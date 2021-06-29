@@ -1,0 +1,21 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "npm",
+            "script": "dev",
+            "path": "taller-server/",
+            "problemMatcher": ["$tsc"],
+            "label": "npm: dev - taller-server",
+            "detail": "ts-node-dev --no-notify src/"
+        },
+        {
+            "type": "npm",
+            "script": "start",
+            "path": "taller-client/",
+            "problemMatcher": ["$tsc"],
+            "label": "npm: start - taller-client",
+            "detail": "react-scripts start"
+        }
+    ]
+}
