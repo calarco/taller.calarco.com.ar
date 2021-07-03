@@ -6,6 +6,7 @@ import Modelo from "./Modelo";
 import Card from "components/Card";
 
 const Box = styled.article`
+    padding: 1rem 1.5rem;
     display: grid;
     grid-auto-flow: column;
     grid-template-columns: 4.25rem 1fr;
@@ -32,10 +33,10 @@ const Wide = styled.label`
 const Vehiculo = function ({
     matchModelo,
     active,
+    activeSection,
+    setActiveSection,
     setActiveId,
     onClick,
-    edit,
-    setEdit,
     vehiculo,
 }) {
     const [inputs, setInputs] = useState({
@@ -103,7 +104,6 @@ const Vehiculo = function ({
                     updatedAt: Date(),
                 })
                 .then((data) => {
-                    setEdit(false);
                     setActiveId(data.id);
                     setMessage("Cliente creado");
                     setTimeout(function () {
@@ -130,7 +130,6 @@ const Vehiculo = function ({
                     modeloId: inputs.modeloId,
                 })
                 .then(() => {
-                    setEdit(false);
                     setMessage("Cliente guardado");
                     setTimeout(function () {
                         setMessage("");
@@ -188,8 +187,8 @@ const Vehiculo = function ({
                 type="Vehículo"
                 message={message}
                 active={active}
-                edit={edit}
-                setEdit={setEdit}
+                activeSection={activeSection}
+                setActiveSection={setActiveSection}
                 create={vehiculo.id === 0 ? true : false}
                 onSubmit={vehiculo.id === 0 ? handleCreate : handleEdit}
                 onReset={handleDelete}

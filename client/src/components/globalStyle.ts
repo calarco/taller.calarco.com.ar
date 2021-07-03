@@ -272,11 +272,12 @@ const GlobalStyle = createGlobalStyle`
     select {
         display: block;
         width: 100%;
-        padding: 0.75rem 0.5rem;
+        margin: 0.5rem 0rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
         outline: none;
         background: none;
-        border: none;
-        border-bottom: 2px solid rgba(0, 0, 0, 0);
+        border: var(--border-variant);
         font: var(--subhead1);
         color: var(--on-background);
         transition: 0.1s ease-in;
@@ -310,6 +311,7 @@ const GlobalStyle = createGlobalStyle`
         padding: 0.25rem 0.5rem;
         border-radius: 4px;
         background: var(--surface-variant);
+        border: none;
     }
 
     select:hover {
@@ -344,13 +346,9 @@ const GlobalStyle = createGlobalStyle`
     textarea:focus,
     select:focus {
         outline: none;
-        border-bottom: 2px solid var(--primary);
+        border: 1px solid var(--primary);
         color: var(--on-background);
         transition: 0.15s ease-out;
-    }
-
-    select:focus {
-        border-radius: 4px 4px 0 0;
     }
 
     input:-webkit-autofill,
@@ -398,7 +396,7 @@ const GlobalStyle = createGlobalStyle`
     button:hover,
     input[type="submit"]:hover {
         cursor: pointer;
-        text-decoration: underline;
+        background: var(--primary-variant);
         transition: 0.15s ease-out;
     }
 

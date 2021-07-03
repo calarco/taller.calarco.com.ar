@@ -1,12 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback, useTransition } from "react";
+import feathersClient from "feathersClient";
 import styled from "styled-components";
 import { SwitchTransition, Transition } from "react-transition-group";
 
 import { Device } from "components/globalStyle";
 import { Busqueda } from "./Busqueda";
-import { Clientes } from "./Clientes";
-import { Vehiculos } from "./Vehiculos";
-import { Reparaciones } from "./Reparaciones";
+import Section from "components/Section";
+import Cliente from "views/Gestion/Clientes/Cliente";
+import Vehiculo from "views/Gestion/Vehiculos/Vehiculo";
+import Reparacion from "views/Gestion/Reparaciones/Reparacion";
 
 const Container = styled.main`
     grid-area: gestion;
@@ -35,11 +37,162 @@ const Container = styled.main`
     }
 `;
 
+const Loading = styled.div`
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 0.25rem;
+    background: var(--primary);
+`;
+
 const Gestion = function ({ matchModelo }) {
     const nodeRef = React.useRef(null);
     const [clienteId, setClienteId] = useState(0);
     const [vehiculoId, setVehiculoId] = useState(0);
-    const [active, setActive] = useState("");
+    const [activeSection, setActiveSection] = useState("");
+    const [isPending, startTransition] = useTransition();
+    const [selected, setSelected] = useState(0);
+
+    const [cliente, setCliente] = useState({
+        id: 0,
+        nombre: "",
+        apellido: "",
+        telefono: " ",
+        direccion: "",
+        empresa: "",
+        createdAt: "",
+        updatedAt: "",
+    });
+    const [vehiculos, setVehiculos] = useState({
+        total: 0,
+        limit: 0,
+        skip: 0,
+        data: [
+            {
+                id: 0,
+                patente: "",
+                year: "",
+                combustible: "",
+                cilindrada: "",
+                createdAt: "",
+                updatedAt: "",
+                clienteId: 0,
+                modeloId: 0,
+            },
+        ],
+    });
+    const [reparaciones, setReparaciones] = useState({
+        total: 0,
+        limit: 0,
+        skip: 0,
+        data: [
+            {
+                id: 0,
+                vehiculoId: "",
+                reparacion: "",
+                repuestos: "",
+                labor: "",
+                costo: "",
+                km: "",
+                createdAt: "",
+                updatedAt: "",
+            },
+        ],
+    });
+
+    const loadCliente = useCallback(() => {
+        feathersClient
+            .service("clientes")
+            .get(clienteId)
+            .then((found) => {
+                setCliente(found);
+            })
+            .catch((error) => {
+                console.log("error", error);
+            });
+    }, [clienteId]);
+
+    const loadVehiculos = useCallback(() => {
+        feathersClient
+            .service("vehiculos")
+            .find({
+                query: {
+                    $limit: 100,
+                    clienteId: clienteId,
+                    $sort: {
+                        updatedAt: -1,
+                    },
+                },
+            })
+            .then((found) => {
+                setVehiculos(found);
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    }, [clienteId]);
+
+    const loadReparaciones = useCallback(() => {
+        feathersClient
+            .service("reparaciones")
+            .find({
+                query: {
+                    vehiculoId: vehiculoId,
+                    $limit: 100,
+                    $sort: {
+                        createdAt: -1,
+                    },
+                },
+            })
+            .then((found) => {
+                setReparaciones(found);
+            })
+            .catch((error) => {
+                console.log("error", error);
+            });
+    }, [vehiculoId]);
+
+    useEffect(() => {
+        feathersClient
+            .service("vehiculos")
+            .on("created", () => loadVehiculos());
+        feathersClient
+            .service("vehiculos")
+            .on("patched", () => loadVehiculos());
+        feathersClient
+            .service("vehiculos")
+            .on("removed", () => loadVehiculos());
+    }, [loadVehiculos]);
+
+    useEffect(() => {
+        feathersClient
+            .service("reparaciones")
+            .on("created", () => loadReparaciones());
+        feathersClient
+            .service("reparaciones")
+            .on("patched", () => loadReparaciones());
+        feathersClient
+            .service("reparaciones")
+            .on("removed", () => loadReparaciones());
+    }, [loadReparaciones]);
+
+    useEffect(() => {
+        clienteId !== 0 &&
+            startTransition(() => {
+                loadCliente();
+            });
+        clienteId !== 0 &&
+            startTransition(() => {
+                loadVehiculos();
+            });
+    }, [clienteId, startTransition, loadCliente, loadVehiculos]);
+
+    useEffect(() => {
+        vehiculoId !== 0 &&
+            startTransition(() => {
+                loadReparaciones();
+            });
+    }, [vehiculoId, startTransition, loadReparaciones]);
 
     return (
         <>
@@ -69,16 +222,66 @@ const Gestion = function ({ matchModelo }) {
                             {(state) => (
                                 <>
                                     {vehiculoId !== 0 && (
-                                        <Reparaciones
-                                            active={active}
-                                            setActive={setActive}
-                                            clienteId={clienteId}
-                                            setClienteId={setClienteId}
-                                            vehiculoId={vehiculoId}
-                                            setVehiculoId={setVehiculoId}
-                                            matchModelo={matchModelo}
+                                        <Section
+                                            type="reparaciones"
+                                            activeSection={activeSection}
+                                            setActiveSection={setActiveSection}
                                             state={state}
-                                        />
+                                        >
+                                            <Reparacion
+                                                active={
+                                                    !reparaciones.data[0]
+                                                        ? true
+                                                        : false
+                                                }
+                                                activeSection={activeSection}
+                                                setActiveSection={
+                                                    setActiveSection
+                                                }
+                                                setActiveId={setSelected}
+                                                reparacion={{
+                                                    id: 0,
+                                                    vehiculoId: vehiculoId,
+                                                    reparacion: "",
+                                                    repuestos: "",
+                                                    labor: "0",
+                                                    costo: "0",
+                                                    km: reparaciones.data[0]
+                                                        ? reparaciones.data[0]
+                                                              .km
+                                                        : "0",
+                                                    createdAt:
+                                                        new Date().toISOString(),
+                                                    updatedAt: "",
+                                                }}
+                                            />
+                                            {reparaciones.data[0] &&
+                                                reparaciones.data.map(
+                                                    (aReparacion) => (
+                                                        <Reparacion
+                                                            key={aReparacion.id}
+                                                            active={
+                                                                selected ===
+                                                                aReparacion.id
+                                                                    ? true
+                                                                    : false
+                                                            }
+                                                            activeSection={
+                                                                activeSection
+                                                            }
+                                                            setActiveSection={
+                                                                setActiveSection
+                                                            }
+                                                            setActiveId={
+                                                                setSelected
+                                                            }
+                                                            reparacion={
+                                                                aReparacion
+                                                            }
+                                                        />
+                                                    )
+                                                )}
+                                        </Section>
                                     )}
                                 </>
                             )}
@@ -103,35 +306,105 @@ const Gestion = function ({ matchModelo }) {
                             {(state) => (
                                 <>
                                     {clienteId !== 0 ? (
-                                        <Vehiculos
-                                            active={active}
-                                            setActive={setActive}
-                                            clienteId={clienteId}
-                                            setClienteId={setClienteId}
-                                            vehiculoId={vehiculoId}
-                                            setVehiculoId={setVehiculoId}
-                                            matchModelo={matchModelo}
+                                        <Section
+                                            type="vehiculos"
+                                            activeSection={activeSection}
+                                            setActiveSection={setActiveSection}
                                             state={state}
-                                        />
+                                        >
+                                            <Vehiculo
+                                                active={
+                                                    !vehiculos.data[0]
+                                                        ? true
+                                                        : false
+                                                }
+                                                activeSection={activeSection}
+                                                setActiveSection={
+                                                    setActiveSection
+                                                }
+                                                setActiveId={setVehiculoId}
+                                                onClick={() => setVehiculoId(0)}
+                                                matchModelo={matchModelo}
+                                                vehiculo={{
+                                                    id: 0,
+                                                    patente: "",
+                                                    year: "",
+                                                    combustible: "Nafta",
+                                                    cilindrada: "",
+                                                    createdAt: "",
+                                                    updatedAt: "",
+                                                    clienteId: clienteId,
+                                                    modeloId: 0,
+                                                }}
+                                            />
+                                            {vehiculos.data[0] &&
+                                                vehiculos.data.map(
+                                                    (aVehiculo) => (
+                                                        <Vehiculo
+                                                            key={aVehiculo.id}
+                                                            active={
+                                                                vehiculoId ===
+                                                                aVehiculo.id
+                                                                    ? true
+                                                                    : false
+                                                            }
+                                                            activeSection={
+                                                                activeSection
+                                                            }
+                                                            setActiveSection={
+                                                                setActiveSection
+                                                            }
+                                                            setActiveId={
+                                                                setVehiculoId
+                                                            }
+                                                            onClick={() =>
+                                                                setVehiculoId(
+                                                                    aVehiculo.id
+                                                                )
+                                                            }
+                                                            matchModelo={
+                                                                matchModelo
+                                                            }
+                                                            vehiculo={aVehiculo}
+                                                        />
+                                                    )
+                                                )}
+                                        </Section>
                                     ) : (
                                         <div>Presupuestos</div>
                                     )}
-                                    <Clientes
-                                        active={active}
-                                        setActive={setActive}
-                                        clienteId={clienteId}
-                                        setClienteId={setClienteId}
-                                        vehiculoId={vehiculoId}
-                                        setVehiculoId={setVehiculoId}
-                                        matchModelo={matchModelo}
-                                        state={state}
-                                    />
+                                    {clienteId === 0 ? (
+                                        <Cliente
+                                            activeSection={activeSection}
+                                            setActiveSection={setActiveSection}
+                                            setActiveId={setClienteId}
+                                            cliente={{
+                                                id: 0,
+                                                nombre: "",
+                                                apellido: "",
+                                                dni: "",
+                                                empresa: "",
+                                                telefono: "",
+                                                email: "",
+                                                createdAt: "",
+                                                updatedAt: "",
+                                            }}
+                                        />
+                                    ) : (
+                                        <Cliente
+                                            activeSection={activeSection}
+                                            setActiveSection={setActiveSection}
+                                            setActiveId={setClienteId}
+                                            cliente={cliente}
+                                        />
+                                    )}
                                 </>
                             )}
                         </Transition>
                     </SwitchTransition>
                 </div>
             </Container>
+            {isPending ? <Loading /> : null}
         </>
     );
 };

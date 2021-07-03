@@ -9,6 +9,7 @@ type Props = {
 };
 
 const Box = styled.article`
+    padding: 1.5rem 2rem;
     display: grid;
     grid-template-columns: 1fr auto;
 
@@ -35,7 +36,12 @@ const Label = styled.label<Props>`
         `};
 `;
 
-const Cliente = function ({ active, setActiveId, edit, setEdit, cliente }) {
+const Cliente = function ({
+    activeSection,
+    setActiveSection,
+    setActiveId,
+    cliente,
+}) {
     const [inputs, setInputs] = useState({
         nombre: "",
         apellido: "",
@@ -82,7 +88,6 @@ const Cliente = function ({ active, setActiveId, edit, setEdit, cliente }) {
                     updatedAt: Date(),
                 })
                 .then((data) => {
-                    setEdit(false);
                     setActiveId(data.id);
                     setMessage("Cliente creado");
                     setTimeout(function () {
@@ -109,7 +114,6 @@ const Cliente = function ({ active, setActiveId, edit, setEdit, cliente }) {
                     email: inputs.email,
                 })
                 .then(() => {
-                    setEdit(false);
                     setMessage("Cliente guardado");
                     setTimeout(function () {
                         setMessage("");
@@ -162,9 +166,9 @@ const Cliente = function ({ active, setActiveId, edit, setEdit, cliente }) {
         <Card
             type="Cliente"
             message={message}
-            active={active}
-            edit={edit}
-            setEdit={setEdit}
+            active={true}
+            activeSection={activeSection}
+            setActiveSection={setActiveSection}
             create={cliente.id === 0 ? true : false}
             onSubmit={cliente.id === 0 ? handleCreate : handleEdit}
             onReset={handleDelete}

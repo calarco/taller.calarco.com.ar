@@ -19,10 +19,10 @@ const Container = styled.div<Props>`
     &:not(:first-child)::after {
         content: "";
         position: absolute;
-        top: -0.5rem;
+        top: -0.75rem;
         z-index: 0;
         width: 100%;
-        border-top: var(--border);
+        border-top: var(--border-variant);
 
         ${(props) =>
             props.edit &&
@@ -53,7 +53,7 @@ const Container = styled.div<Props>`
         !props.create &&
         css`
             position: sticky;
-            top: 4rem;
+            top: 4.5rem;
             bottom: 0;
             z-index: 1000;
             padding: 0 0 3rem 0;
@@ -71,23 +71,28 @@ const Container = styled.div<Props>`
 
     ${(props) =>
         props.type === "Cliente" &&
-        props.edit &&
         css`
+            grid-column-start: 1;
+            grid-column-end: 1;
+            grid-row-start: 1;
             top: 0;
+            border-radius: 4px;
+            box-shadow: var(--shadow-variant);
+            overflow: visible;
+            background: var(--surface);
         `};
 
     ${(props) =>
         props.type === "Vehículo" &&
         props.edit &&
         css`
-            bottom: 15rem;
+            bottom: 16rem;
         `};
 
     > article {
         opacity: 0;
         max-height: 25rem;
         width: 100%;
-        padding: 1rem 1.5rem;
         overflow: hidden;
         display: grid;
         align-items: center;
@@ -224,7 +229,6 @@ const Box = styled.div<Props>`
         width: 100%;
         overflow: hidden;
         border-radius: 4px 4px 0 0;
-        padding: 1rem 1.5rem;
         overflow: hidden;
         display: grid;
         align-items: center;
@@ -261,7 +265,7 @@ const Box = styled.div<Props>`
 
         label {
             height: 100%;
-            padding: 0.5rem 1rem 0 1rem;
+            padding: 0.5rem 1rem;
             background: var(--surface);
         }
 
@@ -325,6 +329,7 @@ const Buttons = styled.div<Props>`
         height: 3rem;
         margin: 0;
         padding: 0 1.5rem;
+        border-radius: 0px;
         background: none;
         border: none;
 
@@ -342,6 +347,11 @@ const Buttons = styled.div<Props>`
             !props.edit &&
             css`
                 color: var(--primary);
+
+                &:hover {
+                    color: var(--secondary);
+                    background: var(--secondary-variant);
+                }
             `};
     }
 
@@ -406,19 +416,28 @@ const Card = function ({
     message,
     create,
     active,
-    edit,
-    setEdit,
+    activeSection,
+    setActiveSection,
     onSubmit,
     onReset,
     children,
 }) {
     const nodeRef = React.useRef(null);
+    const [edit, setEdit] = useState(false);
     const [remove, setRemove] = useState(false);
 
     useEffect(() => {
         create && active ? setEdit(true) : setEdit(false);
         !active && setRemove(false);
     }, [create, active, setEdit]);
+
+    useEffect(() => {
+        activeSection !== type && setEdit(false);
+    }, [type, activeSection]);
+
+    useEffect(() => {
+        edit ? setActiveSection(type) : setActiveSection("");
+    }, [type, edit, setActiveSection]);
 
     return (
         <>

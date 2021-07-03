@@ -8,7 +8,6 @@ const Container = styled.fieldset`
     height: 100%;
     display: grid;
     align-items: center;
-    gap: 1px;
 
     label {
         position: relative;

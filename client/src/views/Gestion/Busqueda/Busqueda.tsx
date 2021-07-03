@@ -42,9 +42,12 @@ const Container = styled.form<Props>`
     grid-template-columns: 1fr auto;
 
     input[type="search"] {
+        margin: 0;
+        border: none;
     }
 
     input[type="search"]:focus {
+        border: none;
     }
 
     button {

@@ -9,8 +9,9 @@ type Props = {
 };
 
 const Box = styled.article`
+    padding: 1.5rem 2rem;
     grid-template-columns: auto 1fr auto;
-    gap: 0.5rem;
+    gap: 1rem;
 `;
 
 const Form = styled.aside`
@@ -50,8 +51,8 @@ const Reparacion = function ({
     setActiveId,
     reparacion,
     active,
-    edit,
-    setEdit,
+    activeSection,
+    setActiveSection,
 }) {
     const [inputs, setInputs] = useState({
         fecha: "",
@@ -108,7 +109,6 @@ const Reparacion = function ({
                     vehiculoId: inputs.vehiculoId,
                 })
                 .then((data) => {
-                    setEdit(false);
                     setActiveId(data.id);
                     setMessage("Reparacion creada");
                     setTimeout(function () {
@@ -136,7 +136,6 @@ const Reparacion = function ({
                     createdAt: new Date(inputs.fecha).toISOString(),
                 })
                 .then(() => {
-                    setEdit(false);
                     setMessage("Reparacion guardada");
                     setTimeout(function () {
                         setMessage("");
@@ -188,8 +187,8 @@ const Reparacion = function ({
             type="Reparación"
             message={message}
             active={active}
-            edit={edit}
-            setEdit={setEdit}
+            activeSection={activeSection}
+            setActiveSection={setActiveSection}
             create={reparacion.id === 0 ? true : false}
             onSubmit={reparacion.id === 0 ? handleCreate : handleEdit}
             onReset={handleDelete}
@@ -209,14 +208,12 @@ const Reparacion = function ({
                             }).format(new Date(reparacion.createdAt))}
                         <small>{reparacion.km} km</small>
                     </h5>
-                    <Numbers>
-                        <h4>
-                            $
-                            {parseInt(reparacion.costo, 10) +
-                                parseInt(reparacion.labor, 10)}
-                        </h4>
-                    </Numbers>
-                    <h5>Total</h5>
+                    <Numbers>Total</Numbers>
+                    <h4>
+                        $
+                        {parseInt(reparacion.costo, 10) +
+                            parseInt(reparacion.labor, 10)}
+                    </h4>
                     <div>
                         <h4>{reparacion.reparacion}</h4>
                     </div>
