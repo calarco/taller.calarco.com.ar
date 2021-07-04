@@ -8,12 +8,6 @@ type Props = {
     readonly error?: boolean;
 };
 
-const Box = styled.article`
-    padding: 1.5rem 2rem;
-    grid-template-columns: auto 1fr auto;
-    gap: 1rem;
-`;
-
 const Form = styled.aside`
     grid-template-columns: auto 1fr auto;
 `;
@@ -23,7 +17,7 @@ const Label = styled.label<Props>`
         props.error &&
         css`
             font-weight: 500;
-            color: var(--error);
+            color: var(--error-variant);
         `};
 `;
 
@@ -34,7 +28,7 @@ const Text = styled.label<Props>`
         props.error &&
         css`
             font-weight: 500;
-            color: var(--error);
+            color: var(--error-variant);
         `};
 `;
 
@@ -43,16 +37,13 @@ const Number = styled.label`
     text-align: right;
 `;
 
-const Numbers = styled.div`
-    text-align: right;
-`;
-
 const Reparacion = function ({
     setActiveId,
     reparacion,
     active,
-    activeSection,
-    setActiveSection,
+    activeCard,
+    setActiveCard,
+    matchModelo,
 }) {
     const [inputs, setInputs] = useState({
         fecha: "",
@@ -187,47 +178,17 @@ const Reparacion = function ({
             type="Reparación"
             message={message}
             active={active}
-            activeSection={activeSection}
-            setActiveSection={setActiveSection}
+            activeCard={activeCard}
+            setActiveCard={setActiveCard}
             create={reparacion.id === 0 ? true : false}
             onSubmit={reparacion.id === 0 ? handleCreate : handleEdit}
             onReset={handleDelete}
+            data={reparacion}
+            matchModelo={matchModelo}
+            onClick={() => {
+                setActiveId(reparacion.id);
+            }}
         >
-            {reparacion.id !== 0 && (
-                <Box
-                    onClick={() => {
-                        setActiveId(reparacion.id);
-                    }}
-                >
-                    <h5>
-                        {reparacion.createdAt &&
-                            Intl.DateTimeFormat("default", {
-                                year: "numeric",
-                                month: "long",
-                                day: "numeric",
-                            }).format(new Date(reparacion.createdAt))}
-                        <small>{reparacion.km} km</small>
-                    </h5>
-                    <Numbers>Total</Numbers>
-                    <h4>
-                        $
-                        {parseInt(reparacion.costo, 10) +
-                            parseInt(reparacion.labor, 10)}
-                    </h4>
-                    <div>
-                        <h4>{reparacion.reparacion}</h4>
-                    </div>
-                    <Numbers>
-                        <h6>${reparacion.labor}</h6>
-                    </Numbers>
-                    <label>Mano de obra</label>
-                    <p>{reparacion.repuestos}</p>
-                    <Numbers>
-                        <h6>${reparacion.costo}</h6>
-                    </Numbers>
-                    <label>Repuestos</label>
-                </Box>
-            )}
             <Form>
                 <label>
                     Fecha

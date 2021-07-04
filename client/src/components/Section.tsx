@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import styled, { css } from "styled-components";
 
 type Props = {
     readonly type?: string;
-    readonly active?: boolean;
+    readonly overlay?: boolean;
     readonly state?: string;
 };
 
@@ -13,6 +13,7 @@ const Container = styled.section<Props>`
     position: relative;
     width: 100%;
     height: 100%;
+    min-height: 25rem;
     max-height: 100%;
     padding: 1.5rem;
     overflow-y: overlay;
@@ -22,16 +23,10 @@ const Container = styled.section<Props>`
     transition: 5s ease-out;
 
     ${(props) =>
-        props.active &&
+        props.overlay &&
         css`
             overflow: hidden;
             transition: none;
-        `};
-
-    ${(props) =>
-        props.type === "vehiculos" &&
-        css`
-            min-height: 25rem;
         `};
 
     ${(props) =>
@@ -41,15 +36,15 @@ const Container = styled.section<Props>`
             grid-column-end: 1;
             grid-row-start: 2;
             grid-row-end: 2;
+            min-height: 21.5rem;
             border-radius: 4px;
             border-top: var(--border-variant);
         `};
 
     ${(props) =>
         props.type === "reparaciones" &&
-        !props.active &&
+        !props.overlay &&
         css`
-            min-height: 21.5rem;
             background: var(--surface);
             box-shadow: var(--shadow);
         `};
@@ -78,7 +73,7 @@ const Overlay = styled.div<Props>`
     transition: 0.25s ease-in;
 
     ${(props) =>
-        props.active &&
+        props.overlay &&
         css`
             visibility: visible;
             opacity: 1;
@@ -88,32 +83,11 @@ const Overlay = styled.div<Props>`
         `};
 `;
 
-const Section = function ({
-    activeSection,
-    setActiveSection,
-    type,
-    state,
-    children,
-}) {
-    const [overlay, setOverlay] = useState(false);
-
-    useEffect(() => {
-        (type === "vehiculos" &&
-            (activeSection === "Vehículo" || activeSection === "Cliente")) ||
-        (type === "reparaciones" && activeSection !== "")
-            ? setOverlay(true)
-            : setOverlay(false);
-    }, [type, activeSection]);
-
+const Section = function ({ active, onClick, type, state, children }) {
     return (
-        <Container type={type} active={overlay} state={state}>
+        <Container type={type} overlay={!active} state={state}>
             {children}
-            <Overlay
-                active={overlay}
-                onClick={() => {
-                    setActiveSection("");
-                }}
-            />
+            <Overlay overlay={!active} onClick={onClick} />
         </Container>
     );
 };

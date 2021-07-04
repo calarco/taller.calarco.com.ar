@@ -8,21 +8,6 @@ type Props = {
     readonly error?: boolean;
 };
 
-const Box = styled.article`
-    padding: 1.5rem 2rem;
-    display: grid;
-    grid-template-columns: 1fr auto;
-
-    div {
-        display: grid;
-        gap: 0.5rem;
-    }
-
-    div:last-child {
-        text-align: right;
-    }
-`;
-
 const Form = styled.aside`
     grid-template-columns: 1fr 1fr;
 `;
@@ -37,10 +22,11 @@ const Label = styled.label<Props>`
 `;
 
 const Cliente = function ({
-    activeSection,
-    setActiveSection,
+    activeCard,
+    setActiveCard,
     setActiveId,
     cliente,
+    matchModelo,
 }) {
     const [inputs, setInputs] = useState({
         nombre: "",
@@ -167,42 +153,15 @@ const Cliente = function ({
             type="Cliente"
             message={message}
             active={true}
-            activeSection={activeSection}
-            setActiveSection={setActiveSection}
+            activeCard={activeCard}
+            setActiveCard={setActiveCard}
             create={cliente.id === 0 ? true : false}
             onSubmit={cliente.id === 0 ? handleCreate : handleEdit}
             onReset={handleDelete}
+            data={cliente}
+            matchModelo={matchModelo}
+            onClick={() => {}}
         >
-            {cliente.id !== 0 && (
-                <Box>
-                    <div>
-                        <h2>
-                            {cliente.nombre} {cliente.apellido}
-                        </h2>
-                        {cliente.empresa && <h5> {cliente.empresa}</h5>}
-                    </div>
-                    <div>
-                        {cliente.dni && (
-                            <label>
-                                DNI / CUIT / CUIL N°
-                                <span>{cliente.dni}</span>
-                            </label>
-                        )}
-                        {cliente.telefono && (
-                            <label>
-                                Telefono
-                                <span>{cliente.telefono}</span>
-                            </label>
-                        )}
-                        {cliente.email && (
-                            <label>
-                                Email
-                                <span>{cliente.email} </span>
-                            </label>
-                        )}
-                    </div>
-                </Box>
-            )}
             <Form>
                 <Label error={error === "" ? false : true}>
                     {error === "" ? "Nombre" : error}

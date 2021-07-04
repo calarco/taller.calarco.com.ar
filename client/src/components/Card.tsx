@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import styled, { css } from "styled-components";
-import { SwitchTransition, Transition } from "react-transition-group";
 
 type Props = {
     readonly type?: string;
@@ -15,6 +14,64 @@ type Props = {
 const Container = styled.div<Props>`
     position: relative;
     transition: 0.25s ease-in;
+
+    ${(props) =>
+        props.type === "Cliente" &&
+        css`
+            grid-column-start: 1;
+            grid-column-end: 1;
+            grid-row-start: 1;
+            top: 0;
+            box-shadow: var(--shadow-variant);
+            overflow: visible;
+            background: var(--surface);
+
+            &:hover {
+                cursor: default;
+                transition: 0.2s ease-in;
+            }
+        `};
+
+    ${(props) =>
+        props.create &&
+        css`
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            height: 3rem;
+            padding: 0 0 3rem 0;
+            transition: 0.3s ease-out;
+        `};
+
+    ${(props) =>
+        props.type !== "Cliente" &&
+        props.active &&
+        !props.create &&
+        css`
+            position: sticky;
+            top: 4.5rem;
+            bottom: 0;
+            z-index: 1000;
+            transition: 0.3s ease-in;
+        `};
+
+    ${(props) =>
+        props.type !== "Cliente" &&
+        props.edit &&
+        css`
+            position: sticky;
+            top: 0;
+            bottom: 6rem;
+            z-index: 1500;
+            backdrop-filter: none;
+        `};
+
+    ${(props) =>
+        props.type === "Vehículo" &&
+        props.edit &&
+        css`
+            bottom: 16rem;
+        `};
 
     &:not(:first-child)::after {
         content: "";
@@ -34,85 +91,14 @@ const Container = styled.div<Props>`
         ${(props) =>
             props.type === "Cliente" &&
             css`
-                border-top: 1px solid rgba(0, 0, 0, 0);
+                border-top: none;
             `};
-    }
-
-    ${(props) =>
-        props.create &&
-        css`
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            height: 3rem;
-            padding: 0 0 3rem 0;
-        `};
-
-    ${(props) =>
-        props.active &&
-        !props.create &&
-        css`
-            position: sticky;
-            top: 4.5rem;
-            bottom: 0;
-            z-index: 1000;
-            padding: 0 0 3rem 0;
-            transition: 0.3s ease-in;
-        `};
-
-    ${(props) =>
-        props.edit &&
-        css`
-            position: sticky;
-            top: 0;
-            bottom: 6rem;
-            z-index: 1500;
-        `};
-
-    ${(props) =>
-        props.type === "Cliente" &&
-        css`
-            grid-column-start: 1;
-            grid-column-end: 1;
-            grid-row-start: 1;
-            top: 0;
-            border-radius: 4px;
-            box-shadow: var(--shadow-variant);
-            overflow: visible;
-            background: var(--surface);
-        `};
-
-    ${(props) =>
-        props.type === "Vehículo" &&
-        props.edit &&
-        css`
-            bottom: 16rem;
-        `};
-
-    > article {
-        opacity: 0;
-        max-height: 25rem;
-        width: 100%;
-        overflow: hidden;
-        display: grid;
-        align-items: center;
-    }
-
-    > aside,
-    > div {
-        display: none;
     }
 `;
 
-const Form = styled.form<Props>`
-    position: absolute;
-    z-index: 0;
-    top: 0;
-    right: 0;
-    left: 0;
+const Box = styled.div<Props>`
     border-radius: 4px;
     border: 1px solid rgba(0, 0, 0, 0);
-    transition: 0.25s ease-in;
 
     &:hover {
         cursor: pointer;
@@ -121,20 +107,12 @@ const Form = styled.form<Props>`
     }
 
     ${(props) =>
-        props.type === "Cliente" &&
-        css`
-            &:hover {
-                cursor: default;
-                border: 1px solid rgba(0, 0, 0, 0);
-                transition: 0.2s ease-in;
-            }
-        `};
-
-    ${(props) =>
         props.create &&
-        props.type === "Cliente" &&
         css`
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(0.4rem);
             border: 1px solid var(--secondary);
+            box-shadow: var(--shadow);
 
             &:hover {
                 cursor: default;
@@ -159,45 +137,11 @@ const Form = styled.form<Props>`
         `};
 
     ${(props) =>
-        props.type !== "Cliente" &&
-        props.create &&
-        css`
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(0.4rem);
-            border: 1px solid var(--secondary);
-            box-shadow: var(--shadow);
-            transition: 0.3s ease-out;
-
-            &:hover {
-                cursor: default;
-                border: 1px solid var(--secondary);
-            }
-        `};
-
-    ${(props) =>
-        props.edit &&
-        css`
-            z-index: 1500;
-            background: var(--surface);
-            backdrop-filter: none;
-            border: 1px solid var(--primary);
-            box-shadow: var(--shadow);
-            transition: 0.3s ease-out;
-
-            &:hover {
-                cursor: default;
-                border: 1px solid var(--primary);
-            }
-        `};
-
-    ${(props) =>
         props.remove &&
         css`
-            background: var(--surface);
             backdrop-filter: none;
             border: 1px solid var(--error-variant);
-            box-shadow: var(--shadow);
-            transition: 0.3s ease-out;
+            transition: 0.2s ease-in;
 
             &:hover {
                 cursor: default;
@@ -205,30 +149,8 @@ const Form = styled.form<Props>`
             }
         `};
 
-    ${(props) =>
-        props.message &&
-        css`
-            background: var(--surface);
-            backdrop-filter: none;
-            transition: 0.3s ease-out;
-
-            &:hover {
-                cursor: default;
-            }
-        `};
-`;
-
-const Box = styled.div<Props>`
-    display: grid;
-    align-items: start;
-
     > article {
-        grid-row: 1;
-        grid-column: 1;
-        max-height: 25rem;
         width: 100%;
-        overflow: hidden;
-        border-radius: 4px 4px 0 0;
         overflow: hidden;
         display: grid;
         align-items: center;
@@ -247,6 +169,114 @@ const Box = styled.div<Props>`
                 opacity: 0;
             `};
     }
+`;
+
+const Cliente = styled.article`
+    padding: 1.5rem 2rem;
+    display: grid;
+    grid-template-columns: 1fr auto;
+
+    div {
+        display: grid;
+        gap: 0.5rem;
+    }
+
+    div:last-child {
+        text-align: right;
+    }
+`;
+
+const Vehiculo = styled.article`
+    padding: 1rem 1.5rem;
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-columns: 4.25rem 1fr;
+    gap: 1rem;
+
+    h4 {
+        text-align: right;
+    }
+
+    div {
+        display: grid;
+        gap: 0.5rem;
+    }
+`;
+
+const Reparación = styled.article`
+    padding: 1.5rem 2rem;
+    grid-template-columns: auto 1fr auto;
+    gap: 1rem;
+`;
+
+const Numbers = styled.div`
+    text-align: right;
+`;
+
+const Remove = styled.div<Props>`
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    bottom: 3rem;
+    left: 1px;
+    grid-row: 1;
+    grid-column: 1;
+    padding: 1.25rem 2.25rem;
+    border-radius: 4px 4px 0 0;
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(0.5rem);
+    display: grid;
+    gap: 0.5rem;
+    align-items: center;
+    text-align: center;
+    transition: 0.25s ease-in;
+
+    ${(props) =>
+        props.active &&
+        css`
+            visibility: visible;
+            opacity: 1;
+            transition: 0.3s ease-in;
+        `};
+`;
+
+const Form = styled.form<Props>`
+    position: absolute;
+    z-index: 0;
+    top: 0;
+    right: 0;
+    left: 0;
+    border-radius: 4px;
+
+    ${(props) =>
+        props.edit &&
+        css`
+            z-index: 1500;
+            background: var(--surface);
+            backdrop-filter: none;
+            border: 1px solid var(--primary);
+            box-shadow: var(--shadow);
+            transition: 0.3s ease-out;
+
+            &:hover {
+                cursor: default;
+                border: 1px solid var(--primary);
+            }
+        `};
+
+    ${(props) =>
+        props.message &&
+        css`
+            background: var(--surface);
+            backdrop-filter: none;
+            transition: 0.3s ease-out;
+
+            &:hover {
+                cursor: default;
+            }
+        `};
 
     > aside {
         visibility: hidden;
@@ -281,32 +311,6 @@ const Box = styled.div<Props>`
                 transition: 0.3s ease-out;
             `};
     }
-
-    > div {
-        visibility: hidden;
-        opacity: 0;
-        grid-row: 1;
-        grid-column: 1;
-        width: 100%;
-        height: 100%;
-        padding: 1.25rem 2.25rem;
-        border-radius: 4px 4px 0 0;
-        background: rgba(255, 255, 255, 0.5);
-        backdrop-filter: blur(0.5rem);
-        display: grid;
-        gap: 0.5rem;
-        align-items: center;
-        text-align: center;
-        transition: 0.25s ease-in;
-
-        ${(props) =>
-            props.remove &&
-            css`
-                visibility: visible;
-                opacity: 1;
-                transition: 0.3s ease-in;
-            `};
-    }
 `;
 
 const Buttons = styled.div<Props>`
@@ -322,7 +326,10 @@ const Buttons = styled.div<Props>`
     border-radius: 4px;
     border-top: 1px solid rgba(0, 0, 0, 0);
     display: flex;
-    transition: 25s ease-out;
+    transition: 0.25s ease-out;
+
+    visibility: visible;
+    opacity: 1;
 
     button {
         width: 100%;
@@ -416,13 +423,15 @@ const Card = function ({
     message,
     create,
     active,
-    activeSection,
-    setActiveSection,
+    activeCard,
+    setActiveCard,
     onSubmit,
     onReset,
     children,
+    data,
+    matchModelo,
+    onClick,
 }) {
-    const nodeRef = React.useRef(null);
     const [edit, setEdit] = useState(false);
     const [remove, setRemove] = useState(false);
 
@@ -432,162 +441,238 @@ const Card = function ({
     }, [create, active, setEdit]);
 
     useEffect(() => {
-        activeSection !== type && setEdit(false);
-    }, [type, activeSection]);
+        activeCard !== type && setEdit(false);
+    }, [type, activeCard]);
 
     useEffect(() => {
-        edit ? setActiveSection(type) : setActiveSection("");
-    }, [type, edit, setActiveSection]);
+        edit ? setActiveCard(type) : setActiveCard("");
+    }, [type, edit, setActiveCard]);
 
     return (
         <>
-            <Container type={type} create={create} active={active} edit={edit}>
-                {children}
-                <Form
-                    onSubmit={onSubmit}
-                    onReset={onReset}
-                    noValidate
+            <Container
+                type={type}
+                create={create}
+                active={active}
+                edit={edit}
+                remove={remove}
+            >
+                <Box
                     type={type}
                     create={create}
                     active={active}
-                    edit={edit}
                     remove={remove}
-                    message={message === "" ? false : true}
                 >
-                    <Box
+                    {data.id !== 0 && type === "Cliente" ? (
+                        <Cliente>
+                            <div>
+                                <h2>
+                                    {data.nombre} {data.apellido}
+                                </h2>
+                                {data.empresa && <h5> {data.empresa}</h5>}
+                            </div>
+                            <div>
+                                {data.dni && (
+                                    <label>
+                                        DNI / CUIT / CUIL N°
+                                        <span>{data.dni}</span>
+                                    </label>
+                                )}
+                                {data.telefono && (
+                                    <label>
+                                        Telefono
+                                        <span>{data.telefono}</span>
+                                    </label>
+                                )}
+                                {data.email && (
+                                    <label>
+                                        Email
+                                        <span>{data.email} </span>
+                                    </label>
+                                )}
+                            </div>
+                        </Cliente>
+                    ) : data.id !== 0 && type === "Vehículo" ? (
+                        <Vehiculo onClick={onClick}>
+                            <h4>{data.patente}</h4>
+                            <div>
+                                <h6>{matchModelo(data.modeloId)}</h6>
+                                <p>
+                                    {data.combustible} {data.cilindrada}
+                                    <small>{data.year}</small>
+                                </p>
+                            </div>
+                            <p>{data.vin}</p>
+                        </Vehiculo>
+                    ) : data.id !== 0 && type === "Reparación" ? (
+                        <Reparación onClick={onClick}>
+                            <h5>
+                                {data.createdAt &&
+                                    Intl.DateTimeFormat("default", {
+                                        year: "numeric",
+                                        month: "long",
+                                        day: "numeric",
+                                    }).format(new Date(data.createdAt))}
+                                <small>{data.km} km</small>
+                            </h5>
+                            <Numbers>Total</Numbers>
+                            <h4>
+                                $
+                                {parseInt(data.costo, 10) +
+                                    parseInt(data.labor, 10)}
+                            </h4>
+                            <div>
+                                <h4>{data.reparacion}</h4>
+                            </div>
+                            <Numbers>
+                                <h6>${data.labor}</h6>
+                            </Numbers>
+                            <label>Mano de obra</label>
+                            <p>{data.repuestos}</p>
+                            <Numbers>
+                                <h6>${data.costo}</h6>
+                            </Numbers>
+                            <label>Repuestos</label>
+                        </Reparación>
+                    ) : undefined}
+                    {!create && (
+                        <Remove active={remove}>
+                            <h5>¿Borrar {type}?</h5>
+                        </Remove>
+                    )}
+                    <Buttons
+                        create={create}
+                        active={active}
+                        edit={edit}
+                        message={message === "" ? false : true}
+                    >
+                        {create && !edit ? (
+                            <>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setEdit(true);
+                                    }}
+                                >
+                                    Crear {type}
+                                </button>
+                            </>
+                        ) : create && edit && active ? (
+                            <>
+                                <button type="submit" onClick={() => {}}>
+                                    Crear {type}
+                                </button>
+                            </>
+                        ) : remove ? (
+                            <>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setRemove(false);
+                                    }}
+                                >
+                                    Cancelar
+                                </button>
+                                <button type="reset" onClick={() => {}}>
+                                    Borrar
+                                </button>
+                            </>
+                        ) : (
+                            <>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setRemove(true);
+                                    }}
+                                >
+                                    Borrar
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setEdit(true);
+                                    }}
+                                >
+                                    Editar
+                                </button>
+                            </>
+                        )}
+                        <div>
+                            <h5>{message}</h5>
+                        </div>
+                    </Buttons>
+                </Box>
+                {edit && (
+                    <Form
+                        onSubmit={onSubmit}
+                        onReset={onReset}
+                        noValidate
+                        type={type}
                         create={create}
                         active={active}
                         edit={edit}
                         remove={remove}
+                        message={message === "" ? false : true}
                     >
                         {children}
-                        {!create && (
-                            <div>
-                                <h5>¿Borrar {type}?</h5>
-                            </div>
-                        )}
-                    </Box>
-                    <SwitchTransition>
-                        <Transition
-                            nodeRef={nodeRef}
-                            key={edit || remove ? "0" : "1"}
-                            addEndListener={(nodeRef, done) => {
-                                nodeRef.addEventListener(
-                                    "transitionend",
-                                    done,
-                                    false
-                                );
-                            }}
-                            unmountOnExit
-                            mountOnEnter
+                        <Buttons
+                            create={create}
+                            active={active}
+                            edit={edit}
+                            message={message === "" ? false : true}
                         >
-                            {(state) => (
-                                <Buttons
-                                    create={create}
-                                    active={active}
-                                    edit={edit}
-                                    state={state}
-                                    message={message === "" ? false : true}
-                                >
-                                    {create && !edit ? (
-                                        <>
-                                            <button
-                                                type="button"
-                                                onClick={() => {
-                                                    setEdit(true);
-                                                }}
-                                            >
-                                                Crear {type}
-                                            </button>
-                                        </>
-                                    ) : create && edit && active ? (
-                                        <>
-                                            <button
-                                                type="submit"
-                                                onClick={() => {}}
-                                            >
-                                                Crear {type}
-                                            </button>
-                                        </>
-                                    ) : create && edit ? (
-                                        <>
-                                            <button
-                                                type="button"
-                                                onClick={() => {
-                                                    setEdit(false);
-                                                }}
-                                            >
-                                                Cancelar
-                                            </button>
-                                            <button
-                                                type="submit"
-                                                onClick={() => {}}
-                                            >
-                                                Crear {type}
-                                            </button>
-                                        </>
-                                    ) : edit ? (
-                                        <>
-                                            <button
-                                                type="button"
-                                                onClick={() => {
-                                                    setEdit(false);
-                                                }}
-                                            >
-                                                Cancelar
-                                            </button>
-                                            <button
-                                                type="submit"
-                                                onClick={() => {}}
-                                            >
-                                                Guardar
-                                            </button>
-                                        </>
-                                    ) : remove ? (
-                                        <>
-                                            <button
-                                                type="button"
-                                                onClick={() => {
-                                                    setRemove(false);
-                                                }}
-                                            >
-                                                Cancelar
-                                            </button>
-                                            <button
-                                                type="reset"
-                                                onClick={() => {}}
-                                            >
-                                                Borrar
-                                            </button>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <button
-                                                type="button"
-                                                onClick={() => {
-                                                    setRemove(true);
-                                                }}
-                                            >
-                                                Borrar
-                                            </button>
-                                            <button
-                                                type="button"
-                                                onClick={() => {
-                                                    setEdit(true);
-                                                }}
-                                            >
-                                                Editar
-                                            </button>
-                                        </>
-                                    )}
-                                    <div>
-                                        <h5>{message}</h5>
-                                    </div>
-                                </Buttons>
-                            )}
-                        </Transition>
-                    </SwitchTransition>
-                </Form>
+                            {create && !edit ? (
+                                <>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setEdit(true);
+                                        }}
+                                    >
+                                        Crear {type}
+                                    </button>
+                                </>
+                            ) : create && edit && active ? (
+                                <>
+                                    <button type="submit" onClick={() => {}}>
+                                        Crear {type}
+                                    </button>
+                                </>
+                            ) : create && edit ? (
+                                <>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setEdit(false);
+                                        }}
+                                    >
+                                        Cancelar
+                                    </button>
+                                    <button type="submit" onClick={() => {}}>
+                                        Crear {type}
+                                    </button>
+                                </>
+                            ) : edit ? (
+                                <>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setEdit(false);
+                                        }}
+                                    >
+                                        Cancelar
+                                    </button>
+                                    <button type="submit" onClick={() => {}}>
+                                        Guardar
+                                    </button>
+                                </>
+                            ) : undefined}
+                            <div>
+                                <h5>{message}</h5>
+                            </div>
+                        </Buttons>
+                    </Form>
+                )}
             </Container>
         </>
     );

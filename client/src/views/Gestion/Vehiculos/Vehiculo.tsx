@@ -5,23 +5,6 @@ import styled from "styled-components";
 import Modelo from "./Modelo";
 import Card from "components/Card";
 
-const Box = styled.article`
-    padding: 1rem 1.5rem;
-    display: grid;
-    grid-auto-flow: column;
-    grid-template-columns: 4.25rem 1fr;
-    gap: 1rem;
-
-    h4 {
-        text-align: right;
-    }
-
-    div {
-        display: grid;
-        gap: 0.5rem;
-    }
-`;
-
 const Form = styled.aside`
     grid-template-columns: 1fr 1fr 1fr;
 `;
@@ -33,8 +16,8 @@ const Wide = styled.label`
 const Vehiculo = function ({
     matchModelo,
     active,
-    activeSection,
-    setActiveSection,
+    activeCard,
+    setActiveCard,
     setActiveId,
     onClick,
     vehiculo,
@@ -187,25 +170,15 @@ const Vehiculo = function ({
                 type="Vehículo"
                 message={message}
                 active={active}
-                activeSection={activeSection}
-                setActiveSection={setActiveSection}
+                activeCard={activeCard}
+                setActiveCard={setActiveCard}
                 create={vehiculo.id === 0 ? true : false}
                 onSubmit={vehiculo.id === 0 ? handleCreate : handleEdit}
                 onReset={handleDelete}
+                data={vehiculo}
+                matchModelo={matchModelo}
+                onClick={onClick}
             >
-                {vehiculo.id !== 0 && (
-                    <Box onClick={onClick}>
-                        <h4>{vehiculo.patente}</h4>
-                        <div>
-                            <h6>{matchModelo(vehiculo.modeloId)}</h6>
-                            <p>
-                                {vehiculo.combustible} {vehiculo.cilindrada}
-                                <small>{vehiculo.year}</small>
-                            </p>
-                        </div>
-                        <p>{vehiculo.vin}</p>
-                    </Box>
-                )}
                 <Form>
                     <Modelo
                         inputs={inputs}
