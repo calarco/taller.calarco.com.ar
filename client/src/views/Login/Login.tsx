@@ -40,8 +40,8 @@ const Buttons = styled.div`
 
 const Login = function ({ setUser }) {
     const [inputs, setInputs] = useState({
-        user: "",
-        password: "",
+        user: "test",
+        password: "1234",
         loading: false,
         error: "",
     });

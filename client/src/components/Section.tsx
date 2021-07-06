@@ -8,6 +8,7 @@ type Props = {
 };
 
 const Container = styled.section<Props>`
+    content-visibility: auto;
     visibility: hidden;
     opacity: 0;
     position: relative;
@@ -17,10 +18,15 @@ const Container = styled.section<Props>`
     max-height: 100%;
     padding: 1.5rem;
     overflow-y: overlay;
+    border-radius: 0 0 4px 4px;
+    background: var(--surface-variant);
+    border: var(--border-variant);
+    border-top: none;
+    box-shadow: var(--shadow-variant);
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    transition: 5s ease-out;
+    transition: 0.3s ease-out;
 
     ${(props) =>
         props.overlay &&
@@ -37,8 +43,7 @@ const Container = styled.section<Props>`
             grid-row-start: 2;
             grid-row-end: 2;
             min-height: 21.5rem;
-            border-radius: 4px;
-            border-top: var(--border-variant);
+            border: var(--border-variant);
         `};
 
     ${(props) =>
@@ -46,6 +51,7 @@ const Container = styled.section<Props>`
         !props.overlay &&
         css`
             background: var(--surface);
+            border: var(--border);
             box-shadow: var(--shadow);
         `};
 
@@ -60,6 +66,8 @@ const Container = styled.section<Props>`
 `;
 
 const Overlay = styled.div<Props>`
+    content-visibility: auto;
+    will-change: opacity;
     visibility: hidden;
     opacity: 0;
     position: absolute;
@@ -76,8 +84,8 @@ const Overlay = styled.div<Props>`
         props.overlay &&
         css`
             visibility: visible;
-            opacity: 1;
             height: 1000%;
+            opacity: 1;
             transform: initial;
             transition: 0.3s ease-out;
         `};

@@ -5,16 +5,15 @@ import { SwitchTransition, Transition } from "react-transition-group";
 
 import { Device } from "components/globalStyle";
 import { Busqueda } from "./Busqueda";
+
 import Section from "components/Section";
-import Cliente from "views/Gestion/Clientes/Cliente";
-import Vehiculo from "views/Gestion/Vehiculos/Vehiculo";
-import Reparacion from "views/Gestion/Reparaciones/Reparacion";
+import Card from "components/Card";
 
 const Container = styled.main`
     grid-area: gestion;
     position: relative;
     width: 100%;
-    max-height: 100vh;
+    height: 100vh;
     padding: 1.5rem 2rem;
     overflow: hidden;
     display: grid;
@@ -22,13 +21,7 @@ const Container = styled.main`
     grid-template-columns: 3fr 2fr;
 
     > div {
-        grid-row-end: 1;
-        height: 100%;
-        overflow: hidden;
-        border-radius: 4px;
-        background: var(--surface-variant);
-        border: var(--border-variant);
-        box-shadow: var(--shadow-variant);
+        height: calc(100vh - 3rem);
         display: grid;
         grid-template-rows: auto 1fr;
     }
@@ -145,7 +138,26 @@ const Gestion = function ({ matchModelo }) {
                 },
             })
             .then((found) => {
-                setReparaciones(found);
+                found.data[0]
+                    ? setReparaciones(found)
+                    : setReparaciones({
+                          total: 0,
+                          limit: 0,
+                          skip: 0,
+                          data: [
+                              {
+                                  id: 0,
+                                  vehiculoId: "",
+                                  reparacion: "",
+                                  repuestos: "",
+                                  labor: "",
+                                  costo: "",
+                                  km: "",
+                                  createdAt: "",
+                                  updatedAt: "",
+                              },
+                          ],
+                      });
             })
             .catch((error) => {
                 console.log("error", error);
@@ -192,6 +204,7 @@ const Gestion = function ({ matchModelo }) {
             startTransition(() => {
                 loadReparaciones();
             });
+        setSelected(0);
     }, [vehiculoId, startTransition, loadReparaciones]);
 
     return (
@@ -208,7 +221,7 @@ const Gestion = function ({ matchModelo }) {
                     <SwitchTransition>
                         <Transition
                             nodeRef={nodeRef}
-                            key={vehiculoId}
+                            key={reparaciones.data[0].id}
                             addEndListener={(nodeRef, done) => {
                                 nodeRef.addEventListener(
                                     "transitionend",
@@ -232,16 +245,9 @@ const Gestion = function ({ matchModelo }) {
                                             }}
                                             state={state}
                                         >
-                                            <Reparacion
-                                                active={
-                                                    !reparaciones.data[0]
-                                                        ? true
-                                                        : false
-                                                }
-                                                activeCard={activeCard}
-                                                setActiveCard={setActiveCard}
-                                                setActiveId={setSelected}
-                                                reparacion={{
+                                            <Card
+                                                type="Reparación"
+                                                data={{
                                                     id: 0,
                                                     vehiculoId: vehiculoId,
                                                     reparacion: "",
@@ -256,13 +262,26 @@ const Gestion = function ({ matchModelo }) {
                                                         new Date().toISOString(),
                                                     updatedAt: "",
                                                 }}
+                                                create={true}
+                                                active={
+                                                    reparaciones.data[0].id ===
+                                                    0
+                                                        ? true
+                                                        : false
+                                                }
+                                                activeCard={activeCard}
+                                                setActiveCard={setActiveCard}
                                                 matchModelo={matchModelo}
+                                                onClick={() => {}}
                                             />
-                                            {reparaciones.data[0] &&
+                                            {reparaciones.data[0].id !== 0 &&
                                                 reparaciones.data.map(
                                                     (aReparacion) => (
-                                                        <Reparacion
+                                                        <Card
                                                             key={aReparacion.id}
+                                                            type="Reparación"
+                                                            data={aReparacion}
+                                                            create={false}
                                                             active={
                                                                 selected ===
                                                                 aReparacion.id
@@ -275,15 +294,14 @@ const Gestion = function ({ matchModelo }) {
                                                             setActiveCard={
                                                                 setActiveCard
                                                             }
-                                                            setActiveId={
-                                                                setSelected
-                                                            }
-                                                            reparacion={
-                                                                aReparacion
-                                                            }
                                                             matchModelo={
                                                                 matchModelo
                                                             }
+                                                            onClick={() => {
+                                                                setSelected(
+                                                                    aReparacion.id
+                                                                );
+                                                            }}
                                                         />
                                                     )
                                                 )}
@@ -298,7 +316,7 @@ const Gestion = function ({ matchModelo }) {
                     <SwitchTransition>
                         <Transition
                             nodeRef={nodeRef}
-                            key={clienteId}
+                            key={cliente.id}
                             addEndListener={(nodeRef, done) => {
                                 nodeRef.addEventListener(
                                     "transitionend",
@@ -325,18 +343,9 @@ const Gestion = function ({ matchModelo }) {
                                             }}
                                             state={state}
                                         >
-                                            <Vehiculo
-                                                active={
-                                                    !vehiculos.data[0]
-                                                        ? true
-                                                        : false
-                                                }
-                                                activeCard={activeCard}
-                                                setActiveCard={setActiveCard}
-                                                setActiveId={setVehiculoId}
-                                                onClick={() => setVehiculoId(0)}
-                                                matchModelo={matchModelo}
-                                                vehiculo={{
+                                            <Card
+                                                type="Vehículo"
+                                                data={{
                                                     id: 0,
                                                     patente: "",
                                                     year: "",
@@ -347,12 +356,25 @@ const Gestion = function ({ matchModelo }) {
                                                     clienteId: clienteId,
                                                     modeloId: 0,
                                                 }}
+                                                create={true}
+                                                active={
+                                                    !vehiculos.data[0]
+                                                        ? true
+                                                        : false
+                                                }
+                                                activeCard={activeCard}
+                                                setActiveCard={setActiveCard}
+                                                matchModelo={matchModelo}
+                                                onClick={() => setVehiculoId(0)}
                                             />
                                             {vehiculos.data[0] &&
                                                 vehiculos.data.map(
                                                     (aVehiculo) => (
-                                                        <Vehiculo
+                                                        <Card
                                                             key={aVehiculo.id}
+                                                            type="Vehículo"
+                                                            data={aVehiculo}
+                                                            create={false}
                                                             active={
                                                                 vehiculoId ===
                                                                 aVehiculo.id
@@ -365,18 +387,14 @@ const Gestion = function ({ matchModelo }) {
                                                             setActiveCard={
                                                                 setActiveCard
                                                             }
-                                                            setActiveId={
-                                                                setVehiculoId
+                                                            matchModelo={
+                                                                matchModelo
                                                             }
                                                             onClick={() =>
                                                                 setVehiculoId(
                                                                     aVehiculo.id
                                                                 )
                                                             }
-                                                            matchModelo={
-                                                                matchModelo
-                                                            }
-                                                            vehiculo={aVehiculo}
                                                         />
                                                     )
                                                 )}
@@ -385,11 +403,9 @@ const Gestion = function ({ matchModelo }) {
                                         <div>Presupuestos</div>
                                     )}
                                     {clienteId === 0 ? (
-                                        <Cliente
-                                            activeCard={activeCard}
-                                            setActiveCard={setActiveCard}
-                                            setActiveId={setClienteId}
-                                            cliente={{
+                                        <Card
+                                            type="Cliente"
+                                            data={{
                                                 id: 0,
                                                 nombre: "",
                                                 apellido: "",
@@ -400,15 +416,23 @@ const Gestion = function ({ matchModelo }) {
                                                 createdAt: "",
                                                 updatedAt: "",
                                             }}
-                                            matchModelo={matchModelo}
-                                        />
-                                    ) : (
-                                        <Cliente
+                                            create={true}
+                                            active={true}
                                             activeCard={activeCard}
                                             setActiveCard={setActiveCard}
-                                            setActiveId={setClienteId}
-                                            cliente={cliente}
                                             matchModelo={matchModelo}
+                                            onClick={() => {}}
+                                        />
+                                    ) : (
+                                        <Card
+                                            type="Cliente"
+                                            data={cliente}
+                                            create={false}
+                                            active={true}
+                                            activeCard={activeCard}
+                                            setActiveCard={setActiveCard}
+                                            matchModelo={matchModelo}
+                                            onClick={() => {}}
                                         />
                                     )}
                                 </>

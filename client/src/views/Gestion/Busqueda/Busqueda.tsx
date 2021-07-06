@@ -36,10 +36,24 @@ const Resultados = styled.div<Props>`
 const Container = styled.form<Props>`
     grid-row-start: 1;
     width: 100%;
-    border-radius: 4px;
+    border-radius: 4px 4px 0 0;
     overflow: hidden;
+    background: var(--surface-variant);
+    border: var(--border-variant);
+    border-bottom: 1px solid rgba(0, 0, 0, 0);
+    box-shadow: var(--shadow-variant);
     display: grid;
     grid-template-columns: 1fr auto;
+
+    ${(props) =>
+        props.active &&
+        css`
+            border-radius: 4px 4px 0 0;
+            background: var(--surface);
+            border: var(--border);
+            box-shadow: var(--shadow);
+            transition: 0.2s ease-out;
+        `};
 
     input[type="search"] {
         margin: 0;
@@ -66,14 +80,6 @@ const Container = styled.form<Props>`
             border-left: var(--border);
         }
     }
-
-    ${(props) =>
-        props.active &&
-        css`
-            background: var(--surface);
-            box-shadow: var(--shadow);
-            transition: 0.2s ease-out;
-        `};
 
     &:focus-within + ${Resultados} {
         visibility: visible;
