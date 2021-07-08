@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useCallback, useTransition } from "react";
 import feathersClient from "feathersClient";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { SwitchTransition, Transition } from "react-transition-group";
 
 import { Device } from "components/globalStyle";
-import { Busqueda } from "./Busqueda";
 
 import Section from "components/Section";
 import Card from "components/Card";
@@ -30,6 +29,88 @@ const Container = styled.main`
     }
 `;
 
+type Props = {
+    readonly type?: string;
+    readonly active?: boolean;
+    readonly state?: string;
+};
+
+const Busqueda = styled.form<Props>`
+    grid-row-start: 1;
+    width: 100%;
+    border-radius: 4px 4px 0 0;
+    overflow: hidden;
+    background: var(--surface-variant);
+    border: var(--border-variant);
+    border-bottom: 1px solid rgba(0, 0, 0, 0);
+    box-shadow: var(--shadow-variant);
+    display: grid;
+    grid-template-columns: 1fr auto;
+
+    ${(props) =>
+        props.active &&
+        css`
+            border-radius: 4px 4px 0 0;
+            background: var(--surface);
+            border: var(--border);
+            box-shadow: var(--shadow);
+            transition: 0.2s ease-out;
+        `};
+
+    input[type="search"] {
+        margin: 0;
+        border: none;
+    }
+
+    input[type="search"]:focus {
+        border: none;
+    }
+
+    button {
+        height: 3rem;
+        padding: 0 1.5rem;
+        margin: 0;
+        border: none;
+        color: var(--secondary);
+
+        &::after {
+            content: "";
+            position: absolute;
+            top: calc(50% - 1rem);
+            left: 0;
+            height: 2rem;
+            border-left: var(--border);
+        }
+    }
+`;
+
+const Resultado = styled.div`
+    width: 100%;
+    padding: 1.5rem 2.5rem;
+    border-bottom: 1px solid var(--on-background-disabled);
+    transition: 0.1s ease-in;
+    display: grid;
+    grid-auto-flow: column;
+    gap: 1rem;
+    align-items: center;
+    justify-content: start;
+
+    &:hover {
+        cursor: pointer;
+        background: var(--on-background-disabled);
+        transition: 0.15s ease-out;
+    }
+
+    h4 {
+        text-align: right;
+    }
+
+    div {
+        pointer-events: none;
+        display: grid;
+    }
+`;
+
 const Loading = styled.div`
     position: fixed;
     bottom: 0;
@@ -40,12 +121,30 @@ const Loading = styled.div`
 
 const Gestion = function ({ matchModelo }) {
     const nodeRef = React.useRef(null);
+    const [busqueda, setBusqueda] = useState("");
     const [clienteId, setClienteId] = useState(0);
     const [vehiculoId, setVehiculoId] = useState(0);
     const [activeCard, setActiveCard] = useState("");
     const [isPending, startTransition] = useTransition();
     const [selected, setSelected] = useState(0);
 
+    const [clientes, setClientes] = useState({
+        total: 0,
+        limit: 0,
+        skip: 0,
+        data: [
+            {
+                id: 0,
+                nombre: "",
+                apellido: "",
+                telefono: " ",
+                direccion: "",
+                empresa: "",
+                createdAt: "",
+                updatedAt: "",
+            },
+        ],
+    });
     const [cliente, setCliente] = useState({
         id: 0,
         nombre: "",
@@ -92,6 +191,13 @@ const Gestion = function ({ matchModelo }) {
             },
         ],
     });
+
+    const handleInputChange = (event) => {
+        event.persist();
+        startTransition(() => {
+            setBusqueda(event.target.value);
+        });
+    };
 
     const loadCliente = useCallback(() => {
         feathersClient
@@ -165,6 +271,68 @@ const Gestion = function ({ matchModelo }) {
     }, [vehiculoId]);
 
     useEffect(() => {
+        busqueda === ""
+            ? feathersClient
+                  .service("clientes")
+                  .find({
+                      query: {
+                          $limit: 50,
+                          $sort: {
+                              updatedAt: -1,
+                          },
+                      },
+                  })
+                  .then((clientes) => {
+                      setClientes(clientes);
+                      setVehiculos({
+                          total: 0,
+                          limit: 0,
+                          skip: 0,
+                          data: [],
+                      });
+                  })
+                  .catch((error) => {
+                      console.log("error", error);
+                  }) &&
+              feathersClient
+                  .service("vehiculos")
+                  .find({
+                      query: {
+                          $limit: 50,
+                          $sort: {
+                              updatedAt: -1,
+                          },
+                      },
+                  })
+                  .then((vehiculos) => {
+                      setVehiculos(vehiculos);
+                  })
+                  .catch((error) => {
+                      console.log("error", error);
+                  })
+            : feathersClient
+                  .service("clientes")
+                  .find({
+                      query: {
+                          $or: [
+                              { nombre: { $iLike: `${busqueda}%` } },
+                              { apellido: { $iLike: `${busqueda}%` } },
+                          ],
+                          $limit: 10,
+                          $sort: {
+                              updatedAt: -1,
+                          },
+                      },
+                  })
+                  .then((clientes) => {
+                      setClientes(clientes);
+                  })
+                  .catch((error) => {
+                      console.log("error", error);
+                  });
+    }, [busqueda]);
+
+    useEffect(() => {
         feathersClient
             .service("vehiculos")
             .on("created", () => loadVehiculos());
@@ -212,111 +380,171 @@ const Gestion = function ({ matchModelo }) {
             <Container>
                 <div>
                     <Busqueda
-                        matchModelo={matchModelo}
-                        clienteId={clienteId}
-                        setClienteId={setClienteId}
-                        vehiculoId={vehiculoId}
-                        setVehiculoId={setVehiculoId}
-                    />
-                    <SwitchTransition>
-                        <Transition
-                            nodeRef={nodeRef}
-                            key={reparaciones.data[0].id}
-                            addEndListener={(nodeRef, done) => {
-                                nodeRef.addEventListener(
-                                    "transitionend",
-                                    done,
-                                    false
-                                );
-                            }}
-                            unmountOnExit
-                            mountOnEnter
-                        >
-                            {(state) => (
-                                <>
-                                    {vehiculoId !== 0 && (
-                                        <Section
-                                            type="reparaciones"
-                                            active={
-                                                activeCard === "" ? true : false
-                                            }
-                                            onClick={() => {
-                                                setActiveCard("");
-                                            }}
-                                            state={state}
-                                        >
-                                            <Card
-                                                type="Reparación"
-                                                data={{
-                                                    id: 0,
-                                                    vehiculoId: vehiculoId,
-                                                    reparacion: "",
-                                                    repuestos: "",
-                                                    labor: "0",
-                                                    costo: "0",
-                                                    km: reparaciones.data[0]
-                                                        ? reparaciones.data[0]
-                                                              .km
-                                                        : "0",
-                                                    createdAt:
-                                                        new Date().toISOString(),
-                                                    updatedAt: "",
-                                                }}
-                                                create={true}
-                                                active={
-                                                    reparaciones.data[0].id ===
-                                                    0
-                                                        ? true
-                                                        : false
-                                                }
-                                                activeCard={activeCard}
-                                                setActiveCard={setActiveCard}
-                                                matchModelo={matchModelo}
-                                                onClick={() => {}}
-                                            />
-                                            {reparaciones.data[0].id !== 0 &&
-                                                reparaciones.data.map(
-                                                    (aReparacion) => (
-                                                        <Card
-                                                            key={aReparacion.id}
-                                                            type="Reparación"
-                                                            data={aReparacion}
-                                                            create={false}
-                                                            active={
-                                                                selected ===
-                                                                aReparacion.id
-                                                                    ? true
-                                                                    : false
-                                                            }
-                                                            activeCard={
-                                                                activeCard
-                                                            }
-                                                            setActiveCard={
-                                                                setActiveCard
-                                                            }
-                                                            matchModelo={
-                                                                matchModelo
-                                                            }
+                        autoComplete="off"
+                        active={vehiculoId === 0 ? true : false}
+                    >
+                        <input
+                            type="search"
+                            name="search"
+                            placeholder="Buscar"
+                            onChange={handleInputChange}
+                            onFocus={() => setVehiculoId(0)}
+                            value={busqueda}
+                            autoFocus
+                        />
+                        {clienteId !== 0 && (
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setClienteId(0);
+                                    setVehiculoId(0);
+                                    setBusqueda("");
+                                }}
+                            >
+                                Crear cliente
+                            </button>
+                        )}
+                    </Busqueda>
+                    <Section
+                        primary={vehiculoId === 0 ? false : true}
+                        active={activeCard === "" ? true : false}
+                        onClick={() => {
+                            setActiveCard("");
+                        }}
+                    >
+                        <SwitchTransition>
+                            <Transition
+                                nodeRef={nodeRef}
+                                key={reparaciones.data[0].id}
+                                addEndListener={(nodeRef, done) => {
+                                    nodeRef.addEventListener(
+                                        "transitionend",
+                                        done,
+                                        false
+                                    );
+                                }}
+                                unmountOnExit
+                                mountOnEnter
+                            >
+                                {(state) => (
+                                    <>
+                                        {vehiculoId === 0 ? (
+                                            <>
+                                                {isPending
+                                                    ? " Loading..."
+                                                    : null}
+                                                {clientes.data.map(
+                                                    (aCliente) => (
+                                                        <Resultado
+                                                            key={aCliente.id}
                                                             onClick={() => {
-                                                                setSelected(
-                                                                    aReparacion.id
+                                                                setClienteId(
+                                                                    aCliente.id
+                                                                );
+                                                                setVehiculoId(
+                                                                    0
                                                                 );
                                                             }}
-                                                        />
+                                                            tabIndex={0}
+                                                        >
+                                                            <h4>
+                                                                {
+                                                                    aCliente.nombre
+                                                                }{" "}
+                                                                {
+                                                                    aCliente.apellido
+                                                                }
+                                                            </h4>
+                                                            <div>
+                                                                <p>
+                                                                    {
+                                                                        aCliente.telefono
+                                                                    }
+                                                                </p>
+                                                            </div>
+                                                        </Resultado>
                                                     )
                                                 )}
-                                        </Section>
-                                    )}
-                                </>
-                            )}
-                        </Transition>
-                    </SwitchTransition>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Card
+                                                    type="Reparación"
+                                                    data={{
+                                                        id: 0,
+                                                        vehiculoId: vehiculoId,
+                                                        reparacion: "",
+                                                        repuestos: "",
+                                                        labor: "0",
+                                                        costo: "0",
+                                                        km: reparaciones.data[0]
+                                                            ? reparaciones
+                                                                  .data[0].km
+                                                            : "0",
+                                                        createdAt:
+                                                            new Date().toISOString(),
+                                                        updatedAt: "",
+                                                    }}
+                                                    create={true}
+                                                    active={false}
+                                                    activeCard={activeCard}
+                                                    setActiveCard={
+                                                        setActiveCard
+                                                    }
+                                                    matchModelo={matchModelo}
+                                                    onClick={() => {}}
+                                                    state={state}
+                                                />
+                                                {reparaciones.data[0].id !==
+                                                    0 &&
+                                                    reparaciones.data.map(
+                                                        (aReparacion) => (
+                                                            <Card
+                                                                key={
+                                                                    aReparacion.id
+                                                                }
+                                                                type="Reparación"
+                                                                data={
+                                                                    aReparacion
+                                                                }
+                                                                create={false}
+                                                                active={
+                                                                    selected ===
+                                                                    aReparacion.id
+                                                                        ? true
+                                                                        : false
+                                                                }
+                                                                activeCard={
+                                                                    activeCard
+                                                                }
+                                                                setActiveCard={
+                                                                    setActiveCard
+                                                                }
+                                                                matchModelo={
+                                                                    matchModelo
+                                                                }
+                                                                onClick={() => {
+                                                                    setSelected(
+                                                                        aReparacion.id
+                                                                    );
+                                                                }}
+                                                                state={state}
+                                                            />
+                                                        )
+                                                    )}
+                                            </>
+                                        )}
+                                    </>
+                                )}
+                            </Transition>
+                        </SwitchTransition>
+                    </Section>
                 </div>
                 <div>
                     <SwitchTransition>
                         <Transition
                             nodeRef={nodeRef}
-                            key={cliente.id}
+                            key={clienteId}
                             addEndListener={(nodeRef, done) => {
                                 nodeRef.addEventListener(
                                     "transitionend",
@@ -324,14 +552,12 @@ const Gestion = function ({ matchModelo }) {
                                     false
                                 );
                             }}
-                            unmountOnExit
-                            mountOnEnter
                         >
                             {(state) => (
                                 <>
                                     {clienteId !== 0 ? (
                                         <Section
-                                            type="vehiculos"
+                                            primary={false}
                                             active={
                                                 activeCard === "Vehículo" ||
                                                 activeCard === "Cliente"
@@ -341,7 +567,6 @@ const Gestion = function ({ matchModelo }) {
                                             onClick={() => {
                                                 setActiveCard("");
                                             }}
-                                            state={state}
                                         >
                                             <Card
                                                 type="Vehículo"
@@ -366,6 +591,7 @@ const Gestion = function ({ matchModelo }) {
                                                 setActiveCard={setActiveCard}
                                                 matchModelo={matchModelo}
                                                 onClick={() => setVehiculoId(0)}
+                                                state={state}
                                             />
                                             {vehiculos.data[0] &&
                                                 vehiculos.data.map(
@@ -395,6 +621,7 @@ const Gestion = function ({ matchModelo }) {
                                                                     aVehiculo.id
                                                                 )
                                                             }
+                                                            state={state}
                                                         />
                                                     )
                                                 )}
@@ -422,6 +649,7 @@ const Gestion = function ({ matchModelo }) {
                                             setActiveCard={setActiveCard}
                                             matchModelo={matchModelo}
                                             onClick={() => {}}
+                                            state={state}
                                         />
                                     ) : (
                                         <Card
@@ -433,6 +661,7 @@ const Gestion = function ({ matchModelo }) {
                                             setActiveCard={setActiveCard}
                                             matchModelo={matchModelo}
                                             onClick={() => {}}
+                                            state={state}
                                         />
                                     )}
                                 </>

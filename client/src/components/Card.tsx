@@ -18,8 +18,21 @@ type Props = {
 };
 
 const Container = styled.div<Props>`
+    will-change: opacity;
     position: relative;
+    visibility: hidden;
+    opacity: 0;
     transition: 0.25s ease-in;
+
+    ${(props) =>
+        props.state === "entered" &&
+        css`
+            will-change: auto;
+            visibility: visible;
+            opacity: 1;
+            transform: initial;
+            transition: 0.3s ease-in;
+        `};
 
     ${(props) =>
         props.type === "Cliente" &&
@@ -195,7 +208,7 @@ const Form = styled.div<Props>`
     top: 0;
     left: 0;
     right: 0;
-    transform: scale(1.03);
+    transform: translateY(-0.75rem);
     overflow: hidden;
     border-radius: 4px;
     border: 1px solid var(--primary);
@@ -334,6 +347,7 @@ const Card = function ({
     setActiveCard,
     matchModelo,
     onClick,
+    state,
 }) {
     const [edit, setEdit] = useState(false);
     const [remove, setRemove] = useState(false);
@@ -359,6 +373,7 @@ const Card = function ({
                 active={active}
                 edit={edit}
                 remove={remove}
+                state={state}
             >
                 <Box
                     type={type}
@@ -441,32 +456,34 @@ const Card = function ({
                         )}
                     </Buttons>
                 </Box>
-                <Form active={(create && active) || edit ? true : false}>
-                    {type === "Cliente" && (
-                        <ClienteForm
-                            cliente={data}
-                            onCancel={() => {
-                                setEdit(false);
-                            }}
-                        />
-                    )}
-                    {type === "Vehículo" && (
-                        <VehiculoForm
-                            vehiculo={data}
-                            onCancel={() => {
-                                setEdit(false);
-                            }}
-                        />
-                    )}
-                    {type === "Reparación" && (
-                        <ReparacionForm
-                            reparacion={data}
-                            onCancel={() => {
-                                setEdit(false);
-                            }}
-                        />
-                    )}
-                </Form>
+                {(create || active) && (
+                    <Form type={type} active={edit ? true : false}>
+                        {type === "Cliente" && (
+                            <ClienteForm
+                                cliente={data}
+                                onCancel={() => {
+                                    setEdit(false);
+                                }}
+                            />
+                        )}
+                        {type === "Vehículo" && (
+                            <VehiculoForm
+                                vehiculo={data}
+                                onCancel={() => {
+                                    setEdit(false);
+                                }}
+                            />
+                        )}
+                        {type === "Reparación" && (
+                            <ReparacionForm
+                                reparacion={data}
+                                onCancel={() => {
+                                    setEdit(false);
+                                }}
+                            />
+                        )}
+                    </Form>
+                )}
             </Container>
         </>
     );
