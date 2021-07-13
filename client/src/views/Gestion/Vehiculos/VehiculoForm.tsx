@@ -49,7 +49,7 @@ const Buttons = styled.div<Props>`
     }
 `;
 
-const Vehiculo = function ({ vehiculo, onCancel }) {
+const VehiculoForm = function ({ vehiculo, onCancel }) {
     const [inputs, setInputs] = useState({
         patente: "",
         year: "",
@@ -289,4 +289,4 @@ const Vehiculo = function ({ vehiculo, onCancel }) {
     );
 };
 
-export default Vehiculo;
+export default VehiculoForm;

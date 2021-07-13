@@ -68,7 +68,7 @@ const Buttons = styled.div<Props>`
     }
 `;
 
-const Reparacion = function ({ reparacion, onCancel }) {
+const ReparacionForm = function ({ reparacion, onCancel }) {
     const [inputs, setInputs] = useState({
         fecha: "",
         km: "",
@@ -293,4 +293,4 @@ const Reparacion = function ({ reparacion, onCancel }) {
     );
 };
 
-export default Reparacion;
+export default ReparacionForm;

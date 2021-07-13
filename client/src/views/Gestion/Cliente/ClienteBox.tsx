@@ -16,7 +16,7 @@ const Container = styled.article`
     }
 `;
 
-const Cliente = function ({ cliente }) {
+const ClienteBox = function ({ cliente }) {
     return (
         <Container>
             <div>
@@ -49,4 +49,4 @@ const Cliente = function ({ cliente }) {
     );
 };
 
-export default Cliente;
+export default ClienteBox;

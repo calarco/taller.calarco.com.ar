@@ -131,13 +131,13 @@ const App = function () {
             <ThemeProvider theme={darkTheme ? themeDark : themeLight}>
                 <GlobalStyle />
             </ThemeProvider>
-            {user ? (
-                <Main>
+            <Main>
+                {user ? (
                     <Gestion matchModelo={matchModelo} />
-                </Main>
-            ) : (
-                <Login setUser={setUser} />
-            )}
+                ) : (
+                    <Login setUser={setUser} />
+                )}
+            </Main>
         </>
     );
 };

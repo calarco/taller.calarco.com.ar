@@ -11,7 +11,7 @@ const Numbers = styled.div`
     text-align: right;
 `;
 
-const Reparacion = function ({ reparacion, onClick }) {
+const ReparacionBox = function ({ reparacion, onClick }) {
     return (
         <Container onClick={onClick}>
             <h5>
@@ -45,4 +45,4 @@ const Reparacion = function ({ reparacion, onClick }) {
     );
 };
 
-export default Reparacion;
+export default ReparacionBox;

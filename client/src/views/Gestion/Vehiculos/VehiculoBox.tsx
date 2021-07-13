@@ -18,7 +18,7 @@ const Container = styled.article`
     }
 `;
 
-const Vehiculo = function ({ vehiculo, onClick, matchModelo }) {
+const VehiculoBox = function ({ vehiculo, onClick, matchModelo }) {
     return (
         <Container onClick={onClick}>
             <h4>{vehiculo.patente}</h4>
@@ -34,4 +34,4 @@ const Vehiculo = function ({ vehiculo, onClick, matchModelo }) {
     );
 };
 
-export default Vehiculo;
+export default VehiculoBox;

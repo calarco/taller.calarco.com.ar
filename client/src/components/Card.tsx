@@ -1,13 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled, { css } from "styled-components";
 
-import Cliente from "views/Gestion/Clientes/Cliente";
-import ClienteForm from "views/Gestion/Clientes/ClienteForm";
-import Vehiculo from "views/Gestion/Vehiculos/Vehiculo";
-import VehiculoForm from "views/Gestion/Vehiculos/VehiculoForm";
-import Reparacion from "views/Gestion/Reparaciones/Reparacion";
-import ReparacionForm from "views/Gestion/Reparaciones/ReparacionForm";
-
 type Props = {
     readonly type?: string;
     readonly create?: boolean;
@@ -18,21 +11,23 @@ type Props = {
 };
 
 const Container = styled.div<Props>`
-    will-change: opacity;
     position: relative;
-    visibility: hidden;
-    opacity: 0;
-    transition: 0.25s ease-in;
 
     ${(props) =>
-        props.state === "entered" &&
-        css`
-            will-change: auto;
-            visibility: visible;
-            opacity: 1;
-            transform: initial;
-            transition: 0.3s ease-in;
-        `};
+        props.state === "entering" || props.state === "exiting"
+            ? css`
+                  will-change: opacity;
+                  visibility: hidden;
+                  opacity: 0;
+                  transition: 0.25s ease-in;
+              `
+            : css`
+                  will-change: auto;
+                  visibility: visible;
+                  opacity: 1;
+                  transform: initial;
+                  transition: 0.3s ease-out;
+              `};
 
     ${(props) =>
         props.type === "Cliente" &&
@@ -52,19 +47,17 @@ const Container = styled.div<Props>`
             z-index: 1000;
             height: 3rem;
             padding: 0 0 3rem 0;
-            transition: 0.3s ease-out;
         `};
 
     ${(props) =>
         props.type !== "Cliente" &&
-        props.active &&
         !props.create &&
+        props.active &&
         css`
             position: sticky;
             top: 4.5rem;
             bottom: 0;
             z-index: 1000;
-            transition: 0.3s ease-in;
         `};
 
     ${(props) =>
@@ -164,6 +157,12 @@ const Box = styled.div<Props>`
         `};
 
     ${(props) =>
+        props.edit &&
+        css`
+            box-shadow: none;
+        `};
+
+    ${(props) =>
         props.remove &&
         css`
             background: rgba(255, 255, 255, 1);
@@ -196,45 +195,42 @@ const Box = styled.div<Props>`
                 opacity: 0;
             `};
     }
-`;
-
-const Form = styled.div<Props>`
-    content-visibility: auto;
-    will-change: opacity;
-    visibility: hidden;
-    opacity: 0;
-    position: absolute;
-    z-index: 1500;
-    top: 0;
-    left: 0;
-    right: 0;
-    transform: translateY(-0.75rem);
-    overflow: hidden;
-    border-radius: 4px;
-    border: 1px solid var(--primary);
-    box-shadow: var(--shadow);
-    background: var(--primary);
-    transition: 0.25s ease-in;
-
-    ${(props) =>
-        props.active &&
-        css`
-            visibility: visible;
-            opacity: 1;
-            transform: initial;
-            transition: 0.3s ease-in;
-        `};
 
     form {
+        content-visibility: auto;
+        will-change: opacity;
+        visibility: hidden;
+        opacity: 0;
+        position: absolute;
+        z-index: 1500;
+        top: -1px;
+        left: -1px;
+        right: -1px;
+        transform: translateY(-0.75rem);
+        overflow: hidden;
+        border-radius: 4px;
+        border: 1px solid var(--primary);
+        box-shadow: var(--shadow);
+        background: var(--primary);
         display: grid;
         gap: 1px;
         align-items: start;
-    }
+        transition: 0.25s ease-in;
 
-    label {
-        height: 100%;
-        padding: 0.5rem 1rem;
-        background: var(--surface);
+        ${(props) =>
+            props.edit &&
+            css`
+                visibility: visible;
+                opacity: 1;
+                transform: initial;
+                transition: 0.3s ease-in;
+            `};
+
+        label {
+            height: 100%;
+            padding: 0.5rem 1rem;
+            background: var(--surface);
+        }
     }
 `;
 
@@ -266,8 +262,6 @@ const Remove = styled.div<Props>`
 `;
 
 const Buttons = styled.div<Props>`
-    visibility: hidden;
-    opacity: 0;
     grid-row: 2;
     grid-column: 1;
     position: relative;
@@ -279,9 +273,6 @@ const Buttons = styled.div<Props>`
     border-top: 1px solid rgba(0, 0, 0, 0);
     display: flex;
     transition: 0.25s ease-out;
-
-    visibility: visible;
-    opacity: 1;
 
     button {
         width: 100%;
@@ -314,15 +305,6 @@ const Buttons = styled.div<Props>`
     }
 
     ${(props) =>
-        props.state === "entered" &&
-        css`
-            visibility: visible;
-            opacity: 1;
-            transform: initial;
-            transition: 0.3s ease-in;
-        `};
-
-    ${(props) =>
         (props.create || props.active) &&
         css`
             visibility: visible;
@@ -340,14 +322,12 @@ const Buttons = styled.div<Props>`
 
 const Card = function ({
     type,
-    data,
     create,
     active,
     activeCard,
     setActiveCard,
-    matchModelo,
-    onClick,
     state,
+    children,
 }) {
     const [edit, setEdit] = useState(false);
     const [remove, setRemove] = useState(false);
@@ -366,126 +346,82 @@ const Card = function ({
     }, [type, edit, setActiveCard]);
 
     return (
-        <>
-            <Container
+        <Container
+            type={type}
+            create={create}
+            active={active}
+            edit={edit}
+            remove={remove}
+            state={state}
+        >
+            <Box
                 type={type}
                 create={create}
                 active={active}
                 edit={edit}
                 remove={remove}
-                state={state}
             >
-                <Box
-                    type={type}
-                    create={create}
-                    active={active}
-                    remove={remove}
-                >
-                    {data.id !== 0 && (
+                {children}
+                {!create && (
+                    <Remove active={remove}>
+                        <h5>¿Borrar {type}?</h5>
+                    </Remove>
+                )}
+                <Buttons create={create} active={active} edit={edit}>
+                    {create ? (
                         <>
-                            {type === "Cliente" ? (
-                                <Cliente cliente={data} />
-                            ) : type === "Vehículo" ? (
-                                <Vehiculo
-                                    vehiculo={data}
-                                    onClick={onClick}
-                                    matchModelo={matchModelo}
-                                />
-                            ) : type === "Reparación" ? (
-                                <Reparacion
-                                    reparacion={data}
-                                    onClick={onClick}
-                                />
-                            ) : undefined}
-                            <Remove active={remove}>
-                                <h5>¿Borrar {type}?</h5>
-                            </Remove>
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setEdit(true);
+                                }}
+                            >
+                                Crear {type}
+                            </button>
+                        </>
+                    ) : create && edit && active ? (
+                        <>
+                            <button type="submit" onClick={() => {}}>
+                                Crear {type}
+                            </button>
+                        </>
+                    ) : remove ? (
+                        <>
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setRemove(false);
+                                }}
+                            >
+                                Cancelar
+                            </button>
+                            <button type="reset" onClick={() => {}}>
+                                Borrar
+                            </button>
+                        </>
+                    ) : (
+                        <>
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setRemove(true);
+                                }}
+                            >
+                                Borrar
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setEdit(true);
+                                }}
+                            >
+                                Editar
+                            </button>
                         </>
                     )}
-                    <Buttons create={create} active={active} edit={edit}>
-                        {create ? (
-                            <>
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        setEdit(true);
-                                    }}
-                                >
-                                    Crear {type}
-                                </button>
-                            </>
-                        ) : create && edit && active ? (
-                            <>
-                                <button type="submit" onClick={() => {}}>
-                                    Crear {type}
-                                </button>
-                            </>
-                        ) : remove ? (
-                            <>
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        setRemove(false);
-                                    }}
-                                >
-                                    Cancelar
-                                </button>
-                                <button type="reset" onClick={() => {}}>
-                                    Borrar
-                                </button>
-                            </>
-                        ) : (
-                            <>
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        setRemove(true);
-                                    }}
-                                >
-                                    Borrar
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        setEdit(true);
-                                    }}
-                                >
-                                    Editar
-                                </button>
-                            </>
-                        )}
-                    </Buttons>
-                </Box>
-                {(create || active) && (
-                    <Form type={type} active={edit ? true : false}>
-                        {type === "Cliente" && (
-                            <ClienteForm
-                                cliente={data}
-                                onCancel={() => {
-                                    setEdit(false);
-                                }}
-                            />
-                        )}
-                        {type === "Vehículo" && (
-                            <VehiculoForm
-                                vehiculo={data}
-                                onCancel={() => {
-                                    setEdit(false);
-                                }}
-                            />
-                        )}
-                        {type === "Reparación" && (
-                            <ReparacionForm
-                                reparacion={data}
-                                onCancel={() => {
-                                    setEdit(false);
-                                }}
-                            />
-                        )}
-                    </Form>
-                )}
-            </Container>
-        </>
+                </Buttons>
+            </Box>
+        </Container>
     );
 };
 
