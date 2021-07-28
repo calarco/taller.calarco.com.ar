@@ -26,6 +26,8 @@ const Side = function ({
 }) {
     const nodeRef = React.useRef(null);
     const [isPending, startTransition] = useTransition();
+    const [create, setCreate] = useState(false);
+    const [remove, setRemove] = useState(false);
 
     const [vehiculos, setVehiculos] = useState({
         total: 0,
@@ -60,11 +62,12 @@ const Side = function ({
             })
             .then((found) => {
                 setVehiculos(found);
+                setActiveCard("");
             })
             .catch((error) => {
                 console.error(error);
             });
-    }, [clienteId]);
+    }, [clienteId, setActiveCard]);
 
     useEffect(() => {
         feathersClient
@@ -85,6 +88,18 @@ const Side = function ({
             });
     }, [clienteId, startTransition, loadVehiculos]);
 
+    useEffect(() => {
+        setRemove(false);
+    }, [vehiculoId]);
+
+    useEffect(() => {
+        activeCard !== "Vehículo" && setCreate(false);
+    }, [activeCard]);
+
+    useEffect(() => {
+        create ? setActiveCard("Vehículo") : setActiveCard("");
+    }, [create, setActiveCard]);
+
     return (
         <>
             <Section
@@ -101,7 +116,7 @@ const Side = function ({
                 <SwitchTransition>
                     <Transition
                         nodeRef={nodeRef}
-                        key={vehiculos.data[0].id}
+                        key={vehiculoId}
                         addEndListener={(nodeRef, done) => {
                             nodeRef.addEventListener(
                                 "transitionend",
@@ -117,13 +132,19 @@ const Side = function ({
                                         <Card
                                             type="Vehículo"
                                             create={true}
-                                            active={
-                                                !vehiculos.data[0]
+                                            active={false}
+                                            edit={
+                                                activeCard === "Vehículo" &&
+                                                create
                                                     ? true
                                                     : false
                                             }
-                                            activeCard={activeCard}
-                                            setActiveCard={setActiveCard}
+                                            onEdit={() => {
+                                                setCreate(true);
+                                            }}
+                                            onRemove={() => {
+                                                setRemove(true);
+                                            }}
                                             state={state}
                                         >
                                             <VehiculoForm
@@ -138,8 +159,18 @@ const Side = function ({
                                                     clienteId: clienteId,
                                                     modeloId: 0,
                                                 }}
-                                                onCancel={() => {
-                                                    setActiveCard("");
+                                                edit={
+                                                    activeCard === "Vehículo" &&
+                                                    create
+                                                        ? true
+                                                        : false
+                                                }
+                                                unEdit={() => {
+                                                    setCreate(false);
+                                                }}
+                                                remove={remove}
+                                                unRemove={() => {
+                                                    setRemove(false);
                                                 }}
                                             />
                                         </Card>
@@ -155,10 +186,23 @@ const Side = function ({
                                                             ? true
                                                             : false
                                                     }
-                                                    activeCard={activeCard}
-                                                    setActiveCard={
-                                                        setActiveCard
+                                                    edit={
+                                                        vehiculoId ===
+                                                            aVehiculo.id &&
+                                                        activeCard ===
+                                                            "Vehículo" &&
+                                                        !create
+                                                            ? true
+                                                            : false
                                                     }
+                                                    onEdit={() =>
+                                                        setActiveCard(
+                                                            "Vehículo"
+                                                        )
+                                                    }
+                                                    onRemove={() => {
+                                                        setRemove(true);
+                                                    }}
                                                     state={state}
                                                 >
                                                     <VehiculoBox
@@ -176,9 +220,22 @@ const Side = function ({
                                                         aVehiculo.id && (
                                                         <VehiculoForm
                                                             vehiculo={aVehiculo}
-                                                            onCancel={() => {
+                                                            edit={
+                                                                activeCard ===
+                                                                    "Vehículo" &&
+                                                                !create
+                                                                    ? true
+                                                                    : false
+                                                            }
+                                                            unEdit={() => {
                                                                 setActiveCard(
                                                                     ""
+                                                                );
+                                                            }}
+                                                            remove={remove}
+                                                            unRemove={() => {
+                                                                setRemove(
+                                                                    false
                                                                 );
                                                             }}
                                                         />

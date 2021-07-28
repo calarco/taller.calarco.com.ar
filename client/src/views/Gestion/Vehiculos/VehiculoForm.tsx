@@ -1,16 +1,52 @@
 import React, { useEffect, useState } from "react";
 import feathersClient from "feathersClient";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import Modelo from "./Modelo";
 
 type Props = {
     readonly create?: boolean;
+    readonly active?: boolean;
+    readonly edit?: boolean;
     readonly error?: boolean;
 };
 
-const Form = styled.form`
+const Form = styled.form<Props>`
+    will-change: opacity;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(-0.75rem);
     grid-template-columns: 1fr 1fr 1fr;
+    content-visibility: auto;
+    position: absolute;
+    z-index: 1500;
+    top: -1px;
+    left: -1px;
+    right: -1px;
+    overflow: hidden;
+    border-radius: 4px;
+    border: 1px solid var(--primary);
+    box-shadow: var(--shadow);
+    background: var(--primary);
+    display: grid;
+    gap: 1px;
+    align-items: start;
+    transition: 0.25s ease-in;
+
+    label {
+        height: 100%;
+        padding: 0.5rem 1rem;
+        background: var(--surface);
+    }
+
+    ${(props) =>
+        props.edit &&
+        css`
+            visibility: visible;
+            opacity: 1;
+            transform: initial;
+            transition: 0.3s ease-in;
+        `};
 `;
 
 const Wide = styled.label`
@@ -49,7 +85,35 @@ const Buttons = styled.div<Props>`
     }
 `;
 
-const VehiculoForm = function ({ vehiculo, onCancel }) {
+const Remove = styled.div<Props>`
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    z-index: 1001;
+    top: 1px;
+    right: 1px;
+    bottom: 3rem;
+    left: 1px;
+    padding: 1.25rem 2.25rem;
+    border-radius: 4px 4px 0 0;
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(0.5rem);
+    display: grid;
+    gap: 0.5rem;
+    align-items: center;
+    text-align: center;
+    transition: 0.25s ease-in;
+
+    ${(props) =>
+        props.active &&
+        css`
+            visibility: visible;
+            opacity: 1;
+            transition: 0.3s ease-in;
+        `};
+`;
+
+const VehiculoForm = function ({ vehiculo, edit, remove, unRemove, unEdit }) {
     const [inputs, setInputs] = useState({
         patente: "",
         year: "",
@@ -182,8 +246,8 @@ const VehiculoForm = function ({ vehiculo, onCancel }) {
     return (
         <>
             <Form
+                edit={edit}
                 onSubmit={vehiculo.id === 0 ? handleCreate : handleEdit}
-                onReset={handleDelete}
             >
                 <Modelo
                     inputs={inputs}
@@ -237,7 +301,6 @@ const VehiculoForm = function ({ vehiculo, onCancel }) {
                         autoComplete="off"
                         value={inputs.vin}
                         onChange={handleInputChange}
-                        required
                     />
                 </Wide>
                 <label>
@@ -266,7 +329,7 @@ const VehiculoForm = function ({ vehiculo, onCancel }) {
                 <Buttons create={vehiculo.id === 0 ? true : false}>
                     {vehiculo.id === 0 ? (
                         <>
-                            <button type="button" onClick={onCancel}>
+                            <button type="button" onClick={unEdit}>
                                 Cancelar
                             </button>
                             <button type="submit" onClick={() => {}}>
@@ -275,7 +338,7 @@ const VehiculoForm = function ({ vehiculo, onCancel }) {
                         </>
                     ) : (
                         <>
-                            <button type="button" onClick={onCancel}>
+                            <button type="button" onClick={unEdit}>
                                 Cancelar
                             </button>
                             <button type="submit" onClick={() => {}}>
@@ -285,6 +348,19 @@ const VehiculoForm = function ({ vehiculo, onCancel }) {
                     )}
                 </Buttons>
             </Form>
+            {vehiculo.id !== 0 && (
+                <Remove active={remove}>
+                    <h5>¿Borrar vehiculo?</h5>
+                    <Buttons>
+                        <button type="button" onClick={unRemove}>
+                            Cancelar
+                        </button>
+                        <button type="reset" onClick={handleDelete}>
+                            Borrar
+                        </button>
+                    </Buttons>
+                </Remove>
+            )}
         </>
     );
 };

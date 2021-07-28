@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 
 import { Device } from "components/globalStyle";
@@ -32,6 +32,15 @@ const Gestion = function ({ matchModelo }) {
     const [clienteId, setClienteId] = useState(0);
     const [vehiculoId, setVehiculoId] = useState(0);
     const [activeCard, setActiveCard] = useState("");
+    const [create, setCreate] = useState(false);
+
+    useEffect(() => {
+        activeCard !== "Cliente" && setCreate(false);
+    }, [activeCard]);
+
+    useEffect(() => {
+        create ? setActiveCard("Cliente") : setActiveCard("");
+    }, [create, setActiveCard]);
 
     return (
         <>
@@ -44,6 +53,7 @@ const Gestion = function ({ matchModelo }) {
                         setVehiculoId={setVehiculoId}
                         activeCard={activeCard}
                         setActiveCard={setActiveCard}
+                        setCreateClient={setCreate}
                     />
                 </div>
                 <div>
@@ -57,6 +67,8 @@ const Gestion = function ({ matchModelo }) {
                     />
                     <Cliente
                         clienteId={clienteId}
+                        create={create}
+                        setCreate={setCreate}
                         activeCard={activeCard}
                         setActiveCard={setActiveCard}
                     />

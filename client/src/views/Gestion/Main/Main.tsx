@@ -112,11 +112,14 @@ const Main = function ({
     setVehiculoId,
     activeCard,
     setActiveCard,
+    setCreateClient,
 }) {
     const nodeRef = React.useRef(null);
     const [busqueda, setBusqueda] = useState("");
     const [isPending, startTransition] = useTransition();
     const [selected, setSelected] = useState(0);
+    const [create, setCreate] = useState(false);
+    const [remove, setRemove] = useState(false);
 
     const [clientes, setClientes] = useState({
         total: 0,
@@ -274,6 +277,18 @@ const Main = function ({
         setSelected(0);
     }, [vehiculoId, startTransition, loadReparaciones]);
 
+    useEffect(() => {
+        setRemove(false);
+    }, [selected]);
+
+    useEffect(() => {
+        activeCard !== "Reparación" && setCreate(false);
+    }, [activeCard]);
+
+    useEffect(() => {
+        create ? setActiveCard("Reparación") : setActiveCard("");
+    }, [create, setActiveCard]);
+
     return (
         <>
             <Container>
@@ -294,9 +309,7 @@ const Main = function ({
                         <button
                             type="button"
                             onClick={() => {
-                                setClienteId(0);
-                                setVehiculoId(0);
-                                setBusqueda("");
+                                setCreateClient(true);
                             }}
                         >
                             Crear cliente
@@ -358,8 +371,16 @@ const Main = function ({
                                                 type="Reparación"
                                                 create={true}
                                                 active={false}
-                                                activeCard={activeCard}
-                                                setActiveCard={setActiveCard}
+                                                edit={
+                                                    activeCard ===
+                                                        "Reparación" && create
+                                                        ? true
+                                                        : false
+                                                }
+                                                onEdit={() => setCreate(true)}
+                                                onRemove={() => {
+                                                    setRemove(true);
+                                                }}
                                                 state={state}
                                             >
                                                 <ReparacionForm
@@ -378,8 +399,19 @@ const Main = function ({
                                                             new Date().toISOString(),
                                                         updatedAt: "",
                                                     }}
-                                                    onCancel={() => {
+                                                    edit={
+                                                        activeCard ===
+                                                            "Reparación" &&
+                                                        create
+                                                            ? true
+                                                            : false
+                                                    }
+                                                    unEdit={() => {
                                                         setActiveCard("");
+                                                    }}
+                                                    remove={remove}
+                                                    unRemove={() => {
+                                                        setRemove(false);
                                                     }}
                                                 />
                                             </Card>
@@ -396,12 +428,23 @@ const Main = function ({
                                                                     ? true
                                                                     : false
                                                             }
-                                                            activeCard={
-                                                                activeCard
+                                                            edit={
+                                                                selected ===
+                                                                    aReparacion.id &&
+                                                                activeCard ===
+                                                                    "Reparación" &&
+                                                                !create
+                                                                    ? true
+                                                                    : false
                                                             }
-                                                            setActiveCard={
-                                                                setActiveCard
+                                                            onEdit={() =>
+                                                                setActiveCard(
+                                                                    "Reparación"
+                                                                )
                                                             }
+                                                            onRemove={() => {
+                                                                setRemove(true);
+                                                            }}
                                                             state={state}
                                                         >
                                                             <ReparacionBox
@@ -414,16 +457,34 @@ const Main = function ({
                                                                     );
                                                                 }}
                                                             />
-                                                            <ReparacionForm
-                                                                reparacion={
-                                                                    aReparacion
-                                                                }
-                                                                onCancel={() => {
-                                                                    setActiveCard(
-                                                                        ""
-                                                                    );
-                                                                }}
-                                                            />
+                                                            {selected ===
+                                                                aReparacion.id && (
+                                                                <ReparacionForm
+                                                                    reparacion={
+                                                                        aReparacion
+                                                                    }
+                                                                    edit={
+                                                                        activeCard ===
+                                                                            "Reparación" &&
+                                                                        !create
+                                                                            ? true
+                                                                            : false
+                                                                    }
+                                                                    unEdit={() => {
+                                                                        setActiveCard(
+                                                                            ""
+                                                                        );
+                                                                    }}
+                                                                    remove={
+                                                                        remove
+                                                                    }
+                                                                    unRemove={() => {
+                                                                        setRemove(
+                                                                            false
+                                                                        );
+                                                                    }}
+                                                                />
+                                                            )}
                                                         </Card>
                                                     )
                                                 )}

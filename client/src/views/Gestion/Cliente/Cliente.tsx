@@ -6,8 +6,15 @@ import Card from "components/Card";
 import ClienteBox from "./ClienteBox";
 import ClienteForm from "views/Gestion/Cliente/ClienteForm";
 
-const Cliente = function ({ clienteId, activeCard, setActiveCard }) {
+const Cliente = function ({
+    clienteId,
+    create,
+    setCreate,
+    activeCard,
+    setActiveCard,
+}) {
     const nodeRef = React.useRef(null);
+    const [remove, setRemove] = useState(false);
 
     const [cliente, setCliente] = useState({
         id: 0,
@@ -33,6 +40,7 @@ const Cliente = function ({ clienteId, activeCard, setActiveCard }) {
     }, [clienteId]);
 
     useEffect(() => {
+        setRemove(false);
         clienteId !== 0 && loadCliente();
     }, [clienteId, loadCliente]);
 
@@ -48,16 +56,21 @@ const Cliente = function ({ clienteId, activeCard, setActiveCard }) {
                 >
                     {(state) => (
                         <>
-                            {clienteId === 0 ? (
-                                <Card
-                                    type="Cliente"
-                                    create={true}
-                                    active={true}
-                                    activeCard={activeCard}
-                                    setActiveCard={setActiveCard}
-                                    state={state}
-                                >
+                            <Card
+                                type="Cliente"
+                                create={false}
+                                active={true}
+                                edit={activeCard === "Cliente" ? true : false}
+                                onEdit={() => setActiveCard("Cliente")}
+                                onRemove={() => {
+                                    setRemove(true);
+                                }}
+                                state={state}
+                            >
+                                <ClienteBox cliente={cliente} />
+                                {cliente.id === 0 || create ? (
                                     <ClienteForm
+                                        key={0}
                                         cliente={{
                                             id: 0,
                                             nombre: "",
@@ -69,29 +82,34 @@ const Cliente = function ({ clienteId, activeCard, setActiveCard }) {
                                             createdAt: "",
                                             updatedAt: "",
                                         }}
-                                        onCancel={() => {
-                                            setActiveCard("");
+                                        edit={true}
+                                        unEdit={() => {
+                                            setCreate(false);
+                                        }}
+                                        remove={remove}
+                                        unRemove={() => {
+                                            setRemove(false);
                                         }}
                                     />
-                                </Card>
-                            ) : (
-                                <Card
-                                    type="Cliente"
-                                    create={false}
-                                    active={true}
-                                    activeCard={activeCard}
-                                    setActiveCard={setActiveCard}
-                                    state={state}
-                                >
-                                    <ClienteBox cliente={cliente} />
+                                ) : (
                                     <ClienteForm
+                                        key={cliente.id}
                                         cliente={cliente}
-                                        onCancel={() => {
+                                        edit={
+                                            activeCard === "Cliente"
+                                                ? true
+                                                : false
+                                        }
+                                        unEdit={() => {
                                             setActiveCard("");
                                         }}
+                                        remove={remove}
+                                        unRemove={() => {
+                                            setRemove(false);
+                                        }}
                                     />
-                                </Card>
-                            )}
+                                )}
+                            </Card>
                         </>
                     )}
                 </Transition>
