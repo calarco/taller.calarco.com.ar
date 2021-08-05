@@ -180,9 +180,14 @@ const Buttons = styled.div<Props>`
     width: 100%;
     height: 3rem;
     overflow: hidden;
-    border-top: var(--border);
     display: flex;
     transition: 0.25s ease-out;
+
+    ${(props) =>
+        !props.create &&
+        css`
+            border-top: var(--border);
+        `};
 
     button {
         width: 100%;

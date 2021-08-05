@@ -112,6 +112,7 @@ const Main = function ({
     setVehiculoId,
     activeCard,
     setActiveCard,
+    createClient,
     setCreateClient,
 }) {
     const nodeRef = React.useRef(null);
@@ -305,7 +306,7 @@ const Main = function ({
                         value={busqueda}
                         autoFocus
                     />
-                    {clienteId !== 0 && (
+                    {clienteId !== 0 && !createClient ? (
                         <button
                             type="button"
                             onClick={() => {
@@ -314,7 +315,16 @@ const Main = function ({
                         >
                             Crear cliente
                         </button>
-                    )}
+                    ) : clienteId !== 0 && createClient ? (
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setCreateClient(false);
+                            }}
+                        >
+                            Cancelar
+                        </button>
+                    ) : undefined}
                 </Busqueda>
                 <Section
                     primary={vehiculoId === 0 ? false : true}

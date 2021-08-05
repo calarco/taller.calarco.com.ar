@@ -116,7 +116,7 @@ const Side = function ({
                 <SwitchTransition>
                     <Transition
                         nodeRef={nodeRef}
-                        key={vehiculoId}
+                        key={clienteId}
                         addEndListener={(nodeRef, done) => {
                             nodeRef.addEventListener(
                                 "transitionend",
@@ -168,7 +168,7 @@ const Side = function ({
                                                 unEdit={() => {
                                                     setCreate(false);
                                                 }}
-                                                remove={remove}
+                                                remove={false}
                                                 unRemove={() => {
                                                     setRemove(false);
                                                 }}

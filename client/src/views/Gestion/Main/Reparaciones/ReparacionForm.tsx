@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import feathersClient from "feathersClient";
 import styled, { css } from "styled-components";
 
+import Form from "components/Form";
+
 type Props = {
     readonly create?: boolean;
     readonly active?: boolean;
@@ -9,51 +11,8 @@ type Props = {
     readonly error?: boolean;
 };
 
-const Form = styled.form<Props>`
+const Container = styled(Form)`
     grid-template-columns: auto 1fr auto;
-    will-change: opacity;
-    visibility: hidden;
-    opacity: 0;
-    transform: translateY(-0.75rem);
-    content-visibility: auto;
-    position: absolute;
-    z-index: 1500;
-    top: -1px;
-    left: -1px;
-    right: -1px;
-    overflow: hidden;
-    border-radius: 4px;
-    border: 1px solid var(--primary);
-    box-shadow: var(--shadow);
-    background: var(--primary);
-    display: grid;
-    gap: 1px;
-    align-items: start;
-    transition: 0.25s ease-in;
-
-    label {
-        height: 100%;
-        padding: 0.5rem 1rem;
-        background: var(--surface);
-    }
-
-    ${(props) =>
-        props.edit &&
-        css`
-            visibility: visible;
-            opacity: 1;
-            transform: initial;
-            transition: 0.3s ease-in;
-        `};
-
-    ${(props) =>
-        props.edit &&
-        css`
-            visibility: visible;
-            opacity: 1;
-            transform: initial;
-            transition: 0.3s ease-in;
-        `};
 `;
 
 const Label = styled.label<Props>`
@@ -264,10 +223,11 @@ const ReparacionForm = function ({
 
     return (
         <>
-            <Form
+            <Container
+                create={reparacion.id === 0 ? true : false}
                 edit={edit}
+                unEdit={unEdit}
                 onSubmit={reparacion.id === 0 ? handleCreate : handleEdit}
-                onReset={handleDelete}
             >
                 <label>
                     Fecha
@@ -350,28 +310,7 @@ const ReparacionForm = function ({
                         onChange={handleInputChange}
                     />
                 </Number>
-                <Buttons create={reparacion.id === 0 ? true : false}>
-                    {reparacion.id === 0 ? (
-                        <>
-                            <button type="button" onClick={unEdit}>
-                                Cancelar
-                            </button>
-                            <button type="submit" onClick={() => {}}>
-                                Crear reparación
-                            </button>
-                        </>
-                    ) : (
-                        <>
-                            <button type="button" onClick={unEdit}>
-                                Cancelar
-                            </button>
-                            <button type="submit" onClick={() => {}}>
-                                Guardar
-                            </button>
-                        </>
-                    )}
-                </Buttons>
-            </Form>
+            </Container>
             {reparacion.id !== 0 && (
                 <Remove active={remove}>
                     <h5>¿Borrar vehiculo?</h5>

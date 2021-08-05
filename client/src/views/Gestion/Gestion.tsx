@@ -53,6 +53,7 @@ const Gestion = function ({ matchModelo }) {
                         setVehiculoId={setVehiculoId}
                         activeCard={activeCard}
                         setActiveCard={setActiveCard}
+                        createClient={create}
                         setCreateClient={setCreate}
                     />
                 </div>

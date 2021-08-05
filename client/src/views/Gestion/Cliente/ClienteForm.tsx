@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import feathersClient from "feathersClient";
 import styled, { css } from "styled-components";
 
+import Form from "components/Form";
+
 type Props = {
     readonly create?: boolean;
     readonly active?: boolean;
@@ -9,42 +11,8 @@ type Props = {
     readonly error?: boolean;
 };
 
-const Form = styled.form<Props>`
-    will-change: opacity;
-    visibility: hidden;
-    opacity: 0;
-    transform: translateY(-0.75rem);
+const Container = styled(Form)`
     grid-template-columns: 1fr 1fr;
-    content-visibility: auto;
-    position: absolute;
-    z-index: 1500;
-    top: -1px;
-    left: -1px;
-    right: -1px;
-    overflow: hidden;
-    border-radius: 4px;
-    border: 1px solid var(--primary);
-    box-shadow: var(--shadow);
-    background: var(--primary);
-    display: grid;
-    gap: 1px;
-    align-items: start;
-    transition: 0.25s ease-in;
-
-    label {
-        height: 100%;
-        padding: 0.5rem 1rem;
-        background: var(--surface);
-    }
-
-    ${(props) =>
-        props.edit &&
-        css`
-            visibility: visible;
-            opacity: 1;
-            transform: initial;
-            transition: 0.3s ease-in;
-        `};
 `;
 
 const Label = styled.label<Props>`
@@ -225,11 +193,11 @@ const ClienteForm = function ({ cliente, edit, unEdit, remove, unRemove }) {
 
     return (
         <>
-            <Form
+            <Container
+                create={cliente.id === 0 ? true : false}
                 edit={edit}
+                unEdit={unEdit}
                 onSubmit={cliente.id === 0 ? handleCreate : handleEdit}
-                onReset={handleDelete}
-                noValidate
             >
                 <Label error={error === "" ? false : true}>
                     {error === "" ? "Nombre" : error}
@@ -304,28 +272,7 @@ const ClienteForm = function ({ cliente, edit, unEdit, remove, unRemove }) {
                         required
                     />
                 </label>
-                <Buttons create={cliente.id === 0 ? true : false}>
-                    {cliente.id === 0 ? (
-                        <>
-                            <button type="button" onClick={unEdit}>
-                                Cancelar
-                            </button>
-                            <button type="submit" onClick={() => {}}>
-                                Crear cliente
-                            </button>
-                        </>
-                    ) : (
-                        <>
-                            <button type="button" onClick={unEdit}>
-                                Cancelar
-                            </button>
-                            <button type="submit" onClick={() => {}}>
-                                Guardar
-                            </button>
-                        </>
-                    )}
-                </Buttons>
-            </Form>
+            </Container>
             {cliente.id !== 0 && (
                 <Remove active={remove}>
                     <h5>¿Borrar cliente?</h5>
@@ -333,7 +280,7 @@ const ClienteForm = function ({ cliente, edit, unEdit, remove, unRemove }) {
                         <button type="button" onClick={unRemove}>
                             Cancelar
                         </button>
-                        <button type="reset" onClick={() => {}}>
+                        <button type="reset" onClick={handleDelete}>
                             Borrar
                         </button>
                     </Buttons>
