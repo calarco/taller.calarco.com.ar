@@ -5,8 +5,8 @@ import { SwitchTransition, Transition } from "react-transition-group";
 
 import Section from "components/Section";
 import Card from "components/Card";
-import VehiculoBox from "./VehiculoBox";
-import VehiculoForm from "views/Gestion/Vehiculos/VehiculoForm";
+import Box from "./Box";
+import Actions from "./Actions";
 
 const Loading = styled.div`
     position: absolute;
@@ -147,7 +147,7 @@ const Side = function ({
                                             }}
                                             state={state}
                                         >
-                                            <VehiculoForm
+                                            <Actions
                                                 vehiculo={{
                                                     id: 0,
                                                     patente: "",
@@ -205,7 +205,7 @@ const Side = function ({
                                                     }}
                                                     state={state}
                                                 >
-                                                    <VehiculoBox
+                                                    <Box
                                                         vehiculo={aVehiculo}
                                                         onClick={() =>
                                                             setVehiculoId(
@@ -218,7 +218,7 @@ const Side = function ({
                                                     />
                                                     {vehiculoId ===
                                                         aVehiculo.id && (
-                                                        <VehiculoForm
+                                                        <Actions
                                                             vehiculo={aVehiculo}
                                                             edit={
                                                                 activeCard ===

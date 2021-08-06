@@ -5,8 +5,8 @@ import { SwitchTransition, Transition } from "react-transition-group";
 
 import Section from "components/Section";
 import Card from "components/Card";
-import ReparacionBox from "views/Gestion/Main/Reparaciones/ReparacionBox";
-import ReparacionForm from "views/Gestion/Main/Reparaciones/ReparacionForm";
+import Box from "views/Gestion/Main/Reparaciones/Box";
+import Actions from "./Reparaciones/Actions";
 
 const Container = styled.div`
     position: relative;
@@ -393,7 +393,7 @@ const Main = function ({
                                                 }}
                                                 state={state}
                                             >
-                                                <ReparacionForm
+                                                <Actions
                                                     reparacion={{
                                                         id: 0,
                                                         vehiculoId: vehiculoId,
@@ -457,7 +457,7 @@ const Main = function ({
                                                             }}
                                                             state={state}
                                                         >
-                                                            <ReparacionBox
+                                                            <Box
                                                                 reparacion={
                                                                     aReparacion
                                                                 }
@@ -469,7 +469,7 @@ const Main = function ({
                                                             />
                                                             {selected ===
                                                                 aReparacion.id && (
-                                                                <ReparacionForm
+                                                                <Actions
                                                                     reparacion={
                                                                         aReparacion
                                                                     }

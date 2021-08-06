@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import feathersClient from "feathersClient";
 import styled, { css } from "styled-components";
 
-import Form from "components/Form";
+import FormComponent from "components/Form";
+import Remove from "components/Remove";
 
 type Props = {
     readonly create?: boolean;
@@ -11,8 +12,8 @@ type Props = {
     readonly error?: boolean;
 };
 
-const Container = styled(Form)`
-    grid-template-columns: 1fr 1fr;
+const Form = styled(FormComponent)`
+    grid-template-columns: 1fr 1fr [end];
 `;
 
 const Label = styled.label<Props>`
@@ -22,65 +23,6 @@ const Label = styled.label<Props>`
             font-weight: 500;
             color: var(--error);
         `};
-`;
-
-const Remove = styled.div<Props>`
-    visibility: hidden;
-    opacity: 0;
-    position: absolute;
-    top: 1px;
-    right: 1px;
-    bottom: 3rem;
-    left: 1px;
-    padding: 1.25rem 2.25rem;
-    border-radius: 4px 4px 0 0;
-    background: rgba(255, 255, 255, 0.5);
-    backdrop-filter: blur(0.5rem);
-    display: grid;
-    gap: 0.5rem;
-    align-items: center;
-    text-align: center;
-    transition: 0.25s ease-in;
-
-    ${(props) =>
-        props.active &&
-        css`
-            visibility: visible;
-            opacity: 1;
-            transition: 0.3s ease-in;
-        `};
-`;
-
-const Buttons = styled.div<Props>`
-    grid-row: 4;
-    grid-column-start: 1;
-    grid-column-end: span 2;
-    position: relative;
-    width: 100%;
-    height: 3rem;
-    overflow: hidden;
-    background: var(--surface);
-    display: flex;
-    transition: 0.25s ease-out;
-
-    button {
-        width: 100%;
-        height: 3rem;
-        margin: 0;
-        padding: 0 1.5rem;
-        border-radius: 0px;
-        background: none;
-        border: none;
-
-        &:not(:first-child)::after {
-            content: "";
-            position: absolute;
-            top: calc(50% - 1rem);
-            left: 0;
-            height: 2rem;
-            border-left: var(--border);
-        }
-    }
 `;
 
 const ClienteForm = function ({ cliente, edit, unEdit, remove, unRemove }) {
@@ -193,7 +135,7 @@ const ClienteForm = function ({ cliente, edit, unEdit, remove, unRemove }) {
 
     return (
         <>
-            <Container
+            <Form
                 create={cliente.id === 0 ? true : false}
                 edit={edit}
                 unEdit={unEdit}
@@ -272,18 +214,14 @@ const ClienteForm = function ({ cliente, edit, unEdit, remove, unRemove }) {
                         required
                     />
                 </label>
-            </Container>
+            </Form>
             {cliente.id !== 0 && (
-                <Remove active={remove}>
-                    <h5>¿Borrar cliente?</h5>
-                    <Buttons>
-                        <button type="button" onClick={unRemove}>
-                            Cancelar
-                        </button>
-                        <button type="reset" onClick={handleDelete}>
-                            Borrar
-                        </button>
-                    </Buttons>
+                <Remove
+                    remove={remove}
+                    unRemove={unRemove}
+                    handleDelete={handleDelete}
+                >
+                    ¿Borrar cliente?
                 </Remove>
             )}
         </>

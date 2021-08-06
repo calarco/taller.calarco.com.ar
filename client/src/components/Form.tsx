@@ -46,10 +46,8 @@ const Container = styled.form<Props>`
 `;
 
 const Buttons = styled.div<Props>`
-    grid-row: 5;
     grid-column-start: 1;
-    grid-column-end: span 3;
-    position: relative;
+    grid-column-end: span end;
     width: 100%;
     height: 3rem;
     overflow: hidden;
@@ -82,7 +80,7 @@ type FormProps = {
     edit: boolean;
     unEdit: (e: React.MouseEvent<HTMLButtonElement>) => void;
     onSubmit: (e: React.FormEvent) => void;
-    children?: React.ReactNode;
+    children: React.ReactNode;
     className?: string;
 };
 

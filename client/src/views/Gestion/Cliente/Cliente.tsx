@@ -3,8 +3,8 @@ import feathersClient from "feathersClient";
 import { SwitchTransition, Transition } from "react-transition-group";
 
 import Card from "components/Card";
-import ClienteBox from "./ClienteBox";
-import ClienteForm from "views/Gestion/Cliente/ClienteForm";
+import Box from "./Box";
+import Actions from "./Actions";
 
 const Cliente = function ({
     clienteId,
@@ -67,9 +67,9 @@ const Cliente = function ({
                                 }}
                                 state={state}
                             >
-                                <ClienteBox cliente={cliente} />
+                                <Box cliente={cliente} />
                                 {cliente.id === 0 || create ? (
-                                    <ClienteForm
+                                    <Actions
                                         key={0}
                                         cliente={{
                                             id: 0,
@@ -92,7 +92,7 @@ const Cliente = function ({
                                         }}
                                     />
                                 ) : (
-                                    <ClienteForm
+                                    <Actions
                                         key={cliente.id}
                                         cliente={cliente}
                                         edit={
