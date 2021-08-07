@@ -9,8 +9,8 @@ type Props = {
 
 const Container = styled.section<Props>`
     content-visibility: auto;
-    visibility: hidden;
-    opacity: 0;
+    visibility: visible;
+    opacity: 1;
     position: relative;
     width: 100%;
     height: 100%;
@@ -28,15 +28,12 @@ const Container = styled.section<Props>`
     gap: 1.5rem;
     transition: 0.3s ease-out;
 
-    visibility: visible;
-    opacity: 1;
-
     ${(props) =>
-        props.state === "entered" &&
+        props.state &&
+        props.state !== "entered" &&
         css`
-            visibility: visible;
-            opacity: 1;
-            transform: initial;
+            visibility: hidden;
+            opacity: 0;
             transition: 0.3s ease-in;
         `};
 
@@ -89,9 +86,24 @@ const Overlay = styled.div<Props>`
         `};
 `;
 
-const Section = function ({ primary, active, onClick, children }) {
+type ComponentProps = {
+    primary: boolean;
+    active: boolean;
+    onClick: (e: React.MouseEvent<HTMLDivElement>) => void;
+    state?: string;
+    children: React.ReactNode;
+    className?: string;
+};
+
+const Section = function ({
+    primary,
+    active,
+    onClick,
+    state,
+    children,
+}: ComponentProps) {
     return (
-        <Container primary={primary} overlay={!active}>
+        <Container primary={primary} overlay={!active} state={state}>
             {children}
             <Overlay overlay={!active} onClick={onClick} />
         </Container>

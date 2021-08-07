@@ -41,13 +41,7 @@ const Number = styled.label`
     text-align: right;
 `;
 
-const ReparacionForm = function ({
-    reparacion,
-    edit,
-    unEdit,
-    remove,
-    unRemove,
-}) {
+const Actions = function ({ reparacion, edit, unEdit, remove, unRemove }) {
     const [inputs, setInputs] = useState({
         fecha: "",
         km: "",
@@ -266,4 +260,4 @@ const ReparacionForm = function ({
     );
 };
 
-export default ReparacionForm;
+export default Actions;

@@ -14,7 +14,7 @@ const Wide = styled.label`
     grid-column-end: span 2;
 `;
 
-const VehiculoForm = function ({ vehiculo, edit, remove, unRemove, unEdit }) {
+const Actions = function ({ vehiculo, edit, remove, unRemove, unEdit }) {
     const [inputs, setInputs] = useState({
         patente: "",
         year: "",
@@ -243,4 +243,4 @@ const VehiculoForm = function ({ vehiculo, edit, remove, unRemove, unEdit }) {
     );
 };
 
-export default VehiculoForm;
+export default Actions;

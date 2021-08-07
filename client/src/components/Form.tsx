@@ -75,7 +75,7 @@ const Buttons = styled.div<Props>`
     }
 `;
 
-type FormProps = {
+type ComponentProps = {
     create: boolean;
     edit: boolean;
     unEdit: (e: React.MouseEvent<HTMLButtonElement>) => void;
@@ -91,7 +91,7 @@ const Form = function ({
     onSubmit,
     children,
     className,
-}: FormProps) {
+}: ComponentProps) {
     return (
         <Container edit={edit} onSubmit={onSubmit} className={className}>
             {children}

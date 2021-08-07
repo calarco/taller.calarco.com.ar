@@ -25,7 +25,7 @@ const Label = styled.label<Props>`
         `};
 `;
 
-const ClienteForm = function ({ cliente, edit, unEdit, remove, unRemove }) {
+const Actions = function ({ cliente, edit, unEdit, remove, unRemove }) {
     const [inputs, setInputs] = useState({
         nombre: "",
         apellido: "",
@@ -228,4 +228,4 @@ const ClienteForm = function ({ cliente, edit, unEdit, remove, unRemove }) {
     );
 };
 
-export default ClienteForm;
+export default Actions;
