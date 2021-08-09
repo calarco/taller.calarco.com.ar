@@ -66,19 +66,17 @@ const Buttons = styled.div<Props>`
 
 const VehiculoForm = function ({ remove, unRemove, handleDelete, children }) {
     return (
-        <>
-            <Container active={remove}>
-                <h5>{children}</h5>
-                <Buttons>
-                    <button type="button" onClick={unRemove}>
-                        Cancelar
-                    </button>
-                    <button type="reset" onClick={handleDelete}>
-                        Borrar
-                    </button>
-                </Buttons>
-            </Container>
-        </>
+        <Container active={remove}>
+            <h5>{children}</h5>
+            <Buttons>
+                <button type="button" onClick={unRemove}>
+                    Cancelar
+                </button>
+                <button type="reset" onClick={handleDelete}>
+                    Borrar
+                </button>
+            </Buttons>
+        </Container>
     );
 };
 

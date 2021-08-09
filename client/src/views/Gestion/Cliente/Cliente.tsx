@@ -1,10 +1,39 @@
 import React, { useState, useEffect, useCallback } from "react";
 import feathersClient from "feathersClient";
+import styled, { css } from "styled-components";
 import { SwitchTransition, Transition } from "react-transition-group";
 
-import Card from "components/Card";
+import CardComponent from "components/Card";
 import Box from "./Box";
 import Actions from "./Actions";
+
+const Card = styled(CardComponent)`
+    ${(props) =>
+        (props.active || props.edit) &&
+        css`
+            position: relative;
+            top: 0;
+            grid-column-start: 1;
+            grid-column-end: 1;
+            grid-row-start: 1;
+            overflow: visible;
+            border-radius: 4px 4px 0 0;
+            backdrop-filter: none;
+            background: var(--surface);
+            border: var(--border);
+            box-shadow: var(--shadow);
+
+            &:hover {
+                cursor: default;
+                border: var(--border);
+                transition: 0.2s ease-in;
+            }
+
+            &:not(:first-child)::after {
+                border-top: none;
+            }
+        `};
+`;
 
 const Cliente = function ({
     clienteId,
@@ -57,8 +86,6 @@ const Cliente = function ({
                     {(state) => (
                         <>
                             <Card
-                                type="Cliente"
-                                create={false}
                                 active={true}
                                 edit={activeCard === "Cliente" ? true : false}
                                 onEdit={() => setActiveCard("Cliente")}

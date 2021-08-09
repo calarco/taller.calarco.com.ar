@@ -1,12 +1,29 @@
 import React, { useState, useEffect, useCallback, useTransition } from "react";
 import feathersClient from "feathersClient";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { SwitchTransition, Transition } from "react-transition-group";
 
 import Section from "components/Section";
-import Card from "components/Card";
+import CreateComponent from "components/Create";
+import CardComponent from "components/Card";
 import Box from "./Box";
 import Actions from "./Actions";
+
+const Create = styled(CreateComponent)`
+    ${(props) =>
+        props.edit &&
+        css`
+            bottom: 16rem;
+        `};
+`;
+
+const Card = styled(CardComponent)`
+    ${(props) =>
+        props.edit &&
+        css`
+            bottom: 16rem;
+        `};
+`;
 
 const Loading = styled.div`
     position: absolute;
@@ -129,10 +146,8 @@ const Side = function ({
                             <>
                                 {clienteId !== 0 ? (
                                     <>
-                                        <Card
+                                        <Create
                                             type="Vehículo"
-                                            create={true}
-                                            active={false}
                                             edit={
                                                 activeCard === "Vehículo" &&
                                                 create
@@ -141,9 +156,6 @@ const Side = function ({
                                             }
                                             onEdit={() => {
                                                 setCreate(true);
-                                            }}
-                                            onRemove={() => {
-                                                setRemove(true);
                                             }}
                                             state={state}
                                         >
@@ -173,13 +185,11 @@ const Side = function ({
                                                     setRemove(false);
                                                 }}
                                             />
-                                        </Card>
+                                        </Create>
                                         {vehiculos.data[0] &&
                                             vehiculos.data.map((aVehiculo) => (
                                                 <Card
                                                     key={aVehiculo.id}
-                                                    type="Vehículo"
-                                                    create={false}
                                                     active={
                                                         vehiculoId ===
                                                         aVehiculo.id

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import feathersClient from "feathersClient";
 
 import Section from "components/Section";
+import Create from "components/Create";
 import Card from "components/Card";
 import Box from "./Box";
 import Actions from "./Actions";
@@ -113,15 +114,10 @@ const Reparaciones = function ({
                 }}
                 state={state}
             >
-                <Card
+                <Create
                     type="Reparación"
-                    create={true}
-                    active={false}
                     edit={activeCard === "Reparación" && create ? true : false}
                     onEdit={() => setCreate(true)}
-                    onRemove={() => {
-                        setRemove(true);
-                    }}
                     state={state}
                 >
                     <Actions
@@ -149,13 +145,11 @@ const Reparaciones = function ({
                             setRemove(false);
                         }}
                     />
-                </Card>
+                </Create>
                 {reparaciones.data[0].id !== 0 &&
                     reparaciones.data.map((aReparacion) => (
                         <Card
                             key={aReparacion.id}
-                            type="Reparación"
-                            create={false}
                             active={selected === aReparacion.id ? true : false}
                             edit={
                                 selected === aReparacion.id &&
