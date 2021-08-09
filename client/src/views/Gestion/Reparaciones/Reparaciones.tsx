@@ -1,11 +1,24 @@
 import React, { useState, useEffect, useCallback } from "react";
 import feathersClient from "feathersClient";
+import styled from "styled-components";
 
-import Section from "components/Section";
+import SectionComponent from "components/Section";
 import Create from "components/Create";
 import Card from "components/Card";
 import Box from "./Box";
 import Actions from "./Actions";
+
+const Section = styled(SectionComponent)`
+    grid-column-start: 1;
+    grid-column-end: 1;
+    grid-row-start: 2;
+    grid-row-end: 2;
+    min-height: 21.5rem;
+    border-radius: 4px;
+    background: var(--surface);
+    border-top: var(--border);
+    box-shadow: var(--shadow);
+`;
 
 const Reparaciones = function ({
     vehiculoId,
@@ -107,7 +120,6 @@ const Reparaciones = function ({
     return (
         <>
             <Section
-                primary={true}
                 active={activeCard === "" ? true : false}
                 onClick={() => {
                     setActiveCard("");
@@ -152,9 +164,9 @@ const Reparaciones = function ({
                             key={aReparacion.id}
                             active={selected === aReparacion.id ? true : false}
                             edit={
+                                !create &&
                                 selected === aReparacion.id &&
-                                activeCard === "Reparación" &&
-                                !create
+                                (activeCard === "Reparación" || remove)
                                     ? true
                                     : false
                             }

@@ -17,15 +17,14 @@ const Card = styled(CardComponent)`
             grid-column-end: 1;
             grid-row-start: 1;
             overflow: visible;
-            border-radius: 4px 4px 0 0;
             backdrop-filter: none;
             background: var(--surface);
-            border: var(--border);
+            border: none;
             box-shadow: var(--shadow);
 
             &:hover {
                 cursor: default;
-                border: var(--border);
+                border: none;
                 transition: 0.2s ease-in;
             }
 

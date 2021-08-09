@@ -22,6 +22,10 @@ const Container = styled.main`
     > div {
         position: relative;
         height: calc(100vh - 3rem);
+        border-radius: 4px;
+        background: var(--surface-variant);
+        border: var(--border-variant);
+        box-shadow: var(--shadow-variant);
         display: grid;
         grid-template-rows: auto 1fr;
     }
@@ -39,21 +43,16 @@ type Props = {
 const Buscador = styled.form<Props>`
     grid-row-start: 1;
     width: 100%;
-    border-radius: 4px 4px 0 0;
+    border-radius: 4px;
     overflow: hidden;
-    background: var(--surface-variant);
-    border: var(--border-variant);
-    border-bottom: 1px solid rgba(0, 0, 0, 0);
-    box-shadow: var(--shadow-variant);
     display: grid;
     grid-template-columns: 1fr auto;
 
     ${(props) =>
         props.active &&
         css`
-            border-radius: 4px 4px 0 0;
+            border-radius: 4px;
             background: var(--surface);
-            border: var(--border);
             box-shadow: var(--shadow);
             transition: 0.2s ease-out;
         `};

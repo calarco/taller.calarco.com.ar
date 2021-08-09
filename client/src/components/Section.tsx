@@ -2,7 +2,6 @@ import React from "react";
 import styled, { css } from "styled-components";
 
 type Props = {
-    readonly primary?: boolean;
     readonly overlay?: boolean;
     readonly state?: string;
 };
@@ -18,11 +17,6 @@ const Container = styled.section<Props>`
     max-height: 100%;
     padding: 1.5rem;
     overflow-y: overlay;
-    border-radius: 0 0 4px 4px;
-    background: var(--surface-variant);
-    border: var(--border-variant);
-    border-top: 1px solid rgba(0, 0, 0, 0);
-    box-shadow: var(--shadow-variant);
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
@@ -38,25 +32,9 @@ const Container = styled.section<Props>`
         `};
 
     ${(props) =>
-        props.primary &&
-        css`
-            grid-column-start: 1;
-            grid-column-end: 1;
-            grid-row-start: 2;
-            grid-row-end: 2;
-            min-height: 21.5rem;
-            background: var(--surface);
-            border: var(--border);
-            box-shadow: var(--shadow);
-        `};
-
-    ${(props) =>
         props.overlay &&
         css`
             overflow: hidden;
-            background: none;
-            border: var(--border-variant);
-            box-shadow: var(--shadow-variant);
         `};
 `;
 
@@ -87,7 +65,6 @@ const Overlay = styled.div<Props>`
 `;
 
 type ComponentProps = {
-    primary: boolean;
     active: boolean;
     onClick: (e: React.MouseEvent<HTMLDivElement>) => void;
     state?: string;
@@ -96,14 +73,14 @@ type ComponentProps = {
 };
 
 const Section = function ({
-    primary,
     active,
     onClick,
     state,
     children,
+    className,
 }: ComponentProps) {
     return (
-        <Container primary={primary} overlay={!active} state={state}>
+        <Container overlay={!active} state={state} className={className}>
             {children}
             <Overlay overlay={!active} onClick={onClick} />
         </Container>

@@ -13,11 +13,16 @@ const Container = styled.div<Props>`
     border: 1px solid rgba(0, 0, 0, 0);
     transition: 0.25s ease-in;
 
-    &:hover {
-        cursor: pointer;
-        border: var(--border);
-        transition: 0.2s ease-in;
-    }
+    ${(props) =>
+        !props.active &&
+        !props.edit &&
+        css`
+            &:hover {
+                cursor: pointer;
+                border: var(--border);
+                transition: 0.2s ease-in;
+            }
+        `};
 
     ${(props) =>
         props.active &&
@@ -34,7 +39,6 @@ const Container = styled.div<Props>`
 
             &:hover {
                 cursor: default;
-                border: 1px solid var(--primary);
             }
         `};
 
@@ -45,7 +49,9 @@ const Container = styled.div<Props>`
             top: 0;
             bottom: 6rem;
             z-index: 1500;
-            box-shadow: none;
+            backdrop-filter: none;
+            border: 1px solid rgba(0, 0, 0, 0);
+            box-shadow: var(--shadow-variant);
         `};
 
     ${(props) =>
@@ -89,6 +95,7 @@ const Buttons = styled.div<Props>`
     width: 100%;
     height: 3rem;
     overflow: hidden;
+    border-top: var(--border);
     display: flex;
     transition: 0.25s ease-out;
 

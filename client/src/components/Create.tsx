@@ -57,7 +57,6 @@ const Buttons = styled.div<Props>`
     position: relative;
     width: 100%;
     height: 3rem;
-    border-top: var(--border);
     overflow: hidden;
     display: flex;
     transition: 0.25s ease-out;

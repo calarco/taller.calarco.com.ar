@@ -120,7 +120,6 @@ const Side = function ({
     return (
         <>
             <Section
-                primary={false}
                 active={
                     activeCard === "Vehículo" || activeCard === "Cliente"
                         ? false
@@ -197,11 +196,12 @@ const Side = function ({
                                                             : false
                                                     }
                                                     edit={
+                                                        !create &&
                                                         vehiculoId ===
                                                             aVehiculo.id &&
-                                                        activeCard ===
-                                                            "Vehículo" &&
-                                                        !create
+                                                        (activeCard ===
+                                                            "Vehículo" ||
+                                                            remove)
                                                             ? true
                                                             : false
                                                     }
