@@ -2,10 +2,7 @@ import React from "react";
 import styled, { css } from "styled-components";
 
 type Props = {
-    readonly create?: boolean;
     readonly active?: boolean;
-    readonly edit?: boolean;
-    readonly error?: boolean;
 };
 
 const Container = styled.div<Props>`

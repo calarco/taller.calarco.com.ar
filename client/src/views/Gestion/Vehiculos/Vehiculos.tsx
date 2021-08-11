@@ -120,10 +120,10 @@ const Side = function ({
     return (
         <>
             <Section
-                active={
+                overlay={
                     activeCard === "Vehículo" || activeCard === "Cliente"
-                        ? false
-                        : true
+                        ? true
+                        : false
                 }
                 onClick={() => {
                     setActiveCard("");

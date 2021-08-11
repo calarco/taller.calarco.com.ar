@@ -174,6 +174,7 @@ const Gestion = function ({ matchModelo }) {
                                             busqueda={busqueda}
                                             setClienteId={setClienteId}
                                             setVehiculoId={setVehiculoId}
+                                            matchModelo={matchModelo}
                                             state={state}
                                         />
                                     ) : (

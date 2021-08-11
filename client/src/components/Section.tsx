@@ -16,6 +16,7 @@ const Container = styled.section<Props>`
     min-height: 25rem;
     max-height: 100%;
     padding: 1.5rem;
+    border-radius: 4px;
     overflow-y: overlay;
     display: flex;
     flex-direction: column;
@@ -65,7 +66,7 @@ const Overlay = styled.div<Props>`
 `;
 
 type ComponentProps = {
-    active: boolean;
+    overlay: boolean;
     onClick: (e: React.MouseEvent<HTMLDivElement>) => void;
     state?: string;
     children: React.ReactNode;
@@ -73,16 +74,16 @@ type ComponentProps = {
 };
 
 const Section = function ({
-    active,
+    overlay,
     onClick,
     state,
     children,
     className,
 }: ComponentProps) {
     return (
-        <Container overlay={!active} state={state} className={className}>
+        <Container overlay={overlay} state={state} className={className}>
             {children}
-            <Overlay overlay={!active} onClick={onClick} />
+            <Overlay overlay={overlay} onClick={onClick} />
         </Container>
     );
 };

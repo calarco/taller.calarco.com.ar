@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import feathersClient from "feathersClient";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import SectionComponent from "components/Section";
 import Create from "components/Create";
@@ -14,10 +14,16 @@ const Section = styled(SectionComponent)`
     grid-row-start: 2;
     grid-row-end: 2;
     min-height: 21.5rem;
-    border-radius: 4px;
     background: var(--surface);
-    border-top: var(--border);
+    border-top: var(--border-variant);
     box-shadow: var(--shadow);
+
+    ${(props) =>
+        props.overlay &&
+        css`
+            background: none;
+            box-shadow: none;
+        `};
 `;
 
 const Reparaciones = function ({
@@ -120,7 +126,7 @@ const Reparaciones = function ({
     return (
         <>
             <Section
-                active={activeCard === "" ? true : false}
+                overlay={activeCard !== "" ? true : false}
                 onClick={() => {
                     setActiveCard("");
                 }}

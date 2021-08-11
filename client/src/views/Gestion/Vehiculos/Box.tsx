@@ -6,6 +6,7 @@ const Container = styled.article`
     display: grid;
     grid-auto-flow: column;
     grid-template-columns: 4.25rem 1fr;
+    align-items: center;
     gap: 1rem;
 
     h4 {
