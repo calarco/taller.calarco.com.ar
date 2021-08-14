@@ -9,8 +9,7 @@ const Container = styled.div`
     border: 1px solid rgba(0, 0, 0, 0);
     transition: 0.1s ease-in;
     display: grid;
-    grid-template-columns: 3fr 2fr;
-    gap: 1rem;
+    grid-template-columns: 1fr auto;
 
     div {
         padding: 1.5rem 2.5rem;
@@ -28,6 +27,7 @@ const Container = styled.div`
     }
 
     h5 {
+        position: relative;
         padding: 1.5rem 2.5rem;
         text-align: right;
 
@@ -35,6 +35,15 @@ const Container = styled.div`
             cursor: pointer;
             background: var(--on-background-disabled);
             transition: 0.15s ease-out;
+        }
+
+        &::after {
+            content: "";
+            position: absolute;
+            top: calc(50% - 1rem);
+            left: 0;
+            height: 2rem;
+            border-left: var(--border-variant);
         }
     }
 

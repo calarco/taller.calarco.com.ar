@@ -202,6 +202,8 @@ const Gestion = function ({ matchModelo }) {
                     />
                     <Cliente
                         clienteId={clienteId}
+                        setClienteId={setClienteId}
+                        setVehiculoId={setVehiculoId}
                         create={create}
                         setCreate={setCreate}
                         activeCard={activeCard}

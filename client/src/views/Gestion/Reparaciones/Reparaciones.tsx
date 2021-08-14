@@ -55,55 +55,61 @@ const Reparaciones = function ({
         ],
     });
 
-    const loadReparaciones = useCallback(() => {
-        feathersClient
-            .service("reparaciones")
-            .find({
-                query: {
-                    vehiculoId: vehiculoId,
-                    $limit: 100,
-                    $sort: {
-                        createdAt: -1,
+    const loadReparaciones = useCallback(
+        (setId?: boolean) => {
+            feathersClient
+                .service("reparaciones")
+                .find({
+                    query: {
+                        vehiculoId: vehiculoId,
+                        $limit: 100,
+                        $sort: {
+                            createdAt: -1,
+                        },
                     },
-                },
-            })
-            .then((found) => {
-                found.data[0]
-                    ? setReparaciones(found)
-                    : setReparaciones({
-                          total: 0,
-                          limit: 0,
-                          skip: 0,
-                          data: [
-                              {
-                                  id: 0,
-                                  vehiculoId: "",
-                                  reparacion: "",
-                                  repuestos: "",
-                                  labor: "",
-                                  costo: "",
-                                  km: "",
-                                  createdAt: "",
-                                  updatedAt: "",
-                              },
-                          ],
-                      });
-            })
-            .catch((error) => {
-                console.log("error", error);
-            });
-    }, [vehiculoId]);
+                })
+                .then((found) => {
+                    found.data[0]
+                        ? setReparaciones(found)
+                        : setReparaciones({
+                              total: 0,
+                              limit: 0,
+                              skip: 0,
+                              data: [
+                                  {
+                                      id: 0,
+                                      vehiculoId: "",
+                                      reparacion: "",
+                                      repuestos: "",
+                                      labor: "",
+                                      costo: "",
+                                      km: "",
+                                      createdAt: "",
+                                      updatedAt: "",
+                                  },
+                              ],
+                          });
+                    setActiveCard("");
+                    setId && setSelected(found.data[0].id);
+                })
+                .catch((error) => {
+                    console.log("error", error);
+                });
+        },
+        [vehiculoId, setActiveCard]
+    );
 
     useEffect(() => {
         feathersClient
             .service("reparaciones")
-            .on("created", () => loadReparaciones());
+            .on("created", () => loadReparaciones(true));
         feathersClient
             .service("reparaciones")
             .on("patched", () => loadReparaciones());
-        feathersClient
-            .service("reparaciones")
-            .on("removed", () => loadReparaciones());
+        feathersClient.service("reparaciones").on("removed", () => {
+            loadReparaciones();
+            setSelected(0);
+        });
     }, [loadReparaciones]);
 
     useEffect(() => {

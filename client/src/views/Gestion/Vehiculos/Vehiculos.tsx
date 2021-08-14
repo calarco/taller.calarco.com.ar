@@ -65,45 +65,50 @@ const Side = function ({
         ],
     });
 
-    const loadVehiculos = useCallback(() => {
-        feathersClient
-            .service("vehiculos")
-            .find({
-                query: {
-                    $limit: 100,
-                    clienteId: clienteId,
-                    $sort: {
-                        updatedAt: -1,
+    const loadVehiculos = useCallback(
+        (setId?: boolean) => {
+            feathersClient
+                .service("vehiculos")
+                .find({
+                    query: {
+                        $limit: 100,
+                        clienteId: clienteId,
+                        $sort: {
+                            updatedAt: -1,
+                        },
                     },
-                },
-            })
-            .then((found) => {
-                setVehiculos(found);
-                setActiveCard("");
-            })
-            .catch((error) => {
-                console.error(error);
-            });
-    }, [clienteId, setActiveCard]);
+                })
+                .then((found) => {
+                    setVehiculos(found);
+                    setActiveCard("");
+                    setId && setVehiculoId(found.data[0].id);
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        },
+        [clienteId, setActiveCard, setVehiculoId]
+    );
 
     useEffect(() => {
         feathersClient
             .service("vehiculos")
-            .on("created", () => loadVehiculos());
+            .on("created", () => loadVehiculos(true));
         feathersClient
             .service("vehiculos")
             .on("patched", () => loadVehiculos());
-        feathersClient
-            .service("vehiculos")
-            .on("removed", () => loadVehiculos());
-    }, [loadVehiculos]);
+        feathersClient.service("vehiculos").on("removed", () => {
+            loadVehiculos();
+            setVehiculoId(0);
+        });
+    }, [loadVehiculos, setVehiculoId]);
 
     useEffect(() => {
         clienteId !== 0 &&
             startTransition(() => {
                 loadVehiculos();
             });
-    }, [clienteId, startTransition, loadVehiculos]);
+    }, [clienteId, setVehiculoId, startTransition, loadVehiculos]);
 
     useEffect(() => {
         setRemove(false);
@@ -158,32 +163,34 @@ const Side = function ({
                                             }}
                                             state={state}
                                         >
-                                            <Actions
-                                                vehiculo={{
-                                                    id: 0,
-                                                    patente: "",
-                                                    year: "",
-                                                    combustible: "Nafta",
-                                                    cilindrada: "",
-                                                    createdAt: "",
-                                                    updatedAt: "",
-                                                    clienteId: clienteId,
-                                                    modeloId: 0,
-                                                }}
-                                                edit={
-                                                    activeCard === "Vehículo" &&
-                                                    create
-                                                        ? true
-                                                        : false
-                                                }
-                                                unEdit={() => {
-                                                    setCreate(false);
-                                                }}
-                                                remove={false}
-                                                unRemove={() => {
-                                                    setRemove(false);
-                                                }}
-                                            />
+                                            {create && (
+                                                <Actions
+                                                    vehiculo={{
+                                                        id: 0,
+                                                        patente: "",
+                                                        year: "",
+                                                        combustible: "Nafta",
+                                                        cilindrada: "",
+                                                        createdAt: "",
+                                                        updatedAt: "",
+                                                        clienteId: clienteId,
+                                                        modeloId: 0,
+                                                    }}
+                                                    edit={
+                                                        activeCard ===
+                                                            "Vehículo" && create
+                                                            ? true
+                                                            : false
+                                                    }
+                                                    unEdit={() => {
+                                                        setCreate(false);
+                                                    }}
+                                                    remove={false}
+                                                    unRemove={() => {
+                                                        setRemove(false);
+                                                    }}
+                                                />
+                                            )}
                                         </Create>
                                         {vehiculos.data[0] &&
                                             vehiculos.data.map((aVehiculo) => (
@@ -231,9 +238,9 @@ const Side = function ({
                                                         <Actions
                                                             vehiculo={aVehiculo}
                                                             edit={
+                                                                !create &&
                                                                 activeCard ===
-                                                                    "Vehículo" &&
-                                                                !create
+                                                                    "Vehículo"
                                                                     ? true
                                                                     : false
                                                             }

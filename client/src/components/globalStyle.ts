@@ -90,6 +90,8 @@ const GlobalStyle = createGlobalStyle`
         font-family: var(--font-family), sans-serif;
         background-color: #000;
         color: #fff;
+        
+        user-select: none;
     }
 
     pre,

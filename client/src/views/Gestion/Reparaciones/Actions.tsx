@@ -86,7 +86,7 @@ const Actions = function ({ reparacion, edit, unEdit, remove, unRemove }) {
             feathersClient
                 .service("reparaciones")
                 .create({
-                    km: inputs.km,
+                    km: parseInt(inputs.km),
                     reparacion: inputs.reparacion,
                     repuestos: inputs.repuestos,
                     costo: inputs.costo,
@@ -109,7 +109,7 @@ const Actions = function ({ reparacion, edit, unEdit, remove, unRemove }) {
             feathersClient
                 .service("reparaciones")
                 .patch(reparacion.id, {
-                    km: inputs.km,
+                    km: parseInt(inputs.km),
                     reparacion: inputs.reparacion,
                     repuestos: inputs.repuestos,
                     costo: inputs.costo,
@@ -160,7 +160,6 @@ const Actions = function ({ reparacion, edit, unEdit, remove, unRemove }) {
     return (
         <>
             <Form
-                create={reparacion.id === 0 ? true : false}
                 edit={edit}
                 unEdit={unEdit}
                 onSubmit={reparacion.id === 0 ? handleCreate : handleEdit}

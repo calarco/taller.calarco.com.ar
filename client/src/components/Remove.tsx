@@ -2,12 +2,10 @@ import React from "react";
 import styled, { css } from "styled-components";
 
 type Props = {
-    readonly active?: boolean;
+    readonly remove?: boolean;
 };
 
 const Container = styled.div<Props>`
-    visibility: hidden;
-    opacity: 0;
     position: absolute;
     z-index: 1001;
     top: -1px;
@@ -26,11 +24,12 @@ const Container = styled.div<Props>`
     transition: 0.25s ease-in;
 
     ${(props) =>
-        props.active &&
+        !props.remove &&
         css`
-            visibility: visible;
-            opacity: 1;
+            visibility: hidden;
+            opacity: 0;
             transition: 0.3s ease-in;
+            pointer-events: none;
         `};
 `;
 
@@ -65,7 +64,7 @@ const Buttons = styled.div<Props>`
 
 const VehiculoForm = function ({ remove, unRemove, handleDelete, children }) {
     return (
-        <Container active={remove}>
+        <Container remove={remove}>
             <h5>{children}</h5>
             <Buttons>
                 <button type="button" onClick={unRemove}>

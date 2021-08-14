@@ -136,7 +136,6 @@ const Actions = function ({ cliente, edit, unEdit, remove, unRemove }) {
     return (
         <>
             <Form
-                create={cliente.id === 0 ? true : false}
                 edit={edit}
                 unEdit={unEdit}
                 onSubmit={cliente.id === 0 ? handleCreate : handleEdit}
@@ -174,7 +173,6 @@ const Actions = function ({ cliente, edit, unEdit, remove, unRemove }) {
                         autoComplete="off"
                         value={inputs.dni}
                         onChange={handleInputChange}
-                        required
                     />
                 </label>
                 <label>
@@ -186,7 +184,6 @@ const Actions = function ({ cliente, edit, unEdit, remove, unRemove }) {
                         autoComplete="off"
                         value={inputs.empresa}
                         onChange={handleInputChange}
-                        required
                     />
                 </label>
                 <label>
@@ -199,7 +196,6 @@ const Actions = function ({ cliente, edit, unEdit, remove, unRemove }) {
                         autoComplete="off"
                         value={inputs.telefono}
                         onChange={handleInputChange}
-                        required
                     />
                 </label>
                 <label>
@@ -211,7 +207,6 @@ const Actions = function ({ cliente, edit, unEdit, remove, unRemove }) {
                         autoComplete="off"
                         value={inputs.email}
                         onChange={handleInputChange}
-                        required
                     />
                 </label>
             </Form>

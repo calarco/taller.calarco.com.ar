@@ -29,6 +29,7 @@ const Container = styled.section<Props>`
         css`
             visibility: hidden;
             opacity: 0;
+            transform: translateY(0.75rem);
             transition: 0.3s ease-in;
         `};
 

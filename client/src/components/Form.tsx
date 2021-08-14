@@ -2,17 +2,11 @@ import React from "react";
 import styled, { css } from "styled-components";
 
 type Props = {
-    readonly create?: boolean;
-    readonly active?: boolean;
     readonly edit?: boolean;
-    readonly error?: boolean;
 };
 
 const Container = styled.form<Props>`
     will-change: opacity;
-    visibility: hidden;
-    opacity: 0;
-    transform: translateY(-0.75rem);
     content-visibility: auto;
     position: absolute;
     z-index: 1500;
@@ -36,11 +30,11 @@ const Container = styled.form<Props>`
     }
 
     ${(props) =>
-        props.edit &&
+        !props.edit &&
         css`
-            visibility: visible;
-            opacity: 1;
-            transform: initial;
+            visibility: hidden;
+            opacity: 0;
+            transform: translateY(-0.75rem);
             transition: 0.3s ease-in;
         `};
 `;
@@ -76,7 +70,6 @@ const Buttons = styled.div<Props>`
 `;
 
 type ComponentProps = {
-    create: boolean;
     edit: boolean;
     unEdit: (e: React.MouseEvent<HTMLButtonElement>) => void;
     onSubmit: (e: React.FormEvent) => void;
@@ -85,7 +78,6 @@ type ComponentProps = {
 };
 
 const Form = function ({
-    create,
     edit,
     unEdit,
     onSubmit,
@@ -95,26 +87,13 @@ const Form = function ({
     return (
         <Container edit={edit} onSubmit={onSubmit} className={className}>
             {children}
-            <Buttons create={create}>
-                {create ? (
-                    <>
-                        <button type="button" onClick={unEdit}>
-                            Cancelar
-                        </button>
-                        <button type="submit" onClick={() => {}}>
-                            Crear vehiculo
-                        </button>
-                    </>
-                ) : (
-                    <>
-                        <button type="button" onClick={unEdit}>
-                            Cancelar
-                        </button>
-                        <button type="submit" onClick={() => {}}>
-                            Guardar
-                        </button>
-                    </>
-                )}
+            <Buttons>
+                <button type="button" onClick={unEdit}>
+                    Cancelar
+                </button>
+                <button type="submit" onClick={() => {}}>
+                    Guardar
+                </button>
             </Buttons>
         </Container>
     );
