@@ -6,9 +6,6 @@ import FormComponent from "components/Form";
 import Remove from "components/Remove";
 
 type Props = {
-    readonly create?: boolean;
-    readonly active?: boolean;
-    readonly edit?: boolean;
     readonly error?: boolean;
 };
 
@@ -147,7 +144,7 @@ const Actions = function ({ reparacion, edit, unEdit, remove, unRemove }) {
     useEffect(() => {
         setInputs({
             fecha: reparacion.createdAt.substring(0, 10),
-            km: reparacion.id === 0 ? "" : reparacion.km,
+            km: reparacion.km,
             reparacion: reparacion.reparacion,
             repuestos: reparacion.repuestos,
             labor: reparacion.labor,
@@ -230,7 +227,6 @@ const Actions = function ({ reparacion, edit, unEdit, remove, unRemove }) {
                         value={inputs.repuestos}
                         onChange={handleInputChange}
                         autoComplete="off"
-                        required
                     />
                 </Text>
                 <Number>

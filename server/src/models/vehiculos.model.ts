@@ -9,19 +9,13 @@ export default function (app: Application): typeof Model {
     const vehiculos = sequelizeClient.define('vehiculos',
         {
             patente: {
-                type: DataTypes.STRING,
+                type: DataTypes.STRING(7),
                 allowNull: false,
                 unique: true
             },
             year: {
                 type: DataTypes.STRING(4),
-                allowNull: false,
-                validate: {
-                    isInt: true,
-                    isNumeric: true,
-                    min: 1800,
-                    max: 4000
-                }
+                allowNull: true,
             },
             combustible: {
                 type: DataTypes.ENUM(

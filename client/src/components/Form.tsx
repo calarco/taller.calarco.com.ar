@@ -39,7 +39,7 @@ const Container = styled.form<Props>`
         `};
 `;
 
-const Buttons = styled.div<Props>`
+const Buttons = styled.div`
     grid-column-start: 1;
     grid-column-end: span end;
     width: 100%;

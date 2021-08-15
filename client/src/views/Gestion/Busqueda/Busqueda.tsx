@@ -187,45 +187,42 @@ const Busqueda = function ({
     return (
         <>
             <Container state={state}>
-                {vehiculos.data[0] || clientes.data[0] ? (
+                {busqueda === "" ? (
+                    vehiculos.data[0] &&
+                    vehiculos.data[0].id !== 0 &&
+                    vehiculos.data.map((aVehiculo) => (
+                        <Vehiculo
+                            key={aVehiculo.id}
+                            vehiculo={aVehiculo}
+                            setClienteId={setClienteId}
+                            setVehiculoId={setVehiculoId}
+                            matchModelo={matchModelo}
+                        />
+                    ))
+                ) : vehiculos.data[0] || clientes.data[0] ? (
                     <>
-                        {busqueda === "" ? (
-                            vehiculos.data.map((aVehiculo) => (
-                                <Vehiculo
-                                    key={aVehiculo.id}
-                                    vehiculo={aVehiculo}
-                                    setClienteId={setClienteId}
-                                    setVehiculoId={setVehiculoId}
-                                    matchModelo={matchModelo}
-                                />
-                            ))
-                        ) : (
-                            <>
-                                {vehiculos.data.map((aVehiculo) => (
-                                    <Vehiculo
-                                        key={aVehiculo.id}
-                                        vehiculo={aVehiculo}
-                                        setClienteId={setClienteId}
-                                        setVehiculoId={setVehiculoId}
-                                        matchModelo={matchModelo}
-                                    />
-                                ))}
-                                {clientes.data.map((aCliente) => (
-                                    <Cliente
-                                        key={aCliente.id}
-                                        onClick={() => {
-                                            setClienteId(aCliente.id);
-                                            setVehiculoId(0);
-                                        }}
-                                    >
-                                        <h4>
-                                            {aCliente.nombre}{" "}
-                                            {aCliente.apellido}
-                                        </h4>
-                                    </Cliente>
-                                ))}
-                            </>
-                        )}
+                        {vehiculos.data.map((aVehiculo) => (
+                            <Vehiculo
+                                key={aVehiculo.id}
+                                vehiculo={aVehiculo}
+                                setClienteId={setClienteId}
+                                setVehiculoId={setVehiculoId}
+                                matchModelo={matchModelo}
+                            />
+                        ))}
+                        {clientes.data.map((aCliente) => (
+                            <Cliente
+                                key={aCliente.id}
+                                onClick={() => {
+                                    setClienteId(aCliente.id);
+                                    setVehiculoId(0);
+                                }}
+                            >
+                                <h4>
+                                    {aCliente.nombre} {aCliente.apellido}
+                                </h4>
+                            </Cliente>
+                        ))}
                     </>
                 ) : (
                     <Empty>No se encontraron resultados</Empty>

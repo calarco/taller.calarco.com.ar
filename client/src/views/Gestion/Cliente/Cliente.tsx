@@ -84,6 +84,7 @@ const Cliente = function ({
                       .get(clienteId)
                       .then((found) => {
                           setCliente(found);
+                          setActiveCard("");
                       })
                       .catch((error) => {
                           console.log("error", error);

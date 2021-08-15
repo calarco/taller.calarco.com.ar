@@ -44,8 +44,6 @@ const Actions = function ({ vehiculo, edit, remove, unRemove, unEdit }) {
             : inputs.patente === ""
             ? (error = "Ingrese la patente")
             : inputs.year === ""
-            ? (error = "Ingrese el año")
-            : inputs.vin === ""
             ? (error = "")
             : /\s/.test(inputs.vin)
             ? (error = "El vin no puede contener espacios")

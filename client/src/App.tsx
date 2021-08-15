@@ -19,12 +19,9 @@ const Main = styled.div<StateProps>`
     font: var(--body1);
     color: var(--on-background);
     display: grid;
-    grid-template-columns: 0px 3fr;
-    grid-template-areas: "gestion gestion";
     overflow: hidden;
 
     @media ${Device.desktop} {
-        grid-template-columns: 1fr 3fr;
     }
 `;
 
@@ -133,7 +130,7 @@ const App = function () {
             </ThemeProvider>
             <Main>
                 {user ? (
-                    <Gestion matchModelo={matchModelo} />
+                    <Gestion setUser={setUser} matchModelo={matchModelo} />
                 ) : (
                     <Login setUser={setUser} />
                 )}
