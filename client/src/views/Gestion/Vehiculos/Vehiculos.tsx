@@ -220,7 +220,6 @@ const Side = function ({
                                                     onRemove={() => {
                                                         setRemove(true);
                                                     }}
-                                                    state={state}
                                                 >
                                                     <Box
                                                         vehiculo={aVehiculo}

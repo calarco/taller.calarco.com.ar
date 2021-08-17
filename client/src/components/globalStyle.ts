@@ -88,9 +88,10 @@ const GlobalStyle = createGlobalStyle`
         font-feature-settings: "kern" 1;
         font-kerning: normal;
         font-family: var(--font-family), sans-serif;
-        background-color: #000;
-        color: #fff;
+        background: var(--background);
+        color: var(--on-background);
         
+        overflow: hidden;
         user-select: none;
     }
 

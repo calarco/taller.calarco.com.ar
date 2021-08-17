@@ -35,7 +35,7 @@ const Container = styled.div`
 `;
 
 const Form = styled.form`
-    overflow: hidden;
+    position: relative;
     border-radius: 4px;
     border: 1px solid var(--primary);
     box-shadow: var(--shadow);
@@ -49,11 +49,16 @@ const Form = styled.form`
         padding: 0.5rem 1rem;
         background: var(--surface);
     }
+
+    label:first-child {
+        border-radius: 4px 4px 0 0;
+    }
 `;
 
 const Buttons = styled.div`
     width: 100%;
     height: 3rem;
+    border-radius: 0 0 4px 4px;
     overflow: hidden;
     background: var(--surface);
     display: flex;
@@ -68,6 +73,16 @@ const Buttons = styled.div`
         background: none;
         border: none;
     }
+`;
+
+const Error = styled.div`
+    position: absolute;
+    bottom: -3rem;
+    height: 3rem;
+    width: 100%;
+    border-radius: 4px;
+    box-shadow: var(--shadow-variant);
+    background: var(--surface-variant);
 `;
 
 const Login = function ({ setUser }) {
@@ -94,7 +109,7 @@ const Login = function ({ setUser }) {
                     ...inputs,
                     password: "",
                     loading: false,
-                    error: error,
+                    error: error.message,
                 });
             });
     };
@@ -134,17 +149,15 @@ const Login = function ({ setUser }) {
                     {inputs.loading ? (
                         <Spinner />
                     ) : (
-                        <>
-                            <div>{inputs.error}</div>
-                            <button
-                                type="submit"
-                                disabled={inputs.loading ? true : false}
-                            >
-                                Ingresar
-                            </button>
-                        </>
+                        <button
+                            type="submit"
+                            disabled={inputs.loading ? true : false}
+                        >
+                            Ingresar
+                        </button>
                     )}
                 </Buttons>
+                {inputs.error && <Error>{inputs.error}</Error>}
             </Form>
         </Container>
     );

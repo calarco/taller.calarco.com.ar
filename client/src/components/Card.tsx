@@ -4,7 +4,6 @@ import styled, { css } from "styled-components";
 type Props = {
     readonly active?: boolean;
     readonly edit?: boolean;
-    readonly state?: string;
 };
 
 const Container = styled.div<Props>`
@@ -53,22 +52,6 @@ const Container = styled.div<Props>`
             border: 1px solid rgba(0, 0, 0, 0);
             box-shadow: var(--shadow-variant);
         `};
-
-    ${(props) =>
-        props.state === "entering" || props.state === "exiting"
-            ? css`
-                  will-change: opacity;
-                  visibility: hidden;
-                  opacity: 0;
-                  transition: 0.25s ease-in;
-              `
-            : css`
-                  will-change: auto;
-                  visibility: visible;
-                  opacity: 1;
-                  transform: initial;
-                  transition: 0.3s ease-out;
-              `};
 
     &:not(:first-child)::after {
         content: "";
@@ -124,7 +107,6 @@ type ComponentProps = {
     edit: boolean;
     onEdit: (e: React.MouseEvent<HTMLButtonElement>) => void;
     onRemove: (e: React.MouseEvent<HTMLButtonElement>) => void;
-    state?: string;
     children: React.ReactNode;
     className?: string;
 };
@@ -134,17 +116,11 @@ const Card = function ({
     edit,
     onEdit,
     onRemove,
-    state,
     children,
     className,
 }: ComponentProps) {
     return (
-        <Container
-            active={active}
-            edit={edit}
-            state={state}
-            className={className}
-        >
+        <Container active={active} edit={edit} className={className}>
             {children}
             {active && (
                 <Buttons>

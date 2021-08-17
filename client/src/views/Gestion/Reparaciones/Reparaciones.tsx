@@ -142,7 +142,6 @@ const Reparaciones = function ({
                     type="Reparación"
                     edit={activeCard === "Reparación" && create ? true : false}
                     onEdit={() => setCreate(true)}
-                    state={state}
                 >
                     <Actions
                         reparacion={{
@@ -186,7 +185,6 @@ const Reparaciones = function ({
                             onRemove={() => {
                                 setRemove(true);
                             }}
-                            state={state}
                         >
                             <Box
                                 reparacion={aReparacion}

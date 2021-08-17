@@ -1,25 +1,45 @@
 import React, { useState, useEffect } from "react";
-import styled, { ThemeProvider } from "styled-components";
 import feathersClient from "feathersClient";
+import { ThemeProvider } from "styled-components";
+import transition from "styled-transition-group";
+import { SwitchTransition } from "react-transition-group";
 
 import { themeDark, themeLight } from "themes";
 import GlobalStyle, { Device } from "components/globalStyle";
 import Login from "views/Login/Login";
 import { Gestion } from "views/Gestion";
 
-type StateProps = {
-    readonly state?: string;
-};
-
-const Main = styled.div<StateProps>`
+const Main = transition.div.attrs({
+    unmountOnExit: true,
+    timeout: 300,
+})`
+    will-change: opacity;
     padding-bottom: calc(env(safe-area-inset-bottom) + 0px);
     width: 100vw;
     height: 100vh;
-    background: var(--background);
-    font: var(--body1);
-    color: var(--on-background);
-    display: grid;
     overflow: hidden;
+    display: grid;
+
+    &:enter {
+        opacity: 0;
+        transform: scale(1.1);
+    }
+
+    &:enter-active {
+        opacity: 1;
+        transform: initial;
+        transition: 0.3s ease-out;
+    }
+
+    &:exit {
+        opacity: 1;
+    }
+
+    &:exit-active {
+        opacity: 0;
+        transform: scale(0.9);
+        transition: 0.2s ease-in;
+    }
 
     @media ${Device.desktop} {
     }
@@ -128,13 +148,15 @@ const App = function () {
             <ThemeProvider theme={darkTheme ? themeDark : themeLight}>
                 <GlobalStyle />
             </ThemeProvider>
-            <Main>
-                {user ? (
-                    <Gestion setUser={setUser} matchModelo={matchModelo} />
-                ) : (
-                    <Login setUser={setUser} />
-                )}
-            </Main>
+            <SwitchTransition mode="out-in">
+                <Main key={user ? "0" : "1"}>
+                    {user ? (
+                        <Gestion setUser={setUser} matchModelo={matchModelo} />
+                    ) : (
+                        <Login setUser={setUser} />
+                    )}
+                </Main>
+            </SwitchTransition>
         </>
     );
 };
