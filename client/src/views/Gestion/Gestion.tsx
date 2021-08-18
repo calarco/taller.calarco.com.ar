@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useTransition } from "react";
 import styled, { css } from "styled-components";
 import transition from "styled-transition-group";
-import { SwitchTransition, Transition } from "react-transition-group";
+import { SwitchTransition } from "react-transition-group";
 
 import { Busqueda } from "./Busqueda";
 import { Cliente } from "./Cliente";
@@ -81,6 +81,7 @@ const Right = transition.div.attrs({
 `;
 
 const Buscador = styled.form<Props>`
+    grid-column-end: 1;
     grid-row-start: 1;
     width: 100%;
     border-radius: 4px;
@@ -159,7 +160,6 @@ const Bar = styled.div`
 `;
 
 const Gestion = function ({ setUser, matchModelo }) {
-    const nodeRef = React.useRef(null);
     const [isPending, startTransition] = useTransition();
     const [busqueda, setBusqueda] = useState("");
     const [clienteId, setClienteId] = useState(0);
@@ -219,63 +219,42 @@ const Gestion = function ({ setUser, matchModelo }) {
                             </button>
                         ) : undefined}
                     </Buscador>
-                    <SwitchTransition>
-                        <Transition
-                            nodeRef={nodeRef}
-                            key={vehiculoId === 0 ? 0 : 1}
-                            addEndListener={(nodeRef, done) => {
-                                nodeRef.addEventListener(
-                                    "transitionend",
-                                    done,
-                                    false
-                                );
-                            }}
-                            unmountOnExit
-                            mountOnEnter
-                        >
-                            {(state) => (
-                                <>
-                                    {vehiculoId === 0 ? (
-                                        <Busqueda
-                                            busqueda={busqueda}
-                                            setClienteId={setClienteId}
-                                            setVehiculoId={setVehiculoId}
-                                            matchModelo={matchModelo}
-                                            state={state}
-                                        />
-                                    ) : (
-                                        <Reparaciones
-                                            vehiculoId={vehiculoId}
-                                            activeCard={activeCard}
-                                            setActiveCard={setActiveCard}
-                                            state={state}
-                                        />
-                                    )}
-                                </>
-                            )}
-                        </Transition>
-                    </SwitchTransition>
+                    <Busqueda
+                        busqueda={busqueda}
+                        setClienteId={setClienteId}
+                        setVehiculoId={setVehiculoId}
+                        matchModelo={matchModelo}
+                    />
+                    <Reparaciones
+                        vehiculoId={vehiculoId}
+                        activeCard={activeCard}
+                        setActiveCard={setActiveCard}
+                    />
                     {isPending ? <Loading /> : null}
                 </Left>
                 <SwitchTransition>
                     <Right key={clienteId}>
-                        <Vehiculos
-                            clienteId={clienteId}
-                            vehiculoId={vehiculoId}
-                            setVehiculoId={setVehiculoId}
-                            activeCard={activeCard}
-                            setActiveCard={setActiveCard}
-                            matchModelo={matchModelo}
-                        />
-                        <Cliente
-                            clienteId={clienteId}
-                            setClienteId={setClienteId}
-                            setVehiculoId={setVehiculoId}
-                            create={create}
-                            setCreate={setCreate}
-                            activeCard={activeCard}
-                            setActiveCard={setActiveCard}
-                        />
+                        {clienteId !== 0 && (
+                            <>
+                                <Vehiculos
+                                    clienteId={clienteId}
+                                    vehiculoId={vehiculoId}
+                                    setVehiculoId={setVehiculoId}
+                                    activeCard={activeCard}
+                                    setActiveCard={setActiveCard}
+                                    matchModelo={matchModelo}
+                                />
+                                <Cliente
+                                    clienteId={clienteId}
+                                    setClienteId={setClienteId}
+                                    setVehiculoId={setVehiculoId}
+                                    create={create}
+                                    setCreate={setCreate}
+                                    activeCard={activeCard}
+                                    setActiveCard={setActiveCard}
+                                />
+                            </>
+                        )}
                     </Right>
                 </SwitchTransition>
             </Panels>

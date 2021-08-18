@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from "react";
 import feathersClient from "feathersClient";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 
 import Vehiculo from "./Vehiculo";
 
-type Props = {
-    readonly state?: string;
-};
-
-const Container = styled.section<Props>`
+const Container = styled.section`
+    grid-column-end: 1;
+    grid-row-start: 2;
+    grid-row-end: 2;
     content-visibility: auto;
     position: relative;
     width: 100%;
@@ -21,15 +20,6 @@ const Container = styled.section<Props>`
     flex-direction: column;
     gap: 1.5rem;
     transition: 0.3s ease-out;
-
-    ${(props) =>
-        props.state &&
-        props.state !== "entered" &&
-        css`
-            visibility: hidden;
-            opacity: 0;
-            transition: 0.3s ease-in;
-        `};
 `;
 
 const Empty = styled.h5`
@@ -73,7 +63,6 @@ const Busqueda = function ({
     setClienteId,
     setVehiculoId,
     matchModelo,
-    state,
 }) {
     const [clientes, setClientes] = useState({
         total: 0,
@@ -186,7 +175,7 @@ const Busqueda = function ({
 
     return (
         <>
-            <Container state={state}>
+            <Container>
                 {busqueda === "" ? (
                     vehiculos.data[0] &&
                     vehiculos.data[0].id !== 0 &&

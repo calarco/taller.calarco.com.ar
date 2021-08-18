@@ -37,6 +37,7 @@ const Container = styled.section<Props>`
         props.overlay &&
         css`
             overflow: hidden;
+            background: var(--surface-variant);
         `};
 `;
 
@@ -51,7 +52,7 @@ const Overlay = styled.div<Props>`
     width: 100%;
     height: 100%;
     z-index: 1001;
-    background: var(--surface-variant);
+    background: rgba(236, 239, 241, 0.7);
     backdrop-filter: blur(0.5rem);
     transition: 0.25s ease-in;
 

@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useCallback, useTransition } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import feathersClient from "feathersClient";
 import styled, { css } from "styled-components";
-import { SwitchTransition, Transition } from "react-transition-group";
 
 import Section from "components/Section";
 import CreateComponent from "components/Create";
@@ -25,12 +24,10 @@ const Card = styled(CardComponent)`
         `};
 `;
 
-const Loading = styled.div`
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    height: 0.25rem;
-    background: var(--primary);
+const Empty = styled.h5`
+    padding: 2rem;
+    text-align: center;
+    color: var(--on-background-variant);
 `;
 
 const Side = function ({
@@ -41,8 +38,6 @@ const Side = function ({
     setActiveCard,
     matchModelo,
 }) {
-    const nodeRef = React.useRef(null);
-    const [isPending, startTransition] = useTransition();
     const [create, setCreate] = useState(false);
     const [remove, setRemove] = useState(false);
 
@@ -104,11 +99,8 @@ const Side = function ({
     }, [loadVehiculos, setVehiculoId]);
 
     useEffect(() => {
-        clienteId !== 0 &&
-            startTransition(() => {
-                loadVehiculos();
-            });
-    }, [clienteId, setVehiculoId, startTransition, loadVehiculos]);
+        clienteId !== 0 && loadVehiculos();
+    }, [clienteId, setVehiculoId, loadVehiculos]);
 
     useEffect(() => {
         setRemove(false);
@@ -123,152 +115,94 @@ const Side = function ({
     }, [create, setActiveCard]);
 
     return (
-        <>
-            <Section
-                overlay={
-                    activeCard === "Vehículo" || activeCard === "Cliente"
-                        ? true
-                        : false
-                }
-                onClick={() => {
-                    setActiveCard("");
-                }}
-            >
-                <SwitchTransition>
-                    <Transition
-                        nodeRef={nodeRef}
-                        key={clienteId}
-                        addEndListener={(nodeRef, done) => {
-                            nodeRef.addEventListener(
-                                "transitionend",
-                                done,
-                                false
-                            );
+        <Section
+            overlay={
+                activeCard === "Vehículo" || activeCard === "Cliente"
+                    ? true
+                    : false
+            }
+            onClick={() => {
+                setActiveCard("");
+            }}
+        >
+            <>
+                <Create
+                    type="Vehículo"
+                    edit={activeCard === "Vehículo" && create ? true : false}
+                    onEdit={() => {
+                        setCreate(true);
+                    }}
+                >
+                    <Actions
+                        vehiculo={{
+                            id: 0,
+                            patente: "",
+                            year: "",
+                            combustible: "Nafta",
+                            cilindrada: "",
+                            createdAt: "",
+                            updatedAt: "",
+                            clienteId: clienteId,
+                            modeloId: 0,
                         }}
-                    >
-                        {(state) => (
-                            <>
-                                {clienteId !== 0 ? (
-                                    <>
-                                        <Create
-                                            type="Vehículo"
-                                            edit={
-                                                activeCard === "Vehículo" &&
-                                                create
-                                                    ? true
-                                                    : false
-                                            }
-                                            onEdit={() => {
-                                                setCreate(true);
-                                            }}
-                                            state={state}
-                                        >
-                                            {create && (
-                                                <Actions
-                                                    vehiculo={{
-                                                        id: 0,
-                                                        patente: "",
-                                                        year: "",
-                                                        combustible: "Nafta",
-                                                        cilindrada: "",
-                                                        createdAt: "",
-                                                        updatedAt: "",
-                                                        clienteId: clienteId,
-                                                        modeloId: 0,
-                                                    }}
-                                                    edit={
-                                                        activeCard ===
-                                                            "Vehículo" && create
-                                                            ? true
-                                                            : false
-                                                    }
-                                                    unEdit={() => {
-                                                        setCreate(false);
-                                                    }}
-                                                    remove={false}
-                                                    unRemove={() => {
-                                                        setRemove(false);
-                                                    }}
-                                                />
-                                            )}
-                                        </Create>
-                                        {vehiculos.data[0] &&
-                                            vehiculos.data.map((aVehiculo) => (
-                                                <Card
-                                                    key={aVehiculo.id}
-                                                    active={
-                                                        vehiculoId ===
-                                                        aVehiculo.id
-                                                            ? true
-                                                            : false
-                                                    }
-                                                    edit={
-                                                        !create &&
-                                                        vehiculoId ===
-                                                            aVehiculo.id &&
-                                                        (activeCard ===
-                                                            "Vehículo" ||
-                                                            remove)
-                                                            ? true
-                                                            : false
-                                                    }
-                                                    onEdit={() =>
-                                                        setActiveCard(
-                                                            "Vehículo"
-                                                        )
-                                                    }
-                                                    onRemove={() => {
-                                                        setRemove(true);
-                                                    }}
-                                                >
-                                                    <Box
-                                                        vehiculo={aVehiculo}
-                                                        onClick={() =>
-                                                            setVehiculoId(
-                                                                aVehiculo.id
-                                                            )
-                                                        }
-                                                        matchModelo={
-                                                            matchModelo
-                                                        }
-                                                    />
-                                                    {vehiculoId ===
-                                                        aVehiculo.id && (
-                                                        <Actions
-                                                            vehiculo={aVehiculo}
-                                                            edit={
-                                                                !create &&
-                                                                activeCard ===
-                                                                    "Vehículo"
-                                                                    ? true
-                                                                    : false
-                                                            }
-                                                            unEdit={() => {
-                                                                setActiveCard(
-                                                                    ""
-                                                                );
-                                                            }}
-                                                            remove={remove}
-                                                            unRemove={() => {
-                                                                setRemove(
-                                                                    false
-                                                                );
-                                                            }}
-                                                        />
-                                                    )}
-                                                </Card>
-                                            ))}
-                                    </>
-                                ) : (
-                                    <div>Presupuestos</div>
-                                )}
-                            </>
-                        )}
-                    </Transition>
-                </SwitchTransition>
-            </Section>
-            {isPending ? <Loading /> : null}
-        </>
+                        edit={
+                            activeCard === "Vehículo" && create ? true : false
+                        }
+                        unEdit={() => {
+                            setCreate(false);
+                        }}
+                        remove={false}
+                        unRemove={() => {
+                            setRemove(false);
+                        }}
+                    />
+                </Create>
+                {vehiculos.data[0] ? (
+                    vehiculos.data.map((aVehiculo) => (
+                        <Card
+                            key={aVehiculo.id}
+                            active={vehiculoId === aVehiculo.id ? true : false}
+                            edit={
+                                !create &&
+                                vehiculoId === aVehiculo.id &&
+                                (activeCard === "Vehículo" || remove)
+                                    ? true
+                                    : false
+                            }
+                            onEdit={() => setActiveCard("Vehículo")}
+                            onRemove={() => {
+                                setRemove(true);
+                            }}
+                        >
+                            <Box
+                                vehiculo={aVehiculo}
+                                onClick={() => setVehiculoId(aVehiculo.id)}
+                                matchModelo={matchModelo}
+                            />
+                            {vehiculoId === aVehiculo.id && (
+                                <Actions
+                                    vehiculo={aVehiculo}
+                                    edit={
+                                        !create && activeCard === "Vehículo"
+                                            ? true
+                                            : false
+                                    }
+                                    unEdit={() => {
+                                        setActiveCard("");
+                                    }}
+                                    remove={remove}
+                                    unRemove={() => {
+                                        setRemove(false);
+                                    }}
+                                />
+                            )}
+                        </Card>
+                    ))
+                ) : (
+                    <Empty>No se encontraron vehiculos</Empty>
+                )}
+            </>
+        </Section>
     );
 };
 

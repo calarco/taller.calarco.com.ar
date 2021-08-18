@@ -3,7 +3,6 @@ import styled, { css } from "styled-components";
 
 type Props = {
     readonly edit?: boolean;
-    readonly state?: string;
 };
 
 const Container = styled.div<Props>`
@@ -32,25 +31,9 @@ const Container = styled.div<Props>`
             z-index: 1500;
             box-shadow: none;
         `};
-
-    ${(props) =>
-        props.state === "entering" || props.state === "exiting"
-            ? css`
-                  will-change: opacity;
-                  visibility: hidden;
-                  opacity: 0;
-                  transition: 0.25s ease-in;
-              `
-            : css`
-                  will-change: auto;
-                  visibility: visible;
-                  opacity: 1;
-                  transform: initial;
-                  transition: 0.3s ease-out;
-              `};
 `;
 
-const Buttons = styled.div<Props>`
+const Buttons = styled.div`
     grid-row: 5;
     grid-column-start: 1;
     grid-column-end: span 3;
@@ -85,7 +68,6 @@ type ComponentProps = {
     type: string;
     edit: boolean;
     onEdit: (e: React.MouseEvent<HTMLButtonElement>) => void;
-    state?: string;
     children: React.ReactNode;
     className?: string;
 };
@@ -93,13 +75,12 @@ type ComponentProps = {
 const Create = function ({
     type,
     edit,
-    state,
     onEdit,
     children,
     className,
 }: ComponentProps) {
     return (
-        <Container edit={edit} state={state} className={className}>
+        <Container edit={edit} className={className}>
             {children}
             <Buttons>
                 <button type="button" onClick={onEdit}>

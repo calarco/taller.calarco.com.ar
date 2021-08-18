@@ -124,9 +124,9 @@ const Cliente = function ({
                 setRemove(true);
             }}
         >
-            {cliente.id === 0 || create ? (
+            <Box cliente={cliente} />
+            {create ? (
                 <Actions
-                    key={0}
                     cliente={{
                         id: 0,
                         nombre: "",
@@ -148,21 +148,17 @@ const Cliente = function ({
                     }}
                 />
             ) : (
-                <>
-                    <Box cliente={cliente} />
-                    <Actions
-                        key={cliente.id}
-                        cliente={cliente}
-                        edit={activeCard === "Cliente" ? true : false}
-                        unEdit={() => {
-                            setActiveCard("");
-                        }}
-                        remove={remove}
-                        unRemove={() => {
-                            setRemove(false);
-                        }}
-                    />
-                </>
+                <Actions
+                    cliente={cliente}
+                    edit={activeCard === "Cliente" ? true : false}
+                    unEdit={() => {
+                        setActiveCard("");
+                    }}
+                    remove={remove}
+                    unRemove={() => {
+                        setRemove(false);
+                    }}
+                />
             )}
         </Card>
     );

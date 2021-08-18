@@ -11,7 +11,10 @@ import { Gestion } from "views/Gestion";
 
 const Main = transition.div.attrs({
     unmountOnExit: true,
-    timeout: 300,
+    timeout: {
+        enter: 300,
+        exit: 200,
+    },
 })`
     will-change: opacity;
     padding-bottom: calc(env(safe-area-inset-bottom) + 0px);

@@ -1,11 +1,14 @@
 import React from "react";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
+import transition from "styled-transition-group";
 
-type Props = {
-    readonly remove?: boolean;
-};
-
-const Container = styled.div<Props>`
+const Container = transition.div.attrs({
+    unmountOnExit: true,
+    timeout: {
+        enter: 200,
+        exit: 150,
+    },
+})`
     position: absolute;
     z-index: 1001;
     top: -1px;
@@ -23,17 +26,27 @@ const Container = styled.div<Props>`
     grid-template-rows: 1fr auto;
     transition: 0.25s ease-in;
 
-    ${(props) =>
-        !props.remove &&
-        css`
-            visibility: hidden;
-            opacity: 0;
-            transition: 0.3s ease-in;
-            pointer-events: none;
-        `};
+    &:enter {
+        opacity: 0;
+    }
+
+    &:enter-active {
+        opacity: 1;
+        transform: initial;
+        transition: 0.2s ease-out;
+    }
+
+    &:exit {
+        opacity: 1;
+    }
+
+    &:exit-active {
+        opacity: 0;
+        transition: 0.15s ease-in;
+    }
 `;
 
-const Buttons = styled.div<Props>`
+const Buttons = styled.div`
     width: 100%;
     height: 3rem;
     overflow: hidden;
@@ -64,7 +77,7 @@ const Buttons = styled.div<Props>`
 
 const VehiculoForm = function ({ remove, unRemove, handleDelete, children }) {
     return (
-        <Container remove={remove}>
+        <Container in={remove}>
             <h5>{children}</h5>
             <Buttons>
                 <button type="button" onClick={unRemove}>

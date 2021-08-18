@@ -1,11 +1,14 @@
 import React from "react";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
+import transition from "styled-transition-group";
 
-type Props = {
-    readonly edit?: boolean;
-};
-
-const Container = styled.form<Props>`
+const Container = transition.form.attrs({
+    unmountOnExit: true,
+    timeout: {
+        enter: 200,
+        exit: 150,
+    },
+})`
     will-change: opacity;
     content-visibility: auto;
     position: absolute;
@@ -29,14 +32,26 @@ const Container = styled.form<Props>`
         background: var(--surface);
     }
 
-    ${(props) =>
-        !props.edit &&
-        css`
-            visibility: hidden;
-            opacity: 0;
-            transform: translateY(-0.75rem);
-            transition: 0.3s ease-in;
-        `};
+    &:enter {
+        opacity: 0;
+        transform: translateY(-1rem);
+    }
+
+    &:enter-active {
+        opacity: 1;
+        transform: initial;
+        transition: 0.2s ease-out;
+    }
+
+    &:exit {
+        opacity: 1;
+    }
+
+    &:exit-active {
+        opacity: 0;
+        transform: translateY(-1rem);
+        transition: 0.15s ease-in;
+    }
 `;
 
 const Buttons = styled.div`
@@ -85,7 +100,7 @@ const Form = function ({
     className,
 }: ComponentProps) {
     return (
-        <Container edit={edit} onSubmit={onSubmit} className={className}>
+        <Container in={edit} onSubmit={onSubmit} className={className}>
             {children}
             <Buttons>
                 <button type="button" onClick={unEdit}>
