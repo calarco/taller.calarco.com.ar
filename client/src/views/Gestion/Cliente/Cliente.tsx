@@ -1,12 +1,40 @@
 import React, { useState, useEffect, useCallback } from "react";
 import feathersClient from "feathersClient";
-import styled, { css } from "styled-components";
+import { css } from "styled-components";
+import transition from "styled-transition-group";
+import { SwitchTransition } from "react-transition-group";
 
 import CardComponent from "components/Card";
 import Box from "./Box";
 import Actions from "./Actions";
 
-const Card = styled(CardComponent)`
+const Card = transition(CardComponent).attrs({
+    unmountOnExit: true,
+    timeout: {
+        enter: 300,
+        exit: 150,
+    },
+})`
+    will-change: opacity;
+    
+    &:enter {
+        opacity: 0;
+    }
+
+    &:enter-active {
+        opacity: 1;
+        transition: 0.3s ease-out;
+    }
+
+    &:exit {
+        opacity: 1;
+    }
+
+    &:exit-active {
+        opacity: 0;
+        transition: 0.15s ease-in;
+    }
+
     ${(props) =>
         (props.active || props.edit) &&
         css`
@@ -38,7 +66,6 @@ const Cliente = function ({
     setClienteId,
     setVehiculoId,
     create,
-    setCreate,
     activeCard,
     setActiveCard,
 }) {
@@ -116,40 +143,33 @@ const Cliente = function ({
     }, [clienteId, loadCliente]);
 
     return (
-        <Card
-            active={true}
-            edit={activeCard === "Cliente" ? true : false}
-            onEdit={() => setActiveCard("Cliente")}
-            onRemove={() => {
-                setRemove(true);
-            }}
-        >
-            <Box cliente={cliente} />
-            {create ? (
+        <SwitchTransition>
+            <Card
+                key={clienteId}
+                active={true}
+                edit={activeCard === "Cliente" ? true : false}
+                onEdit={() => setActiveCard("Cliente")}
+                onRemove={() => {
+                    setRemove(true);
+                }}
+            >
+                <Box cliente={cliente} />
                 <Actions
-                    cliente={{
-                        id: 0,
-                        nombre: "",
-                        apellido: "",
-                        dni: "",
-                        empresa: "",
-                        telefono: "",
-                        email: "",
-                        createdAt: "",
-                        updatedAt: "",
-                    }}
-                    edit={true}
-                    unEdit={() => {
-                        setCreate(false);
-                    }}
-                    remove={remove}
-                    unRemove={() => {
-                        setRemove(false);
-                    }}
-                />
-            ) : (
-                <Actions
-                    cliente={cliente}
+                    cliente={
+                        create
+                            ? {
+                                  id: 0,
+                                  nombre: "",
+                                  apellido: "",
+                                  dni: "",
+                                  empresa: "",
+                                  telefono: "",
+                                  email: "",
+                                  createdAt: "",
+                                  updatedAt: "",
+                              }
+                            : cliente
+                    }
                     edit={activeCard === "Cliente" ? true : false}
                     unEdit={() => {
                         setActiveCard("");
@@ -159,8 +179,8 @@ const Cliente = function ({
                         setRemove(false);
                     }}
                 />
-            )}
-        </Card>
+            </Card>
+        </SwitchTransition>
     );
 };
 

@@ -1,10 +1,60 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useTransition } from "react";
 import feathersClient from "feathersClient";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import Vehiculo from "./Vehiculo";
 
-const Container = styled.section`
+type Props = {
+    readonly active?: boolean;
+    readonly loading?: boolean;
+};
+
+const Buscador = styled.form<Props>`
+    grid-column-end: 1;
+    grid-row-start: 1;
+    width: 100%;
+    border-radius: 4px;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr auto;
+
+    ${(props) =>
+        props.active &&
+        css`
+            border-radius: 4px;
+            background: var(--surface);
+            box-shadow: var(--shadow);
+            transition: 0.2s ease-out;
+        `};
+
+    input[type="search"] {
+        margin: 0;
+        border: none;
+    }
+
+    input[type="search"]:focus {
+        border: none;
+    }
+
+    button {
+        height: 3rem;
+        padding: 0 1.5rem;
+        margin: 0;
+        border: none;
+        color: var(--secondary);
+
+        &::after {
+            content: "";
+            position: absolute;
+            top: calc(50% - 1rem);
+            left: 0;
+            height: 2rem;
+            border-left: var(--border);
+        }
+    }
+`;
+
+const Container = styled.section<Props>`
     grid-column-end: 1;
     grid-row-start: 2;
     grid-row-end: 2;
@@ -19,7 +69,13 @@ const Container = styled.section`
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    transition: 0.3s ease-out;
+    transition: 0.2s ease-out;
+
+    ${(props) =>
+        props.loading &&
+        css`
+            opacity: 0.7;
+        `};
 `;
 
 const Empty = styled.h5`
@@ -59,11 +115,17 @@ const Cliente = styled.div`
 `;
 
 const Busqueda = function ({
-    busqueda,
+    clienteId,
     setClienteId,
+    vehiculoId,
     setVehiculoId,
+    create,
+    setCreate,
     matchModelo,
 }) {
+    const [busqueda, setBusqueda] = useState("");
+    const [isPending, startTransition] = useTransition();
+
     const [clientes, setClientes] = useState({
         total: 0,
         limit: 0,
@@ -175,7 +237,44 @@ const Busqueda = function ({
 
     return (
         <>
-            <Container>
+            <Buscador
+                autoComplete="off"
+                active={vehiculoId === 0 ? true : false}
+            >
+                <input
+                    type="search"
+                    name="search"
+                    placeholder="Buscar"
+                    onChange={(event) =>
+                        startTransition(() => {
+                            setBusqueda(event.target.value);
+                        })
+                    }
+                    onFocus={() => setVehiculoId(0)}
+                    value={busqueda}
+                    autoFocus
+                />
+                {clienteId !== 0 && !create ? (
+                    <button
+                        type="button"
+                        onClick={() => {
+                            setCreate(true);
+                        }}
+                    >
+                        Crear cliente
+                    </button>
+                ) : clienteId !== 0 && create ? (
+                    <button
+                        type="button"
+                        onClick={() => {
+                            setCreate(false);
+                        }}
+                    >
+                        Cancelar
+                    </button>
+                ) : undefined}
+            </Buscador>
+            <Container loading={isPending}>
                 {busqueda === "" ? (
                     vehiculos.data[0] &&
                     vehiculos.data[0].id !== 0 &&

@@ -1,18 +1,13 @@
-import React, { useState, useEffect, useTransition } from "react";
-import styled, { css } from "styled-components";
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
 import transition from "styled-transition-group";
-import { SwitchTransition } from "react-transition-group";
 
 import { Busqueda } from "./Busqueda";
 import { Cliente } from "./Cliente";
 import { Vehiculos } from "./Vehiculos";
 import { Reparaciones } from "./Reparaciones";
 
-type Props = {
-    readonly active?: boolean;
-};
-
-const Container = styled.main<Props>`
+const Container = styled.main`
     width: 100%;
     height: 100vh;
     overflow: hidden;
@@ -31,7 +26,7 @@ const Panels = styled.div`
     will-change: opacity;
 `;
 
-const Left = styled.div`
+const Panel = styled.div`
     position: relative;
     height: calc(100vh - 4.75rem);
     border-radius: 4px;
@@ -40,9 +35,10 @@ const Left = styled.div`
     box-shadow: var(--shadow-variant);
     display: grid;
     grid-template-rows: auto 1fr;
+    transition: 0.2s ease-in-out;
 `;
 
-const Right = transition.div.attrs({
+const Cover = transition.div.attrs({
     unmountOnExit: true,
     timeout: {
         enter: 300,
@@ -51,17 +47,20 @@ const Right = transition.div.attrs({
 })`
     will-change: opacity;
     position: relative;
-    height: calc(100vh - 4.75rem);
+    grid-column-end: 1;
+    grid-row-start: 2;
+    grid-row-end: 2;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
     border-radius: 4px;
-    background: var(--surface-variant);
-    border: var(--border-variant);
-    box-shadow: var(--shadow-variant);
-    display: grid;
-    grid-template-rows: auto 1fr;
+    background: var(--surface);
+    border-top: var(--border-variant);
+    box-shadow: var(--shadow);
 
     &:enter {
         opacity: 0;
-        transform: translateX(-1rem);
+        transform: scale(1.05);
     }
 
     &:enter-active {
@@ -76,61 +75,9 @@ const Right = transition.div.attrs({
 
     &:exit-active {
         opacity: 0;
+        transform: scale(1.05);
         transition: 0.15s ease-in;
     }
-`;
-
-const Buscador = styled.form<Props>`
-    grid-column-end: 1;
-    grid-row-start: 1;
-    width: 100%;
-    border-radius: 4px;
-    overflow: hidden;
-    display: grid;
-    grid-template-columns: 1fr auto;
-
-    ${(props) =>
-        props.active &&
-        css`
-            border-radius: 4px;
-            background: var(--surface);
-            box-shadow: var(--shadow);
-            transition: 0.2s ease-out;
-        `};
-
-    input[type="search"] {
-        margin: 0;
-        border: none;
-    }
-
-    input[type="search"]:focus {
-        border: none;
-    }
-
-    button {
-        height: 3rem;
-        padding: 0 1.5rem;
-        margin: 0;
-        border: none;
-        color: var(--secondary);
-
-        &::after {
-            content: "";
-            position: absolute;
-            top: calc(50% - 1rem);
-            left: 0;
-            height: 2rem;
-            border-left: var(--border);
-        }
-    }
-`;
-
-const Loading = styled.div`
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    height: 0.25rem;
-    background: var(--primary);
 `;
 
 const Bar = styled.div`
@@ -160,19 +107,14 @@ const Bar = styled.div`
 `;
 
 const Gestion = function ({ setUser, matchModelo }) {
-    const [isPending, startTransition] = useTransition();
-    const [busqueda, setBusqueda] = useState("");
     const [clienteId, setClienteId] = useState(0);
     const [vehiculoId, setVehiculoId] = useState(0);
-    const [activeCard, setActiveCard] = useState("");
-    const [create, setCreate] = useState(false);
+    const [activeCard, setActiveCard] = useState("Cliente");
+    const [create, setCreate] = useState(true);
 
-    const handleInputChange = (event) => {
-        event.persist();
-        startTransition(() => {
-            setBusqueda(event.target.value);
-        });
-    };
+    useEffect(() => {
+        clienteId === 0 && setCreate(true);
+    }, [clienteId]);
 
     useEffect(() => {
         activeCard !== "Cliente" && setCreate(false);
@@ -185,78 +127,44 @@ const Gestion = function ({ setUser, matchModelo }) {
     return (
         <Container>
             <Panels>
-                <Left>
-                    <Buscador
-                        autoComplete="off"
-                        active={vehiculoId === 0 ? true : false}
-                    >
-                        <input
-                            type="search"
-                            name="search"
-                            placeholder="Buscar"
-                            onChange={handleInputChange}
-                            onFocus={() => setVehiculoId(0)}
-                            value={busqueda}
-                            autoFocus
-                        />
-                        {clienteId !== 0 && !create ? (
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    setCreate(true);
-                                }}
-                            >
-                                Crear cliente
-                            </button>
-                        ) : clienteId !== 0 && create ? (
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    setCreate(false);
-                                }}
-                            >
-                                Cancelar
-                            </button>
-                        ) : undefined}
-                    </Buscador>
+                <Panel>
                     <Busqueda
-                        busqueda={busqueda}
+                        clienteId={clienteId}
                         setClienteId={setClienteId}
+                        vehiculoId={vehiculoId}
                         setVehiculoId={setVehiculoId}
+                        create={create}
+                        setCreate={setCreate}
                         matchModelo={matchModelo}
                     />
-                    <Reparaciones
-                        vehiculoId={vehiculoId}
+                    <Cover in={vehiculoId !== 0}>
+                        <Reparaciones
+                            vehiculoId={vehiculoId}
+                            activeCard={activeCard}
+                            setActiveCard={setActiveCard}
+                        />
+                    </Cover>
+                </Panel>
+                <Panel>
+                    {clienteId !== 0 && (
+                        <Vehiculos
+                            clienteId={clienteId}
+                            vehiculoId={vehiculoId}
+                            setVehiculoId={setVehiculoId}
+                            activeCard={activeCard}
+                            setActiveCard={setActiveCard}
+                            matchModelo={matchModelo}
+                        />
+                    )}
+                    <Cliente
+                        clienteId={clienteId}
+                        setClienteId={setClienteId}
+                        setVehiculoId={setVehiculoId}
+                        create={create}
                         activeCard={activeCard}
                         setActiveCard={setActiveCard}
                     />
-                    {isPending ? <Loading /> : null}
-                </Left>
-                <SwitchTransition>
-                    <Right key={clienteId}>
-                        {clienteId !== 0 && (
-                            <>
-                                <Vehiculos
-                                    clienteId={clienteId}
-                                    vehiculoId={vehiculoId}
-                                    setVehiculoId={setVehiculoId}
-                                    activeCard={activeCard}
-                                    setActiveCard={setActiveCard}
-                                    matchModelo={matchModelo}
-                                />
-                                <Cliente
-                                    clienteId={clienteId}
-                                    setClienteId={setClienteId}
-                                    setVehiculoId={setVehiculoId}
-                                    create={create}
-                                    setCreate={setCreate}
-                                    activeCard={activeCard}
-                                    setActiveCard={setActiveCard}
-                                />
-                            </>
-                        )}
-                    </Right>
-                </SwitchTransition>
+                </Panel>
             </Panels>
             <Bar>
                 <button

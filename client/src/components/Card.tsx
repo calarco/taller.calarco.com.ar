@@ -1,5 +1,6 @@
 import React from "react";
 import styled, { css } from "styled-components";
+import transition from "styled-transition-group";
 
 type Props = {
     readonly active?: boolean;
@@ -10,7 +11,7 @@ const Container = styled.div<Props>`
     position: relative;
     border-radius: 4px;
     border: 1px solid rgba(0, 0, 0, 0);
-    transition: 0.25s ease-in;
+    transition: 0.2s ease-in;
 
     ${(props) =>
         !props.active &&
@@ -46,7 +47,6 @@ const Container = styled.div<Props>`
         css`
             position: sticky;
             top: 0;
-            bottom: 6rem;
             z-index: 1500;
             backdrop-filter: none;
             border: 1px solid rgba(0, 0, 0, 0);
@@ -70,7 +70,13 @@ const Container = styled.div<Props>`
     }
 `;
 
-const Buttons = styled.div<Props>`
+const Buttons = transition.div.attrs({
+    unmountOnExit: true,
+    timeout: {
+        enter: 200,
+        exit: 150,
+    },
+})`
     grid-row: 5;
     grid-column-start: 1;
     grid-column-end: span 3;
@@ -80,7 +86,6 @@ const Buttons = styled.div<Props>`
     overflow: hidden;
     border-top: var(--border);
     display: flex;
-    transition: 0.25s ease-out;
 
     button {
         width: 100%;
@@ -99,6 +104,24 @@ const Buttons = styled.div<Props>`
             height: 2rem;
             border-left: var(--border);
         }
+    }
+
+    &:enter {
+        max-height: 0;
+    }
+
+    &:enter-active {
+        max-height: 3rem;
+        transition: 0.2s ease-out;
+    }
+
+    &:exit {
+        max-height: 3rem;
+    }
+
+    &:exit-active {
+        max-height: 0;
+        transition: 0.15s ease-in;
     }
 `;
 
@@ -122,16 +145,14 @@ const Card = function ({
     return (
         <Container active={active} edit={edit} className={className}>
             {children}
-            {active && (
-                <Buttons>
-                    <button type="button" onClick={onRemove}>
-                        Borrar
-                    </button>
-                    <button type="button" onClick={onEdit}>
-                        Editar
-                    </button>
-                </Buttons>
-            )}
+            <Buttons in={active}>
+                <button type="button" onClick={onRemove}>
+                    Borrar
+                </button>
+                <button type="button" onClick={onEdit}>
+                    Editar
+                </button>
+            </Buttons>
         </Container>
     );
 };

@@ -6,9 +6,6 @@ import FormComponent from "components/Form";
 import Remove from "components/Remove";
 
 type Props = {
-    readonly create?: boolean;
-    readonly active?: boolean;
-    readonly edit?: boolean;
     readonly error?: boolean;
 };
 
@@ -122,15 +119,14 @@ const Actions = function ({ cliente, edit, unEdit, remove, unRemove }) {
     };
 
     useEffect(() => {
-        cliente.id !== 0 &&
-            setInputs({
-                nombre: cliente.nombre,
-                apellido: cliente.apellido,
-                dni: cliente.dni || "",
-                empresa: cliente.empresa || "",
-                telefono: cliente.telefono || "",
-                email: cliente.email || "",
-            });
+        setInputs({
+            nombre: cliente.nombre,
+            apellido: cliente.apellido,
+            dni: cliente.dni || "",
+            empresa: cliente.empresa || "",
+            telefono: cliente.telefono || "",
+            email: cliente.email || "",
+        });
     }, [cliente]);
 
     return (

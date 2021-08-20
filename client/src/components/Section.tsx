@@ -8,15 +8,12 @@ type Props = {
 
 const Container = styled.section<Props>`
     content-visibility: auto;
-    visibility: visible;
-    opacity: 1;
     position: relative;
     width: 100%;
     height: 100%;
     min-height: 25rem;
     max-height: 100%;
     padding: 1.5rem;
-    border-radius: 4px;
     overflow-y: overlay;
     display: flex;
     flex-direction: column;

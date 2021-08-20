@@ -2,7 +2,7 @@ import React from "react";
 import styled, { css } from "styled-components";
 
 type Props = {
-    readonly edit?: boolean;
+    readonly active?: boolean;
 };
 
 const Container = styled.div<Props>`
@@ -25,7 +25,7 @@ const Container = styled.div<Props>`
     }
 
     ${(props) =>
-        props.edit &&
+        props.active &&
         css`
             bottom: 6rem;
             z-index: 1500;
@@ -66,24 +66,24 @@ const Buttons = styled.div`
 
 type ComponentProps = {
     type: string;
-    edit: boolean;
-    onEdit: (e: React.MouseEvent<HTMLButtonElement>) => void;
+    active: boolean;
+    onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
     children: React.ReactNode;
     className?: string;
 };
 
 const Create = function ({
     type,
-    edit,
-    onEdit,
+    active,
+    onClick,
     children,
     className,
 }: ComponentProps) {
     return (
-        <Container edit={edit} className={className}>
+        <Container active={active} className={className}>
             {children}
             <Buttons>
-                <button type="button" onClick={onEdit}>
+                <button type="button" onClick={onClick}>
                     Crear {type}
                 </button>
             </Buttons>
