@@ -145,7 +145,7 @@ const Cliente = function ({
     return (
         <SwitchTransition>
             <Card
-                key={clienteId}
+                key={cliente.id}
                 active={true}
                 edit={activeCard === "Cliente" ? true : false}
                 onEdit={() => setActiveCard("Cliente")}

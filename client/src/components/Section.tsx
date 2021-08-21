@@ -2,8 +2,7 @@ import React from "react";
 import styled, { css } from "styled-components";
 
 type Props = {
-    readonly overlay?: boolean;
-    readonly state?: string;
+    overlay?: boolean;
 };
 
 const Container = styled.section<Props>`
@@ -19,16 +18,6 @@ const Container = styled.section<Props>`
     flex-direction: column;
     gap: 1.5rem;
     transition: 0.3s ease-out;
-
-    ${(props) =>
-        props.state &&
-        props.state !== "entered" &&
-        css`
-            visibility: hidden;
-            opacity: 0;
-            transform: translateY(0.75rem);
-            transition: 0.3s ease-in;
-        `};
 
     ${(props) =>
         props.overlay &&
@@ -67,7 +56,6 @@ const Overlay = styled.div<Props>`
 type ComponentProps = {
     overlay: boolean;
     onClick: (e: React.MouseEvent<HTMLDivElement>) => void;
-    state?: string;
     children: React.ReactNode;
     className?: string;
 };
@@ -75,12 +63,11 @@ type ComponentProps = {
 const Section = function ({
     overlay,
     onClick,
-    state,
     children,
     className,
 }: ComponentProps) {
     return (
-        <Container overlay={overlay} state={state} className={className}>
+        <Container overlay={overlay} className={className}>
             {children}
             <Overlay overlay={overlay} onClick={onClick} />
         </Container>

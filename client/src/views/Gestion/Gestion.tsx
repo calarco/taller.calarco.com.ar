@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import transition from "styled-transition-group";
 
 import { Busqueda } from "./Busqueda";
 import { Cliente } from "./Cliente";
@@ -36,48 +35,6 @@ const Panel = styled.div`
     display: grid;
     grid-template-rows: auto 1fr;
     transition: 0.2s ease-in-out;
-`;
-
-const Cover = transition.div.attrs({
-    unmountOnExit: true,
-    timeout: {
-        enter: 300,
-        exit: 150,
-    },
-})`
-    will-change: opacity;
-    position: relative;
-    grid-column-end: 1;
-    grid-row-start: 2;
-    grid-row-end: 2;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    border-radius: 4px;
-    background: var(--surface);
-    border-top: var(--border-variant);
-    box-shadow: var(--shadow);
-
-    &:enter {
-        opacity: 0;
-        transform: scale(1.05);
-    }
-
-    &:enter-active {
-        opacity: 1;
-        transform: initial;
-        transition: 0.3s ease-out;
-    }
-
-    &:exit {
-        opacity: 1;
-    }
-
-    &:exit-active {
-        opacity: 0;
-        transform: scale(1.05);
-        transition: 0.15s ease-in;
-    }
 `;
 
 const Bar = styled.div`
@@ -137,13 +94,11 @@ const Gestion = function ({ setUser, matchModelo }) {
                         setCreate={setCreate}
                         matchModelo={matchModelo}
                     />
-                    <Cover in={vehiculoId !== 0}>
-                        <Reparaciones
-                            vehiculoId={vehiculoId}
-                            activeCard={activeCard}
-                            setActiveCard={setActiveCard}
-                        />
-                    </Cover>
+                    <Reparaciones
+                        vehiculoId={vehiculoId}
+                        activeCard={activeCard}
+                        setActiveCard={setActiveCard}
+                    />
                 </Panel>
                 <Panel>
                     {clienteId !== 0 && (

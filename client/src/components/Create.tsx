@@ -27,7 +27,6 @@ const Container = styled.div<Props>`
     ${(props) =>
         props.active &&
         css`
-            bottom: 6rem;
             z-index: 1500;
             box-shadow: none;
         `};

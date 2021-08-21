@@ -313,7 +313,7 @@ const GlobalStyle = createGlobalStyle`
         margin: 0.5rem 0rem;
         padding: 0.25rem 0.5rem;
         border-radius: 4px;
-        background: var(--surface-variant);
+        background: rgba(236, 239, 241, 0.7);
         border: none;
     }
 

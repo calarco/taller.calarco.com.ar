@@ -1,6 +1,8 @@
-import React, { useState, useEffect, useTransition } from "react";
+import React, { useState, useEffect, startTransition } from "react";
 import feathersClient from "feathersClient";
 import styled, { css } from "styled-components";
+import transition from "styled-transition-group";
+import { SwitchTransition } from "react-transition-group";
 
 import Vehiculo from "./Vehiculo";
 
@@ -17,6 +19,7 @@ const Buscador = styled.form<Props>`
     overflow: hidden;
     display: grid;
     grid-template-columns: 1fr auto;
+    transition: 0.15s ease-in;
 
     ${(props) =>
         props.active &&
@@ -35,26 +38,56 @@ const Buscador = styled.form<Props>`
     input[type="search"]:focus {
         border: none;
     }
+`;
 
-    button {
-        height: 3rem;
-        padding: 0 1.5rem;
-        margin: 0;
-        border: none;
-        color: var(--secondary);
+const CreateButton = transition.button.attrs({
+    unmountOnExit: true,
+    timeout: {
+        enter: 200,
+        exit: 150,
+    },
+})`
+    height: 3rem;
+    padding: 0 1.5rem;
+    margin: 0;
+    border: none;
+    color: var(--secondary);
 
-        &::after {
-            content: "";
-            position: absolute;
-            top: calc(50% - 1rem);
-            left: 0;
-            height: 2rem;
-            border-left: var(--border);
-        }
+    &::after {
+        content: "";
+        position: absolute;
+        top: calc(50% - 1rem);
+        left: 0;
+        height: 2rem;
+        border-left: var(--border);
+    }
+    
+    &:enter {
+        opacity: 0;
+    }
+
+    &:enter-active {
+        opacity: 1;
+        transition: 0.2s ease-out;
+    }
+
+    &:exit {
+        opacity: 1;
+    }
+
+    &:exit-active {
+        opacity: 0;
+        transition: 0.15s ease-in;
     }
 `;
 
-const Container = styled.section<Props>`
+const Container = transition.section.attrs({
+    unmountOnExit: true,
+    timeout: {
+        enter: 300,
+        exit: 150,
+    },
+})`
     grid-column-end: 1;
     grid-row-start: 2;
     grid-row-end: 2;
@@ -69,13 +102,24 @@ const Container = styled.section<Props>`
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    transition: 0.2s ease-out;
 
-    ${(props) =>
-        props.loading &&
-        css`
-            opacity: 0.7;
-        `};
+    &:enter {
+        opacity: 0;
+    }
+
+    &:enter-active {
+        opacity: 1;
+        transition: 0.3s ease-out;
+    }
+
+    &:exit {
+        opacity: 1;
+    }
+
+    &:exit-active {
+        opacity: 0;
+        transition: 0.15s ease-in;
+    }
 `;
 
 const Empty = styled.h5`
@@ -123,8 +167,8 @@ const Busqueda = function ({
     setCreate,
     matchModelo,
 }) {
+    const [count, setCount] = useState(0);
     const [busqueda, setBusqueda] = useState("");
-    const [isPending, startTransition] = useTransition();
 
     const [clientes, setClientes] = useState({
         total: 0,
@@ -175,6 +219,7 @@ const Busqueda = function ({
                       },
                   })
                   .then((clientes) => {
+                      setCount((count) => count + 1);
                       setClientes(clientes);
                   })
                   .catch((error) => {
@@ -191,6 +236,7 @@ const Busqueda = function ({
                       },
                   })
                   .then((vehiculos) => {
+                      setCount((count) => count + 1);
                       setVehiculos(vehiculos);
                   })
                   .catch((error) => {
@@ -211,6 +257,7 @@ const Busqueda = function ({
                       },
                   })
                   .then((clientes) => {
+                      setCount((count) => count + 1);
                       setClientes(clientes);
                   })
                   .catch((error) => {
@@ -228,6 +275,7 @@ const Busqueda = function ({
                       },
                   })
                   .then((vehiculos) => {
+                      setCount((count) => count + 1);
                       setVehiculos(vehiculos);
                   })
                   .catch((error) => {
@@ -254,42 +302,38 @@ const Busqueda = function ({
                     value={busqueda}
                     autoFocus
                 />
-                {clienteId !== 0 && !create ? (
-                    <button
-                        type="button"
-                        onClick={() => {
-                            setCreate(true);
-                        }}
-                    >
-                        Crear cliente
-                    </button>
-                ) : clienteId !== 0 && create ? (
-                    <button
-                        type="button"
-                        onClick={() => {
-                            setCreate(false);
-                        }}
-                    >
-                        Cancelar
-                    </button>
-                ) : undefined}
+                {clienteId !== 0 && (
+                    <SwitchTransition>
+                        {!create ? (
+                            <CreateButton
+                                key={0}
+                                type="button"
+                                onClick={() => {
+                                    setCreate(true);
+                                }}
+                            >
+                                Crear cliente
+                            </CreateButton>
+                        ) : (
+                            <CreateButton
+                                key={1}
+                                type="button"
+                                onClick={() => {
+                                    setCreate(false);
+                                }}
+                            >
+                                Cancelar
+                            </CreateButton>
+                        )}
+                    </SwitchTransition>
+                )}
             </Buscador>
-            <Container loading={isPending}>
-                {busqueda === "" ? (
-                    vehiculos.data[0] &&
-                    vehiculos.data[0].id !== 0 &&
-                    vehiculos.data.map((aVehiculo) => (
-                        <Vehiculo
-                            key={aVehiculo.id}
-                            vehiculo={aVehiculo}
-                            setClienteId={setClienteId}
-                            setVehiculoId={setVehiculoId}
-                            matchModelo={matchModelo}
-                        />
-                    ))
-                ) : vehiculos.data[0] || clientes.data[0] ? (
-                    <>
-                        {vehiculos.data.map((aVehiculo) => (
+            <SwitchTransition>
+                <Container key={count}>
+                    {busqueda === "" ? (
+                        vehiculos.data[0] &&
+                        vehiculos.data[0].id !== 0 &&
+                        vehiculos.data.map((aVehiculo) => (
                             <Vehiculo
                                 key={aVehiculo.id}
                                 vehiculo={aVehiculo}
@@ -297,25 +341,37 @@ const Busqueda = function ({
                                 setVehiculoId={setVehiculoId}
                                 matchModelo={matchModelo}
                             />
-                        ))}
-                        {clientes.data.map((aCliente) => (
-                            <Cliente
-                                key={aCliente.id}
-                                onClick={() => {
-                                    setClienteId(aCliente.id);
-                                    setVehiculoId(0);
-                                }}
-                            >
-                                <h4>
-                                    {aCliente.nombre} {aCliente.apellido}
-                                </h4>
-                            </Cliente>
-                        ))}
-                    </>
-                ) : (
-                    <Empty>No se encontraron resultados</Empty>
-                )}
-            </Container>
+                        ))
+                    ) : vehiculos.data[0] || clientes.data[0] ? (
+                        <>
+                            {vehiculos.data.map((aVehiculo) => (
+                                <Vehiculo
+                                    key={aVehiculo.id}
+                                    vehiculo={aVehiculo}
+                                    setClienteId={setClienteId}
+                                    setVehiculoId={setVehiculoId}
+                                    matchModelo={matchModelo}
+                                />
+                            ))}
+                            {clientes.data.map((aCliente) => (
+                                <Cliente
+                                    key={aCliente.id}
+                                    onClick={() => {
+                                        setClienteId(aCliente.id);
+                                        setVehiculoId(0);
+                                    }}
+                                >
+                                    <h4>
+                                        {aCliente.nombre} {aCliente.apellido}
+                                    </h4>
+                                </Cliente>
+                            ))}
+                        </>
+                    ) : (
+                        <Empty>No se encontraron resultados</Empty>
+                    )}
+                </Container>
+            </SwitchTransition>
         </>
     );
 };
