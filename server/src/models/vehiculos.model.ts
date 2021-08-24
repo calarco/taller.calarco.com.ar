@@ -15,7 +15,8 @@ export default function (app: Application): typeof Model {
             },
             year: {
                 type: DataTypes.STRING(4),
-                allowNull: true,
+                allowNull: false,
+                defaultValue: ""
             },
             combustible: {
                 type: DataTypes.ENUM(
@@ -29,15 +30,19 @@ export default function (app: Application): typeof Model {
                 defaultValue: "Nafta"
             },
             cilindrada: {
-                type: DataTypes.STRING,
-                allowNull: true,
+                type: DataTypes.STRING(7),
+                allowNull: false,
                 defaultValue: ""
             },
             vin: {
                 type: DataTypes.STRING(17),
-                allowNull: true,
+                allowNull: false,
                 defaultValue: ""
-            }
+            },
+            companyId: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+            },
         },
         {
             hooks: {

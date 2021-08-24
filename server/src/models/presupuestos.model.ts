@@ -9,7 +9,7 @@ export default function (app: Application): typeof Model {
     const presupuestos = sequelizeClient.define("presupuestos", 
         {
             patente: {
-                type: DataTypes.STRING,
+                type: DataTypes.STRING(7),
                 allowNull: false,
             },
             km: {
@@ -39,7 +39,11 @@ export default function (app: Application): typeof Model {
             repuestos: {
                 type: DataTypes.JSON,
                 allowNull: false
-            }
+            },
+            companyId: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+            },
         },
         {
             hooks: {

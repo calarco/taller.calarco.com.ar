@@ -45,7 +45,11 @@ export default function (app: Application): typeof Model {
                     min: 0o0,
                     max: 9999999
                 }
-            }
+            },
+            companyId: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+            },
         },
         {
             hooks: {

@@ -23,7 +23,6 @@ const Container = styled.section<Props>`
         props.overlay &&
         css`
             overflow: hidden;
-            background: var(--surface-variant);
         `};
 `;
 

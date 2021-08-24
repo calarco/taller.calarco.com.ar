@@ -151,7 +151,7 @@ const App = function () {
             <ThemeProvider theme={darkTheme ? themeDark : themeLight}>
                 <GlobalStyle />
             </ThemeProvider>
-            <SwitchTransition mode="out-in">
+            <SwitchTransition>
                 <Main key={user ? "0" : "1"}>
                     {user ? (
                         <Gestion setUser={setUser} matchModelo={matchModelo} />

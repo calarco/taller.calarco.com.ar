@@ -39,6 +39,10 @@ export default function (app: Application): typeof Model {
                 allowNull: false,
                 defaultValue: ""
             },
+            companyId: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+            },
         },
         {
             hooks: {

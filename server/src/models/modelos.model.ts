@@ -11,7 +11,11 @@ export default function (app: Application): typeof Model {
             nombre: {
                 type: DataTypes.STRING,
                 allowNull: false
-            }
+            },
+            companyId: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+            },
         },
         {
             hooks: {

@@ -87,8 +87,8 @@ const Error = styled.div`
 
 const Login = function ({ setUser }) {
     const [inputs, setInputs] = useState({
-        user: "test",
-        password: "1234",
+        user: "",
+        password: "",
         loading: false,
         error: "",
     });
