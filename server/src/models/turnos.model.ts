@@ -10,11 +10,11 @@ export default function (app: Application): typeof Model {
         {
             fecha: {
                 type: DataTypes.DATE,
-                allowNull: false
+                allowNull: false,
             },
             motivo: {
                 type: DataTypes.STRING,
-                allowNull: false
+                allowNull: false,
             }
         },
         {
@@ -23,7 +23,8 @@ export default function (app: Application): typeof Model {
                     options.raw = true;
                 }
             }
-        });
+        }
+    );
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   (turnos as any).associate = function (models: any): void {

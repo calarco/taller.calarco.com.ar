@@ -11,33 +11,33 @@ export default function (app: Application): typeof Model {
             nombre: {
                 type: DataTypes.STRING,
                 allowNull: false,
-                defaultValue: ""
+                defaultValue: "",
             },
             apellido: {
                 type: DataTypes.STRING,
                 allowNull: false,
-                defaultValue: ""
+                defaultValue: "",
             },
             dni: {
                 type: DataTypes.STRING,
                 allowNull: false,
-                defaultValue: ""
+                defaultValue: "",
             },
             empresa: {
                 type: DataTypes.STRING,
                 allowNull: false,
-                defaultValue: ""
+                defaultValue: "",
             },
             telefono: {
                 type: DataTypes.STRING,
                 allowNull: false,
                 unique: true,
-                defaultValue: ""
+                defaultValue: "",
             },
             email: {
                 type: DataTypes.STRING,
                 allowNull: false,
-                defaultValue: ""
+                defaultValue: "",
             },
             companyId: {
                 type: DataTypes.INTEGER,
@@ -50,7 +50,8 @@ export default function (app: Application): typeof Model {
                     options.raw = true;
                 }
             }
-        });
+        }
+    );
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   (clientes as any).associate = function (models: any): void {

@@ -17,6 +17,10 @@ export default function (app: Application): typeof Model {
             type: DataTypes.STRING,
             allowNull: false
         },
+        companyId: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
         roles: {
             type: DataTypes.STRING,
             allowNull: false,

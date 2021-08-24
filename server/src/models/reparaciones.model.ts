@@ -15,16 +15,16 @@ export default function (app: Application): typeof Model {
                     isInt: true,
                     isNumeric: true,
                     min: 0o0,
-                    max: 9999999
+                    max: 9999999,
                 }
             },
             reparacion: {
                 type: DataTypes.STRING,
-                allowNull: false
+                allowNull: false,
             },
             repuestos: {
                 type: DataTypes.STRING,
-                allowNull: false
+                allowNull: false,
             },
             costo: {
                 type: DataTypes.STRING(7),
@@ -33,7 +33,7 @@ export default function (app: Application): typeof Model {
                     isInt: true,
                     isNumeric: true,
                     min: 0o0,
-                    max: 9999999
+                    max: 9999999,
                 }
             },
             labor: {
@@ -43,7 +43,7 @@ export default function (app: Application): typeof Model {
                     isInt: true,
                     isNumeric: true,
                     min: 0o0,
-                    max: 9999999
+                    max: 9999999,
                 }
             },
             companyId: {
@@ -57,7 +57,8 @@ export default function (app: Application): typeof Model {
                     options.raw = true;
                 }
             }
-        });
+        }
+    );
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   (reparaciones as any).associate = function (models: any): void {

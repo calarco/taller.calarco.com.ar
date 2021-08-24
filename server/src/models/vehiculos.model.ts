@@ -11,12 +11,11 @@ export default function (app: Application): typeof Model {
             patente: {
                 type: DataTypes.STRING(7),
                 allowNull: false,
-                unique: true
             },
             year: {
                 type: DataTypes.STRING(4),
                 allowNull: false,
-                defaultValue: ""
+                defaultValue: "",
             },
             combustible: {
                 type: DataTypes.ENUM(
@@ -27,17 +26,17 @@ export default function (app: Application): typeof Model {
                     "Hibrido"
                 ),
                 allowNull: false,
-                defaultValue: "Nafta"
+                defaultValue: "Nafta",
             },
             cilindrada: {
                 type: DataTypes.STRING(7),
                 allowNull: false,
-                defaultValue: ""
+                defaultValue: "",
             },
             vin: {
                 type: DataTypes.STRING(17),
                 allowNull: false,
-                defaultValue: ""
+                defaultValue: "",
             },
             companyId: {
                 type: DataTypes.INTEGER,

@@ -19,12 +19,12 @@ export default function (app: Application): typeof Model {
                     isInt: true,
                     isNumeric: true,
                     min: 0o0,
-                    max: 9999999
+                    max: 9999999,
                 }
             },
             motivo: {
                 type: DataTypes.STRING,
-                allowNull: false
+                allowNull: false,
             },
             labor: {
                 type: DataTypes.STRING(7),
@@ -33,12 +33,12 @@ export default function (app: Application): typeof Model {
                     isInt: true,
                     isNumeric: true,
                     min: 0o0,
-                    max: 9999999
+                    max: 9999999,
                 }
             },
             repuestos: {
                 type: DataTypes.JSON,
-                allowNull: false
+                allowNull: false,
             },
             companyId: {
                 type: DataTypes.INTEGER,
@@ -51,7 +51,8 @@ export default function (app: Application): typeof Model {
                     options.raw = true;
                 }
             }
-        });
+        }
+    );
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   (presupuestos as any).associate = function (models: any): void {

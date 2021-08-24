@@ -11,7 +11,6 @@ export default function (app: Application): typeof Model {
             nombre: {
                 type: DataTypes.STRING,
                 allowNull: false,
-                unique: true
             },
             companyId: {
                 type: DataTypes.INTEGER,
@@ -24,7 +23,8 @@ export default function (app: Application): typeof Model {
                     options.raw = true;
                 }
             }
-        });
+        }
+    );
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   (fabricantes as any).associate = function (models: any): void {

@@ -1,33 +1,41 @@
 import * as authentication from '@feathersjs/authentication';
+import { HookContext } from '@feathersjs/feathers';
 // Don't remove this comment. It's needed to format import lines nicely.
 
-import { HookContext } from '@feathersjs/feathers';
-import commonHooks from "feathers-hooks-common"
 
 const { authenticate } = authentication.hooks;
-
-const isNotAdmin = () => (context: HookContext) =>
-    !context.params.user
-        ? false
-        : context.params.user.roles && context.params.user.roles.indexOf("admin") === -1;
 
 export default {
     before: {
         all: [
             authenticate('jwt'),
-            commonHooks.iff(isNotAdmin(), hook => {
+            (hook: HookContext) => {
                 if (hook.params.query && hook.params.user) {
                     hook.params.query.companyId = hook.params.user.companyId;
                 }
                 return hook;
-            }),
+            }
         ],
         find: [],
         get: [],
-        create: [],
-        update: [],
+        create: [
+            (hook: HookContext) => {
+                if (hook.params.user) {
+                    hook.data.companyId = hook.params.user.companyId;
+                }
+                return hook;
+            }
+        ],
+        update: [
+            (hook: HookContext) => {
+                if (hook.params.user) {
+                    hook.data.companyId = hook.params.user.companyId;
+                }
+                return hook;
+            }
+        ],
         patch: [],
-        remove: []
+        remove: [],
     },
 
     after: {
@@ -37,7 +45,7 @@ export default {
         create: [],
         update: [],
         patch: [],
-        remove: []
+        remove: [],
     },
 
     error: {
@@ -47,6 +55,6 @@ export default {
         create: [],
         update: [],
         patch: [],
-        remove: []
+        remove: [],
     }
 };
