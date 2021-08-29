@@ -152,21 +152,21 @@ const Vehiculos = function ({
 
     useEffect(() => {
         loadVehiculos();
-    }, [clienteId, setVehiculoId, loadVehiculos]);
+    }, [clienteId, loadVehiculos]);
 
     useEffect(() => {
         setRemove(false);
     }, [vehiculoId]);
 
     useEffect(() => {
-        activeCard !== "Vehículo" && setCreate(false);
-    }, [activeCard]);
-
-    useEffect(() => {
         create ? setActiveCard("Vehículo") : setActiveCard("");
     }, [create, setActiveCard]);
 
-    return (
+    useEffect(() => {
+        activeCard !== "Vehículo" && setCreate(false);
+    }, [activeCard]);
+
+    return count !== 0 ? (
         <SwitchTransition>
             <Section
                 key={count}
@@ -210,63 +210,58 @@ const Vehiculos = function ({
                         }}
                     />
                 </Create>
-                {vehiculos.data[0] ? (
-                    <TransitionGroup component={null}>
-                        {vehiculos.data[0] &&
-                            vehiculos.data[0].id !== 0 &&
-                            vehiculos.data.map((aVehiculo) => (
-                                <Card
-                                    key={aVehiculo.id}
-                                    active={
-                                        vehiculoId === aVehiculo.id
-                                            ? true
-                                            : false
-                                    }
-                                    edit={
-                                        !create &&
-                                        vehiculoId === aVehiculo.id &&
-                                        (activeCard === "Vehículo" || remove)
-                                            ? true
-                                            : false
-                                    }
-                                    onEdit={() => setActiveCard("Vehículo")}
-                                    onRemove={() => {
-                                        setRemove(true);
-                                    }}
-                                >
-                                    <Box
+                <TransitionGroup component={null}>
+                    {vehiculos.data[0] && vehiculos.data[0].id !== 0 ? (
+                        vehiculos.data.map((aVehiculo) => (
+                            <Card
+                                key={aVehiculo.id}
+                                active={
+                                    vehiculoId === aVehiculo.id ? true : false
+                                }
+                                edit={
+                                    !create &&
+                                    vehiculoId === aVehiculo.id &&
+                                    (activeCard === "Vehículo" || remove)
+                                        ? true
+                                        : false
+                                }
+                                onEdit={() => setActiveCard("Vehículo")}
+                                onRemove={() => {
+                                    setRemove(true);
+                                }}
+                            >
+                                <Box
+                                    vehiculo={aVehiculo}
+                                    onClick={() => setVehiculoId(aVehiculo.id)}
+                                    matchModelo={matchModelo}
+                                />
+                                {vehiculoId === aVehiculo.id && (
+                                    <Actions
                                         vehiculo={aVehiculo}
-                                        onClick={() =>
-                                            setVehiculoId(aVehiculo.id)
+                                        edit={
+                                            !create && activeCard === "Vehículo"
+                                                ? true
+                                                : false
                                         }
-                                        matchModelo={matchModelo}
+                                        unEdit={() => {
+                                            setActiveCard("");
+                                        }}
+                                        remove={remove}
+                                        unRemove={() => {
+                                            setRemove(false);
+                                        }}
                                     />
-                                    {vehiculoId === aVehiculo.id && (
-                                        <Actions
-                                            vehiculo={aVehiculo}
-                                            edit={
-                                                !create &&
-                                                activeCard === "Vehículo"
-                                                    ? true
-                                                    : false
-                                            }
-                                            unEdit={() => {
-                                                setActiveCard("");
-                                            }}
-                                            remove={remove}
-                                            unRemove={() => {
-                                                setRemove(false);
-                                            }}
-                                        />
-                                    )}
-                                </Card>
-                            ))}
-                    </TransitionGroup>
-                ) : (
-                    <Empty>No se encontraron vehiculos</Empty>
-                )}
+                                )}
+                            </Card>
+                        ))
+                    ) : (
+                        <Empty>No se encontraron vehiculos</Empty>
+                    )}
+                </TransitionGroup>
             </Section>
         </SwitchTransition>
+    ) : (
+        <></>
     );
 };
 

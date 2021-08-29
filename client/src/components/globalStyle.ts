@@ -144,6 +144,10 @@ const GlobalStyle = createGlobalStyle`
         small {
             font: var(--body1);
         }
+
+        span {
+            font: var(--subhead1);
+        }
     }
 
     h5 {

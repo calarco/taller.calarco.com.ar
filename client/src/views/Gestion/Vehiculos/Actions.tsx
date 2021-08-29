@@ -4,10 +4,15 @@ import styled from "styled-components";
 
 import FormComponent from "components/Form";
 import Remove from "components/Remove";
-import Modelo from "./Modelo";
+import ModeloComponent from "components/Modelo";
 
 const Form = styled(FormComponent)`
     grid-template-columns: 1fr 1fr 1fr [end];
+`;
+
+const Modelo = styled(ModeloComponent)`
+    grid-column-end: span 2;
+    grid-row-end: span 2;
 `;
 
 const Wide = styled.label`

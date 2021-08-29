@@ -3,8 +3,6 @@ import styled from "styled-components";
 import feathersClient from "feathersClient";
 
 const Container = styled.fieldset`
-    grid-column-end: span 2;
-    grid-row-end: span 2;
     height: 100%;
     display: grid;
     align-items: center;
@@ -54,7 +52,24 @@ const Container = styled.fieldset`
     }
 `;
 
-const Modelo = function ({ inputs, setInputs, onChange }) {
+type ComponentProps = {
+    inputs: {
+        fabricanteId: number;
+        fabricante: string;
+        modeloId: number;
+        modelo: string;
+    };
+    setInputs: (inputs: any) => void;
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    className?: string;
+};
+
+const Modelo = function ({
+    inputs,
+    setInputs,
+    onChange,
+    className,
+}: ComponentProps) {
     const [fabricantes, setFabricantes] = useState({
         total: 0,
         limit: 0,
@@ -253,7 +268,7 @@ const Modelo = function ({ inputs, setInputs, onChange }) {
     }, [inputs.modelo, setInputs]);
 
     return (
-        <Container>
+        <Container className={className}>
             <label>
                 Marca
                 <input

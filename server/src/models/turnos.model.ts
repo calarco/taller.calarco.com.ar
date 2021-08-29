@@ -15,13 +15,17 @@ export default function (app: Application): typeof Model {
             motivo: {
                 type: DataTypes.STRING,
                 allowNull: false,
-            }
+            },
+            companyId: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+            },
         },
         {
             hooks: {
                 beforeCount(options: any): HookReturn {
                     options.raw = true;
-                }
+                },
             }
         }
     );

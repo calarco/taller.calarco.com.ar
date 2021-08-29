@@ -1,15 +1,31 @@
 import React, { useState, useEffect } from "react";
 import feathersClient from "feathersClient";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
-const Container = styled.div`
+type Props = {
+    readonly active?: boolean;
+};
+
+const Container = styled.div<Props>`
     position: relative;
     width: 100%;
-    border-radius: 4px;
-    border: 1px solid rgba(0, 0, 0, 0);
-    transition: 0.1s ease-in;
     display: grid;
     grid-template-columns: 1fr auto;
+    transition: 0.15s ease-in;
+
+    &:hover {
+        cursor: pointer;
+        transition: 0.15s ease-out;
+    }
+
+    &::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        z-index: 0;
+        width: 100%;
+        border-top: var(--border-variant);
+    }
 
     div {
         padding: 1.5rem 2.5rem;
@@ -21,7 +37,7 @@ const Container = styled.div`
 
         &:hover {
             cursor: pointer;
-            background: var(--on-background-disabled);
+            background: var(--primary-variant);
             transition: 0.15s ease-out;
         }
     }
@@ -29,11 +45,13 @@ const Container = styled.div`
     h5 {
         position: relative;
         padding: 1.5rem 2.5rem;
+        border: 1px solid rgba(0, 0, 0, 0);
         text-align: right;
+        transition: 0.15s ease-in;
 
         &:hover {
             cursor: pointer;
-            background: var(--on-background-disabled);
+            background: var(--primary-variant);
             transition: 0.15s ease-out;
         }
 
@@ -45,26 +63,19 @@ const Container = styled.div`
             height: 2rem;
             border-left: var(--border-variant);
         }
-    }
 
-    &:hover {
-        cursor: pointer;
-        border: var(--border);
-        transition: 0.15s ease-out;
-    }
-
-    &:not(:first-child)::after {
-        content: "";
-        position: absolute;
-        top: -0.75rem;
-        z-index: 0;
-        width: 100%;
-        border-top: var(--border-variant);
+        ${(props) =>
+            props.active &&
+            css`
+                background: var(--primary-variant);
+                transition: 0.15s ease-out;
+            `};
     }
 `;
 
 const Vehiculo = function ({
     vehiculo,
+    active,
     setClienteId,
     setVehiculoId,
     matchModelo,
@@ -93,7 +104,7 @@ const Vehiculo = function ({
     }, [vehiculo]);
 
     return (
-        <Container>
+        <Container active={active}>
             <div
                 onClick={() => {
                     setVehiculoId(vehiculo.id);

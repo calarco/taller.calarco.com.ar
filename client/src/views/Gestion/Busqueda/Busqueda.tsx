@@ -15,6 +15,7 @@ const Buscador = styled.form<Props>`
     grid-column-end: 1;
     grid-row-start: 1;
     width: 100%;
+    height: 3rem;
     border-radius: 4px;
     overflow: hidden;
     display: grid;
@@ -47,11 +48,10 @@ const CreateButton = transition.button.attrs({
         exit: 150,
     },
 })`
-    height: 3rem;
+    height: 100%;
     padding: 0 1.5rem;
     margin: 0;
     border: none;
-    color: var(--secondary);
 
     &::after {
         content: "";
@@ -97,11 +97,10 @@ const Container = transition.section.attrs({
     height: 100%;
     min-height: 25rem;
     max-height: 100%;
-    padding: 1rem 1.5rem;
-    overflow-y: overlay;
+    padding: 1rem 0;
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
 
     &:enter {
         opacity: 0;
@@ -132,8 +131,6 @@ const Cliente = styled.div`
     position: relative;
     width: 100%;
     padding: 1.5rem 2.5rem;
-    border-radius: 4px;
-    border: 1px solid rgba(0, 0, 0, 0);
     transition: 0.1s ease-in;
     display: grid;
     grid-auto-flow: column;
@@ -143,15 +140,14 @@ const Cliente = styled.div`
 
     &:hover {
         cursor: pointer;
-        background: var(--on-background-disabled);
-        border: var(--border);
+        background: var(--primary-variant);
         transition: 0.15s ease-out;
     }
 
-    &:not(:first-child)::after {
+    &::after {
         content: "";
         position: absolute;
-        top: -0.75rem;
+        top: 0;
         z-index: 0;
         width: 100%;
         border-top: var(--border-variant);
@@ -302,31 +298,29 @@ const Busqueda = function ({
                     value={busqueda}
                     autoFocus
                 />
-                {clienteId !== 0 && (
-                    <SwitchTransition>
-                        {!create ? (
-                            <CreateButton
-                                key={0}
-                                type="button"
-                                onClick={() => {
-                                    setCreate(true);
-                                }}
-                            >
-                                Crear cliente
-                            </CreateButton>
-                        ) : (
-                            <CreateButton
-                                key={1}
-                                type="button"
-                                onClick={() => {
-                                    setCreate(false);
-                                }}
-                            >
-                                Cancelar
-                            </CreateButton>
-                        )}
-                    </SwitchTransition>
-                )}
+                <SwitchTransition>
+                    {!create ? (
+                        <CreateButton
+                            key={0}
+                            type="button"
+                            onClick={() => {
+                                setCreate(true);
+                            }}
+                        >
+                            Crear cliente
+                        </CreateButton>
+                    ) : (
+                        <CreateButton
+                            key={1}
+                            type="button"
+                            onClick={() => {
+                                setCreate(false);
+                            }}
+                        >
+                            Cancelar
+                        </CreateButton>
+                    )}
+                </SwitchTransition>
             </Buscador>
             <SwitchTransition>
                 <Container key={count}>
@@ -336,6 +330,7 @@ const Busqueda = function ({
                         vehiculos.data.map((aVehiculo) => (
                             <Vehiculo
                                 key={aVehiculo.id}
+                                active={aVehiculo.clienteId === clienteId}
                                 vehiculo={aVehiculo}
                                 setClienteId={setClienteId}
                                 setVehiculoId={setVehiculoId}
@@ -348,6 +343,7 @@ const Busqueda = function ({
                                 <Vehiculo
                                     key={aVehiculo.id}
                                     vehiculo={aVehiculo}
+                                    active={aVehiculo.clienteId === clienteId}
                                     setClienteId={setClienteId}
                                     setVehiculoId={setVehiculoId}
                                     matchModelo={matchModelo}

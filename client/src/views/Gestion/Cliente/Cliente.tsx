@@ -83,8 +83,8 @@ const Cliente = function ({
     });
 
     const loadCliente = useCallback(
-        (setId?: boolean) => {
-            setId
+        (last?: boolean) => {
+            last
                 ? feathersClient
                       .service("clientes")
                       .find({
@@ -128,21 +128,10 @@ const Cliente = function ({
 
     useEffect(() => {
         setRemove(false);
-        clienteId !== 0
-            ? loadCliente()
-            : setCliente({
-                  id: 0,
-                  nombre: "",
-                  apellido: "",
-                  telefono: " ",
-                  direccion: "",
-                  empresa: "",
-                  createdAt: "",
-                  updatedAt: "",
-              });
+        loadCliente();
     }, [clienteId, loadCliente]);
 
-    return (
+    return cliente.id && cliente.id !== 0 ? (
         <SwitchTransition>
             <Card
                 key={cliente.id}
@@ -153,7 +142,13 @@ const Cliente = function ({
                     setRemove(true);
                 }}
             >
-                <Box cliente={cliente} />
+                <Box
+                    cliente={cliente}
+                    onClose={() => {
+                        setClienteId(0);
+                        setVehiculoId(0);
+                    }}
+                />
                 <Actions
                     cliente={
                         create
@@ -181,6 +176,28 @@ const Cliente = function ({
                 />
             </Card>
         </SwitchTransition>
+    ) : (
+        <Actions
+            cliente={{
+                id: 0,
+                nombre: "",
+                apellido: "",
+                dni: "",
+                empresa: "",
+                telefono: "",
+                email: "",
+                createdAt: "",
+                updatedAt: "",
+            }}
+            edit={activeCard === "Cliente" ? true : false}
+            unEdit={() => {
+                setActiveCard("");
+            }}
+            remove={remove}
+            unRemove={() => {
+                setRemove(false);
+            }}
+        />
     );
 };
 

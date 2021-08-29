@@ -2,34 +2,51 @@ import React from "react";
 import styled from "styled-components";
 
 const Container = styled.article`
-    padding: 1.5rem 2rem;
+    padding: 1rem 1rem 1.25rem 1rem;
     display: grid;
-    grid-template-columns: 1fr auto;
+    gap: 1rem;
 
-    div {
+    div:first-child {
+        padding-left: 0.75rem;
         display: grid;
         gap: 0.5rem;
+        grid-template-columns: 1fr auto;
+        align-items: center;
     }
 
     div:last-child {
-        text-align: right;
+        padding: 0 0.75rem;
+        display: grid;
+        grid-template-columns: auto auto;
+        justify-content: space-between;
+        gap: 0.5rem 1rem;
+    }
+
+    button {
+        margin: 0;
+        padding: 0.5rem 1rem;
+        background: var(--surface);
+        border: var(--border-variant);
     }
 `;
 
-const ClienteBox = function ({ cliente }) {
+const ClienteBox = function ({ cliente, onClose }) {
     return (
         <Container>
             <div>
                 <h2>
                     {cliente.nombre} {cliente.apellido}
+                    {cliente.dni && <small>{cliente.dni}</small>}
                 </h2>
-                {cliente.empresa && <h5> {cliente.empresa}</h5>}
+                <button type="button" onClick={onClose}>
+                    Cerrar
+                </button>
             </div>
             <div>
-                {cliente.dni && (
+                {cliente.email && (
                     <label>
-                        DNI / CUIT / CUIL N°
-                        <span>{cliente.dni}</span>
+                        Email
+                        <span>{cliente.email}</span>
                     </label>
                 )}
                 {cliente.telefono && (
@@ -38,10 +55,10 @@ const ClienteBox = function ({ cliente }) {
                         <span>{cliente.telefono}</span>
                     </label>
                 )}
-                {cliente.email && (
+                {cliente.empresa && (
                     <label>
-                        Email
-                        <span>{cliente.email} </span>
+                        Empresa
+                        <span>{cliente.empresa}</span>
                     </label>
                 )}
             </div>

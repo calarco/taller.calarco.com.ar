@@ -19,12 +19,11 @@ const Container = transition.form.attrs({
     overflow: hidden;
     border-radius: 4px;
     border: 1px solid var(--primary);
-    box-shadow: var(--shadow);
     background: var(--primary);
+    box-shadow: var(--shadow);
     display: grid;
     gap: 1px;
     align-items: start;
-    transition: 0.25s ease-in;
 
     label {
         height: 100%;

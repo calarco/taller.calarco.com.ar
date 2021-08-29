@@ -21,11 +21,6 @@ export default function (app: Application): typeof Model {
             type: DataTypes.INTEGER,
             allowNull: false,
         },
-        roles: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            defaultValue: ""
-        },
     }, {
         hooks: {
             beforeCount(options: any): HookReturn {

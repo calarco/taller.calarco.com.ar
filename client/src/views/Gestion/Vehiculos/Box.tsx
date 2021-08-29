@@ -5,7 +5,7 @@ const Container = styled.article`
     padding: 1rem 1.5rem;
     display: grid;
     grid-auto-flow: column;
-    grid-template-columns: 4.25rem 1fr;
+    grid-template-columns: 4.5rem 1fr;
     align-items: center;
     gap: 1rem;
 
