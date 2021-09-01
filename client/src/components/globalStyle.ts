@@ -20,8 +20,8 @@ const GlobalStyle = createGlobalStyle`
     }
 
     ::-webkit-scrollbar-thumb {
-        background: var(--on-background-disabled);
-        border: 1px solid var(--on-background-disabled);
+        background: rgba(0, 0, 0, 0.038);
+        border: 1px solid rgba(0, 0, 0, 0.038);
     }
 
     ::-webkit-scrollbar-thumb:hover {
@@ -52,12 +52,13 @@ const GlobalStyle = createGlobalStyle`
         --shadow: ${(props) => props.theme.shadows.surface};
         --shadow-variant: ${(props) => props.theme.shadows.surfaceVariant};
 
+        --border: ${(props) => props.theme.borders.border};
+        --border-variant: ${(props) => props.theme.borders.borderVariant};
+
         --primary: ${(props) => props.theme.colors.primary};
         --primary-variant: ${(props) => props.theme.colors.primaryVariant};
         --secondary: ${(props) => props.theme.colors.secondary};
         --secondary-variant: ${(props) => props.theme.colors.secondaryVariant};
-        --border: ${(props) => props.theme.colors.border};
-        --border-variant: ${(props) => props.theme.colors.borderVariant};
         --background: ${(props) => props.theme.colors.background};
         --on-background: ${(props) => props.theme.colors.onBackground};
         --on-background-variant: ${(props) =>

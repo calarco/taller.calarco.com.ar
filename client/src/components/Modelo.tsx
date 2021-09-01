@@ -14,8 +14,7 @@ const Container = styled.fieldset`
         button {
             position: absolute;
             bottom: 0;
-            right: 1rem;
-            margin: 0.5rem 0rem;
+            right: 0.5rem;
             padding: 0.25rem 0.5rem;
             border: none;
         }

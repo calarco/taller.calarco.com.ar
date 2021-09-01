@@ -18,7 +18,7 @@ const Container = styled.div<Props>`
         transition: 0.15s ease-out;
     }
 
-    &::after {
+    &:not(:first-child)::after {
         content: "";
         position: absolute;
         top: 0;

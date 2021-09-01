@@ -128,7 +128,7 @@ const Cliente = function ({
 
     useEffect(() => {
         setRemove(false);
-        loadCliente();
+        clienteId !== 0 && loadCliente();
     }, [clienteId, loadCliente]);
 
     return cliente.id && cliente.id !== 0 ? (

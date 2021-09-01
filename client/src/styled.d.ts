@@ -9,13 +9,16 @@ declare module "styled-components" {
             surfaceVariant: string;
         };
 
+        borders: {
+            border: string;
+            borderVariant: string;
+        };
+
         colors: {
             primary: string;
             primaryVariant: string;
             secondary: string;
             secondaryVariant: string;
-            border: string;
-            borderVariant: string;
             background: string;
             onBackground: string;
             onBackgroundVariant: string;

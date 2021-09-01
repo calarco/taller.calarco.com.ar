@@ -9,34 +9,43 @@ import Actions from "./Actions";
 const Section = styled(SectionComponent)`
     grid-row-end: span 2;
     padding: 0;
+    gap: 0;
 `;
 
-const Mes = styled.h4`
+const Mes = styled.div`
     position: sticky;
     top: 0;
     z-index: 900;
     width: 100%;
     height: 3rem;
     padding: 0 1.5rem;
-    border-radius: 4px 4px 0 0;
+    border-radius: 4px;
     background: rgba(255, 255, 255, 0.75);
     backdrop-filter: blur(0.4rem);
     box-shadow: var(--shadow-variant);
-    border-top: var(--border-variant);
+    border-bottom: var(--border-variant);
     display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
     text-transform: capitalize;
+
+    h6 {
+        color: var(--on-background-variant);
+    }
 `;
 
 type ActiveProps = {
     active?: boolean;
+    inactive?: boolean;
 };
 
 const Day = styled.div<ActiveProps>`
-    padding: 0 1.5rem;
+    position: relative;
+    padding: 0.75rem 2rem;
     display: grid;
     align-items: start;
     grid-template-columns: 3rem 1fr;
-    gap: 1rem;
+    gap: 1.5rem;
     transition: 0.15s ease-in;
 
     ${(props) =>
@@ -48,10 +57,29 @@ const Day = styled.div<ActiveProps>`
             z-index: 1500;
             transition: 0.2s ease-out;
         `};
+
+    &::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        right: 1rem;
+        left: 1rem;
+        z-index: 0;
+        border-bottom: var(--border-variant);
+
+        ${(props) =>
+            props.active &&
+            css`
+                transition: 0.2s ease-out;
+                border-bottom: 1px solid rgba(0, 0, 0, 0);
+            `};
+    }
 `;
 
 const Dia = styled.div<ActiveProps>`
-    padding: 0 0.5rem 0.25rem 0.5rem;
+    position: relative;
+    height: 3rem;
+    padding: 0 0.5rem;
     text-transform: uppercase;
     text-align: center;
     display: grid;
@@ -64,14 +92,31 @@ const Dia = styled.div<ActiveProps>`
                 color: var(--secondary);
             }
         `};
+
+    ${(props) =>
+        props.inactive &&
+        css`
+            & > * {
+                color: var(--on-background-disabled);
+            }
+        `};
 `;
 
 const List = styled.div`
     position: relative;
     border-radius: 4px;
-    border: var(--border-variant);
     display: flex;
     flex-direction: column;
+
+    &::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 0;
+        border-left: var(--border-variant);
+    }
 `;
 
 const Create = styled(CreateComponent)`
@@ -84,20 +129,14 @@ const Create = styled(CreateComponent)`
     &:hover {
         border: none;
     }
-
-    &::after {
-        content: "";
-        position: absolute;
-        right: 1rem;
-        bottom: 0;
-        left: 1rem;
-        z-index: 0;
-        border-bottom: var(--border-variant);
-    }
 `;
 
 const Turno = styled.div`
     padding: 1rem 1.5rem;
+
+    &:nth-child(2) {
+        border-top: var(--border-variant);
+    }
 `;
 
 const Loading = styled.div`
@@ -122,11 +161,13 @@ const Loading = styled.div`
 
 const Turnos = function ({ activeCard, setActiveCard, matchModelo }) {
     const loader = useRef<HTMLDivElement | null>(null);
-    const [selected, setSelected] = useState(0);
+    const [selected, setSelected] = useState("");
     const [create, setCreate] = useState(false);
     const [remove, setRemove] = useState(false);
 
-    const [days, setDays] = useState([{ month: 0, days: [0] }]);
+    const [calendar, setCalendar] = useState([
+        { year: 0, month: 0, days: [0] },
+    ]);
     const [turnos, setTurnos] = useState({
         total: 0,
         limit: 0,
@@ -144,22 +185,34 @@ const Turnos = function ({ activeCard, setActiveCard, matchModelo }) {
     });
 
     const loadDays = useCallback(() => {
-        const monthDays =
-            32 -
-            new Date(
-                new Date().getFullYear(),
-                days[days.length - 1].month + 1,
-                32
-            ).getDate();
         const list: number[] = [];
-        for (var i = 1; i <= monthDays; i++) {
+        for (
+            var i = 1;
+            i <=
+            32 -
+                new Date(
+                    calendar[calendar.length - 1].month === 11
+                        ? calendar[calendar.length - 1].year + 1
+                        : calendar[calendar.length - 1].year,
+                    calendar[calendar.length - 1].month + 1,
+                    32
+                ).getDate();
+            i++
+        ) {
             list.push(i);
         }
-        setDays((days) => [
-            ...days,
-            { month: days[days.length - 1].month + 1, days: list },
+        setCalendar((calendar) => [
+            ...calendar,
+            {
+                year:
+                    calendar[calendar.length - 1].month === 11
+                        ? calendar[calendar.length - 1].year + 1
+                        : calendar[calendar.length - 1].year,
+                month: calendar[calendar.length - 1].month + 1,
+                days: list,
+            },
         ]);
-    }, []);
+    }, [calendar]);
 
     const handleObserver = useCallback(
         (entries) => {
@@ -207,7 +260,13 @@ const Turnos = function ({ activeCard, setActiveCard, matchModelo }) {
         for (var i = today; i <= currentMonthDays; i++) {
             currentList.push(i);
         }
-        setDays([{ month: new Date().getMonth(), days: currentList }]);
+        setCalendar([
+            {
+                year: new Date().getFullYear(),
+                month: new Date().getMonth(),
+                days: currentList,
+            },
+        ]);
     }, []);
 
     useEffect(() => {
@@ -248,25 +307,40 @@ const Turnos = function ({ activeCard, setActiveCard, matchModelo }) {
                     setActiveCard("");
                 }}
             >
-                {days.map((month) => (
+                {calendar.map((item) => (
                     <>
-                        <Mes>
-                            {new Date(2021, month.month, 1).toLocaleDateString(
-                                "default",
-                                {
+                        <Mes key={`${item.year}-${item.month}`}>
+                            <h4>
+                                {new Date(
+                                    item.year,
+                                    item.month,
+                                    1
+                                ).toLocaleDateString("default", {
                                     month: "long",
-                                }
-                            )}
+                                })}
+                            </h4>
+                            <h6>{item.year}</h6>
                         </Mes>
-                        {month.days.map((day, index) => (
+                        {item.days.map((number, index) => (
                             <Day
-                                key={day}
+                                key={`${item.year}-${item.month}-${number}`}
                                 active={
-                                    selected === day && activeCard === "Turno"
+                                    selected ===
+                                        `${item.year}-${item.month}-${number}` &&
+                                    activeCard === "Turno"
                                 }
                             >
                                 <Dia
                                     active={index === 0}
+                                    inactive={
+                                        [0, 6].indexOf(
+                                            new Date(
+                                                item.year,
+                                                item.month,
+                                                number
+                                            ).getDay()
+                                        ) !== -1
+                                    }
                                     onClick={() => {
                                         window.scrollTo({
                                             top: 0,
@@ -274,12 +348,12 @@ const Turnos = function ({ activeCard, setActiveCard, matchModelo }) {
                                         });
                                     }}
                                 >
-                                    <h3>{day}</h3>
+                                    <h3>{number}</h3>
                                     <p>
                                         {new Date(
-                                            new Date().getFullYear(),
-                                            new Date().getMonth(),
-                                            day
+                                            item.year,
+                                            item.month,
+                                            number
                                         ).toLocaleDateString("default", {
                                             weekday: "short",
                                         })}
@@ -289,25 +363,35 @@ const Turnos = function ({ activeCard, setActiveCard, matchModelo }) {
                                     <Create
                                         type="Turno"
                                         active={
-                                            selected === day &&
+                                            selected ===
+                                                `${item.year}-${item.month}-${number}` &&
                                             activeCard === "Turno"
                                         }
                                         onClick={() => {
                                             setCreate(true);
-                                            setSelected(day);
+                                            setSelected(
+                                                `${item.year}-${item.month}-${number}`
+                                            );
                                         }}
                                     >
                                         <Actions
                                             turno={{
                                                 id: 0,
-                                                fecha: `2021-08-${day}`,
+                                                fecha: `${item.year}-${(
+                                                    item.month + 1
+                                                )
+                                                    .toString()
+                                                    .padStart(2, "0")}-${number
+                                                    .toString()
+                                                    .padStart(2, "0")}`,
                                                 motivo: "",
                                                 createdAt: "",
                                                 updatedAt: "",
                                                 modeloId: 0,
                                             }}
                                             edit={
-                                                selected === day &&
+                                                selected ===
+                                                    `${item.year}-${item.month}-${number}` &&
                                                 activeCard === "Turno" &&
                                                 create
                                                     ? true
@@ -329,7 +413,17 @@ const Turnos = function ({ activeCard, setActiveCard, matchModelo }) {
                                                 aTurno.fecha.substring(
                                                     0,
                                                     10
-                                                ) === `2021-08-${day}` && (
+                                                ) ===
+                                                    `${item.year}-${(
+                                                        item.month + 1
+                                                    )
+                                                        .toString()
+                                                        .padStart(
+                                                            2,
+                                                            "0"
+                                                        )}-${number
+                                                        .toString()
+                                                        .padStart(2, "0")}` && (
                                                     <Turno key={aTurno.id}>
                                                         <h6>
                                                             {aTurno.motivo}

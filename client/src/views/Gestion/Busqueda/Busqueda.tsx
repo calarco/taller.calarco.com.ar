@@ -97,7 +97,6 @@ const Container = transition.section.attrs({
     height: 100%;
     min-height: 25rem;
     max-height: 100%;
-    padding: 1rem 0;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
@@ -144,7 +143,7 @@ const Cliente = styled.div`
         transition: 0.15s ease-out;
     }
 
-    &::after {
+    &:not(:first-child)::after {
         content: "";
         position: absolute;
         top: 0;

@@ -2,20 +2,24 @@ import React from "react";
 import styled from "styled-components";
 
 const Container = styled.article`
-    padding: 1rem 1rem 1.25rem 1rem;
+    padding-bottom: 1.25rem;
     display: grid;
     gap: 1rem;
 
     div:first-child {
-        padding-left: 0.75rem;
         display: grid;
         gap: 0.5rem;
         grid-template-columns: 1fr auto;
-        align-items: center;
+        align-items: top;
+
+        h2 {
+            padding-top: 1.25rem;
+            padding-left: 2rem;
+        }
     }
 
     div:last-child {
-        padding: 0 0.75rem;
+        padding: 0 2rem;
         display: grid;
         grid-template-columns: auto auto;
         justify-content: space-between;
@@ -23,10 +27,14 @@ const Container = styled.article`
     }
 
     button {
+        height: 3rem;
         margin: 0;
-        padding: 0.5rem 1rem;
+        padding: 0.5rem 1.5rem;
+        border-radius: 0 0 0 4px;
         background: var(--surface);
-        border: var(--border-variant);
+        border: var(--border);
+        border-top: none;
+        border-right: none;
     }
 `;
 

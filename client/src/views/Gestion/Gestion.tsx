@@ -89,7 +89,6 @@ const Right1 = transition.div.attrs({
     height: calc(100vh - 4.75rem);
     border-radius: 4px;
     background: var(--surface);
-    border: var(--border);
     box-shadow: var(--shadow);
     display: grid;
     grid-template-rows: auto 1fr;
