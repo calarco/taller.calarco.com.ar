@@ -2,10 +2,9 @@ import React, { useEffect, useState } from "react";
 import feathersClient from "feathersClient";
 
 import Form from "components/Form";
-import Remove from "components/Remove";
 import Modelo from "components/Modelo";
 
-const Actions = function ({ turno, edit, remove, unRemove, unEdit }) {
+const Actions = function ({ turno, edit, unEdit }) {
     const [inputs, setInputs] = useState({
         fecha: "",
         motivo: "",
@@ -65,17 +64,6 @@ const Actions = function ({ turno, edit, remove, unRemove, unEdit }) {
                 });
     };
 
-    const handleDelete = (event) => {
-        event.preventDefault();
-        feathersClient
-            .service("turnos")
-            .remove(turno.id)
-            .then(() => {})
-            .catch((error) => {
-                console.error(error);
-            });
-    };
-
     const handleInputChange = (event) => {
         event.persist();
         setInputs((inputs) => ({
@@ -99,38 +87,27 @@ const Actions = function ({ turno, edit, remove, unRemove, unEdit }) {
     }, [turno]);
 
     return (
-        <>
-            <Form
-                edit={edit}
-                unEdit={unEdit}
-                onSubmit={turno.id === 0 ? handleCreate : handleEdit}
-            >
-                <label>
-                    Motivo
-                    <input
-                        type="text"
-                        name="motivo"
-                        placeholder="-"
-                        value={inputs.motivo}
-                        onChange={handleInputChange}
-                    />
-                </label>
-                <Modelo
-                    inputs={inputs}
-                    setInputs={setInputs}
+        <Form
+            edit={edit}
+            unEdit={unEdit}
+            onSubmit={turno.id === 0 ? handleCreate : handleEdit}
+        >
+            <label>
+                Motivo
+                <input
+                    type="text"
+                    name="motivo"
+                    placeholder="-"
+                    value={inputs.motivo}
                     onChange={handleInputChange}
                 />
-            </Form>
-            {turno.id !== 0 && (
-                <Remove
-                    remove={remove}
-                    unRemove={unRemove}
-                    handleDelete={handleDelete}
-                >
-                    ¿Borrar turno?
-                </Remove>
-            )}
-        </>
+            </label>
+            <Modelo
+                inputs={inputs}
+                setInputs={setInputs}
+                onChange={handleInputChange}
+            />
+        </Form>
     );
 };
 

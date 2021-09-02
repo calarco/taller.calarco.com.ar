@@ -1,20 +1,19 @@
 import React from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import transition from "styled-transition-group";
 
-const Container = transition.div.attrs({
-    unmountOnExit: true,
-    timeout: {
-        enter: 200,
-        exit: 150,
-    },
-})`
+type Props = {
+    inline?: boolean;
+};
+
+const Container = transition.div<Props>`
     position: absolute;
     z-index: 1001;
     top: -1px;
     right: -1px;
     bottom: -1px;
     left: -1px;
+    min-height: 3rem;
     border-radius: 4px;
     overflow: hidden;
     background: rgba(255, 255, 255, 0.5);
@@ -25,6 +24,21 @@ const Container = transition.div.attrs({
     text-align: center;
     grid-template-rows: 1fr auto;
     transition: 0.25s ease-in;
+
+    ${(props) =>
+        props.inline &&
+        css`
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            grid-template-rows: 1fr;
+            grid-template-columns: 1fr auto;
+        `};
+
+    h5 {
+        padding: 0.5rem;
+    }
 
     &:enter {
         opacity: 0;
@@ -46,18 +60,33 @@ const Container = transition.div.attrs({
     }
 `;
 
-const Buttons = styled.div`
+const Buttons = styled.div<Props>`
+    position: relative;
     width: 100%;
     height: 3rem;
     overflow: hidden;
-    background: var(--surface);
     border-top: var(--border);
     display: flex;
     transition: 0.25s ease-out;
 
+    ${(props) =>
+        props.inline &&
+        css`
+            height: 100%;
+            border-top: none;
+
+            &::after {
+                content: "";
+                position: absolute;
+                top: calc(50% - 1rem);
+                left: 0;
+                height: 2rem;
+                border-left: var(--border);
+            }
+        `};
+
     button {
         width: 100%;
-        height: 3rem;
         margin: 0;
         padding: 0 1.5rem;
         border-radius: 0px;
@@ -75,11 +104,36 @@ const Buttons = styled.div`
     }
 `;
 
-const VehiculoForm = function ({ remove, unRemove, handleDelete, children }) {
+type ComponentProps = {
+    inline?: boolean;
+    remove: boolean;
+    unRemove: (e: React.MouseEvent<HTMLButtonElement>) => void;
+    handleDelete: (e: React.FormEvent) => void;
+    children: React.ReactNode;
+    className?: string;
+};
+
+const VehiculoForm = function ({
+    inline,
+    remove,
+    unRemove,
+    handleDelete,
+    children,
+    className,
+}: ComponentProps) {
     return (
-        <Container in={remove}>
+        <Container
+            unmountOnExit
+            timeout={{
+                enter: 200,
+                exit: 150,
+            }}
+            in={remove}
+            className={className}
+            inline={inline}
+        >
             <h5>{children}</h5>
-            <Buttons>
+            <Buttons inline={inline}>
                 <button type="button" onClick={unRemove}>
                     Cancelar
                 </button>

@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import feathersClient from "feathersClient";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 
 import SectionComponent from "components/Section";
-import CreateComponent from "components/Create";
-import Actions from "./Actions";
+import Day from "./Day";
 
 const Section = styled(SectionComponent)`
     grid-row-end: span 2;
@@ -34,111 +33,6 @@ const Mes = styled.div`
     }
 `;
 
-type ActiveProps = {
-    active?: boolean;
-    inactive?: boolean;
-};
-
-const Day = styled.div<ActiveProps>`
-    position: relative;
-    padding: 0.75rem 2rem;
-    display: grid;
-    align-items: start;
-    grid-template-columns: 3rem 1fr;
-    gap: 1.5rem;
-    transition: 0.15s ease-in;
-
-    ${(props) =>
-        props.active &&
-        css`
-            position: sticky;
-            top: 0;
-            bottom: 17rem;
-            z-index: 1500;
-            transition: 0.2s ease-out;
-        `};
-
-    &::after {
-        content: "";
-        position: absolute;
-        bottom: 0;
-        right: 1rem;
-        left: 1rem;
-        z-index: 0;
-        border-bottom: var(--border-variant);
-
-        ${(props) =>
-            props.active &&
-            css`
-                transition: 0.2s ease-out;
-                border-bottom: 1px solid rgba(0, 0, 0, 0);
-            `};
-    }
-`;
-
-const Dia = styled.div<ActiveProps>`
-    position: relative;
-    height: 3rem;
-    padding: 0 0.5rem;
-    text-transform: uppercase;
-    text-align: center;
-    display: grid;
-    grid-template-rows: auto auto;
-
-    ${(props) =>
-        props.active &&
-        css`
-            & > * {
-                color: var(--secondary);
-            }
-        `};
-
-    ${(props) =>
-        props.inactive &&
-        css`
-            & > * {
-                color: var(--on-background-disabled);
-            }
-        `};
-`;
-
-const List = styled.div`
-    position: relative;
-    border-radius: 4px;
-    display: flex;
-    flex-direction: column;
-
-    &::after {
-        content: "";
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        z-index: 0;
-        border-left: var(--border-variant);
-    }
-`;
-
-const Create = styled(CreateComponent)`
-    position: relative;
-    backdrop-filter: none;
-    background: none;
-    border: none;
-    box-shadow: none;
-
-    &:hover {
-        border: none;
-    }
-`;
-
-const Turno = styled.div`
-    padding: 1rem 1.5rem;
-
-    &:nth-child(2) {
-        border-top: var(--border-variant);
-    }
-`;
-
 const Loading = styled.div`
     @keyframes loading {
         0% {
@@ -162,8 +56,6 @@ const Loading = styled.div`
 const Turnos = function ({ activeCard, setActiveCard, matchModelo }) {
     const loader = useRef<HTMLDivElement | null>(null);
     const [selected, setSelected] = useState("");
-    const [create, setCreate] = useState(false);
-    const [remove, setRemove] = useState(false);
 
     const [calendar, setCalendar] = useState([
         { year: 0, month: 0, days: [0] },
@@ -288,162 +180,81 @@ const Turnos = function ({ activeCard, setActiveCard, matchModelo }) {
     }, [loadTurnos]);
 
     useEffect(() => {
-        create ? setActiveCard("Turno") : setActiveCard("");
-    }, [create, setActiveCard]);
+        selected !== "" ? setActiveCard("Turno") : setActiveCard("");
+    }, [selected, setActiveCard]);
 
     useEffect(() => {
-        activeCard !== "Turno" && setCreate(false);
+        activeCard !== "Turno" && setSelected("");
     }, [activeCard]);
 
     return (
-        <>
-            <Section
-                overlay={
-                    activeCard === "Turno" || activeCard === "Cliente"
-                        ? true
-                        : false
-                }
-                onClick={() => {
-                    setActiveCard("");
-                }}
-            >
-                {calendar.map((item) => (
-                    <>
-                        <Mes key={`${item.year}-${item.month}`}>
-                            <h4>
-                                {new Date(
-                                    item.year,
-                                    item.month,
-                                    1
-                                ).toLocaleDateString("default", {
-                                    month: "long",
-                                })}
-                            </h4>
-                            <h6>{item.year}</h6>
-                        </Mes>
-                        {item.days.map((number, index) => (
-                            <Day
-                                key={`${item.year}-${item.month}-${number}`}
-                                active={
-                                    selected ===
-                                        `${item.year}-${item.month}-${number}` &&
-                                    activeCard === "Turno"
-                                }
-                            >
-                                <Dia
-                                    active={index === 0}
-                                    inactive={
-                                        [0, 6].indexOf(
-                                            new Date(
-                                                item.year,
-                                                item.month,
-                                                number
-                                            ).getDay()
-                                        ) !== -1
-                                    }
-                                    onClick={() => {
-                                        window.scrollTo({
-                                            top: 0,
-                                            behavior: "smooth",
-                                        });
-                                    }}
-                                >
-                                    <h3>{number}</h3>
-                                    <p>
-                                        {new Date(
-                                            item.year,
-                                            item.month,
-                                            number
-                                        ).toLocaleDateString("default", {
-                                            weekday: "short",
-                                        })}
-                                    </p>
-                                </Dia>
-                                <List>
-                                    <Create
-                                        type="Turno"
-                                        active={
-                                            selected ===
-                                                `${item.year}-${item.month}-${number}` &&
-                                            activeCard === "Turno"
-                                        }
-                                        onClick={() => {
-                                            setCreate(true);
-                                            setSelected(
-                                                `${item.year}-${item.month}-${number}`
-                                            );
-                                        }}
-                                    >
-                                        <Actions
-                                            turno={{
-                                                id: 0,
-                                                fecha: `${item.year}-${(
-                                                    item.month + 1
-                                                )
-                                                    .toString()
-                                                    .padStart(2, "0")}-${number
-                                                    .toString()
-                                                    .padStart(2, "0")}`,
-                                                motivo: "",
-                                                createdAt: "",
-                                                updatedAt: "",
-                                                modeloId: 0,
-                                            }}
-                                            edit={
-                                                selected ===
-                                                    `${item.year}-${item.month}-${number}` &&
-                                                activeCard === "Turno" &&
-                                                create
-                                                    ? true
-                                                    : false
-                                            }
-                                            unEdit={() => {
-                                                setActiveCard("");
-                                            }}
-                                            remove={remove}
-                                            unRemove={() => {
-                                                setRemove(false);
-                                            }}
-                                        />
-                                    </Create>
-                                    {turnos.data[0] &&
-                                        turnos.data[0].id !== 0 &&
-                                        turnos.data.map(
-                                            (aTurno) =>
-                                                aTurno.fecha.substring(
-                                                    0,
-                                                    10
-                                                ) ===
-                                                    `${item.year}-${(
-                                                        item.month + 1
-                                                    )
-                                                        .toString()
-                                                        .padStart(
-                                                            2,
-                                                            "0"
-                                                        )}-${number
-                                                        .toString()
-                                                        .padStart(2, "0")}` && (
-                                                    <Turno key={aTurno.id}>
-                                                        <h6>
-                                                            {aTurno.motivo}
-                                                            <span>
-                                                                {matchModelo(
-                                                                    aTurno.modeloId
-                                                                )}
-                                                            </span>
-                                                        </h6>
-                                                    </Turno>
-                                                )
-                                        )}
-                                </List>
-                            </Day>
-                        ))}
-                    </>
-                ))}
-                <Loading ref={loader}>Loading...</Loading>
-            </Section>
-        </>
+        <Section
+            overlay={
+                activeCard === "Turno" || activeCard === "Cliente"
+                    ? true
+                    : false
+            }
+            onClick={() => {
+                setActiveCard("");
+            }}
+        >
+            {calendar.map((item) => (
+                <>
+                    <Mes key={`${item.year}-${item.month}`}>
+                        <h4>
+                            {new Date(
+                                item.year,
+                                item.month,
+                                1
+                            ).toLocaleDateString("default", {
+                                month: "long",
+                            })}
+                        </h4>
+                        <h6>{item.year}</h6>
+                    </Mes>
+                    {item.days.map((number) => (
+                        <Day
+                            key={`${item.year}-${(item.month + 1)
+                                .toString()
+                                .padStart(2, "0")}-${number
+                                .toString()
+                                .padStart(2, "0")}`}
+                            matchModelo={matchModelo}
+                            date={[item.year, item.month, number]}
+                            turnos={turnos.data.filter(
+                                ({ fecha }) =>
+                                    fecha.substring(0, 10) ===
+                                    `${item.year}-${(item.month + 1)
+                                        .toString()
+                                        .padStart(2, "0")}-${number
+                                        .toString()
+                                        .padStart(2, "0")}`
+                            )}
+                            active={
+                                selected ===
+                                    `${item.year}-${(item.month + 1)
+                                        .toString()
+                                        .padStart(2, "0")}-${number
+                                        .toString()
+                                        .padStart(2, "0")}` &&
+                                activeCard === "Turno"
+                            }
+                            setActive={() => {
+                                setSelected(
+                                    `${item.year}-${(item.month + 1)
+                                        .toString()
+                                        .padStart(2, "0")}-${number
+                                        .toString()
+                                        .padStart(2, "0")}`
+                                );
+                            }}
+                            unActive={() => setActiveCard("")}
+                        />
+                    ))}
+                </>
+            ))}
+            <Loading ref={loader}>Loading...</Loading>
+        </Section>
     );
 };
 
