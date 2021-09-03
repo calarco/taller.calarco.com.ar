@@ -46,7 +46,6 @@ const Buttons = styled.div`
     button {
         width: 100%;
         height: 3rem;
-        margin: 0;
         padding: 0 1.5rem;
         border-radius: 0px;
         background: none;

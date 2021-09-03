@@ -5,7 +5,7 @@ import transition from "styled-transition-group";
 import { TransitionGroup } from "react-transition-group";
 
 import CreateComponent from "components/Create";
-import Actions from "./Actions";
+import Form from "./Form";
 import Remove from "components/Remove";
 
 type Props = {
@@ -115,7 +115,6 @@ const Turno = transition.div`
     }
 
     button {
-        margin: 0;
         border: none;
 
         &:not(:first-child)::after {
@@ -207,7 +206,7 @@ const Day = function ({
             </Dia>
             <List>
                 <Create type="Turno" active={active} onClick={setActive}>
-                    <Actions
+                    <Form
                         turno={{
                             id: 0,
                             fecha: `${date[0]}-${(date[1] + 1)

@@ -380,7 +380,6 @@ const GlobalStyle = createGlobalStyle`
     button,
     input[type="submit"] {
         position: relative;
-        margin: 1rem 0.5rem;
         padding: 0.5rem 1.5rem;
         border-radius: 4px;
         background: none;

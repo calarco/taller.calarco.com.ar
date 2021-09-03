@@ -28,7 +28,6 @@ const Container = styled.article`
 
     button {
         height: 3rem;
-        margin: 0;
         padding: 0.5rem 1.5rem;
         border-radius: 0 0 0 4px;
         background: var(--surface);

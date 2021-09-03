@@ -87,7 +87,6 @@ const Buttons = styled.div<Props>`
 
     button {
         width: 100%;
-        margin: 0;
         padding: 0 1.5rem;
         border-radius: 0px;
         background: none;
