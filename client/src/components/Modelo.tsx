@@ -9,12 +9,11 @@ const Container = styled.fieldset`
 
     label {
         position: relative;
-        height: 100%;
 
         button {
             position: absolute;
-            bottom: 0;
-            right: 0.5rem;
+            bottom: 1rem;
+            right: 1rem;
             padding: 0.25rem 0.5rem;
             border: none;
         }

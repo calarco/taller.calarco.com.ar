@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import feathersClient from "feathersClient";
 import styled from "styled-components";
 import transition from "styled-transition-group";
 import { SwitchTransition } from "react-transition-group";
@@ -140,11 +141,97 @@ const Bar = styled.div`
     }
 `;
 
-const Gestion = function ({ setUser, matchModelo }) {
+const Gestion = function ({ setUser }) {
     const [clienteId, setClienteId] = useState(0);
     const [vehiculoId, setVehiculoId] = useState(0);
     const [activeCard, setActiveCard] = useState("");
     const [create, setCreate] = useState(false);
+
+    const [fabricantes, setFabricantes] = useState({
+        total: 0,
+        limit: 0,
+        skip: 0,
+        data: [
+            {
+                id: 0,
+                nombre: "",
+                createdAt: "",
+                updatedAt: "",
+            },
+        ],
+    });
+    const [modelos, setModelos] = useState({
+        total: 0,
+        limit: 0,
+        skip: 0,
+        data: [
+            {
+                id: 0,
+                nombre: "",
+                createdAt: "",
+                updatedAt: "",
+                fabricanteId: 0,
+            },
+        ],
+    });
+
+    function loadCars() {
+        feathersClient
+            .service("fabricantes")
+            .find({
+                query: {
+                    $limit: 100,
+                    $sort: {
+                        nombre: 1,
+                    },
+                },
+            })
+            .then((found) => {
+                found.data[0] && setFabricantes(found);
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+        feathersClient
+            .service("modelos")
+            .find({
+                query: {
+                    $limit: 200,
+                    $sort: {
+                        nombre: 1,
+                    },
+                },
+            })
+            .then((found) => {
+                found.data[0] && setModelos(found);
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    }
+
+    const matchModelo = (modeloId) => {
+        try {
+            return (
+                fabricantes.data.find(
+                    ({ id }) =>
+                        id ===
+                        modelos.data.find(({ id }) => id === modeloId)!
+                            .fabricanteId
+                )!.nombre +
+                " " +
+                modelos.data.find(({ id }) => id === modeloId)!.nombre
+            );
+        } catch {
+            return "error";
+        }
+    };
+
+    useEffect(() => {
+        loadCars();
+        feathersClient.service("fabricantes").on("created", () => loadCars());
+        feathersClient.service("modelos").on("created", () => loadCars());
+    }, []);
 
     useEffect(() => {
         activeCard !== "Cliente" && setCreate(false);

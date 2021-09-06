@@ -57,8 +57,18 @@ const Turnos = function ({ activeCard, setActiveCard, matchModelo }) {
     const loader = useRef<HTMLDivElement | null>(null);
     const [selected, setSelected] = useState("");
 
+    const year = new Date().getFullYear();
+    const month = new Date().getMonth();
+    const days: number[] = [];
+    for (
+        var i = new Date().getDate();
+        i <= 32 - new Date(year, month, 32).getDate();
+        i++
+    ) {
+        days.push(i);
+    }
     const [calendar, setCalendar] = useState([
-        { year: 0, month: 0, days: [0] },
+        { year: year, month: month, days: days },
     ]);
     const [turnos, setTurnos] = useState({
         total: 0,
@@ -77,31 +87,34 @@ const Turnos = function ({ activeCard, setActiveCard, matchModelo }) {
     });
 
     const loadDays = useCallback(() => {
-        const list: number[] = [];
-        for (
-            var i = 1;
-            i <=
-            32 -
-                new Date(
-                    calendar[calendar.length - 1].month === 11
-                        ? calendar[calendar.length - 1].year + 1
-                        : calendar[calendar.length - 1].year,
-                    calendar[calendar.length - 1].month + 1,
-                    32
-                ).getDate();
-            i++
-        ) {
-            list.push(i);
+        const year =
+            calendar[calendar.length - 1].month === 11
+                ? calendar[calendar.length - 1].year + 1
+                : calendar[calendar.length - 1].year;
+        const month =
+            calendar[calendar.length - 1].month === 11
+                ? 0
+                : calendar[calendar.length - 1].month + 1;
+        const days: number[] = [];
+        for (var i = 1; i <= 32 - new Date(year, month, 32).getDate(); i++) {
+            days.push(i);
         }
         setCalendar((calendar) => [
-            ...calendar,
+            ...calendar.filter(
+                (item: { year: number; month: number }, index: number) => {
+                    return (
+                        calendar.findIndex(
+                            (test: { year: number; month: number }) =>
+                                test.year === item.year &&
+                                test.month === item.month
+                        ) === index
+                    );
+                }
+            ),
             {
-                year:
-                    calendar[calendar.length - 1].month === 11
-                        ? calendar[calendar.length - 1].year + 1
-                        : calendar[calendar.length - 1].year,
-                month: calendar[calendar.length - 1].month + 1,
-                days: list,
+                year: year,
+                month: month,
+                days: days,
             },
         ]);
     }, [calendar]);
@@ -138,28 +151,6 @@ const Turnos = function ({ activeCard, setActiveCard, matchModelo }) {
                 console.error(error);
             });
     }, [setActiveCard]);
-
-    useEffect(() => {
-        const today = new Date().getDate();
-        const currentMonthDays =
-            32 -
-            new Date(
-                new Date().getFullYear(),
-                new Date().getMonth(),
-                32
-            ).getDate();
-        const currentList: number[] = [];
-        for (var i = today; i <= currentMonthDays; i++) {
-            currentList.push(i);
-        }
-        setCalendar([
-            {
-                year: new Date().getFullYear(),
-                month: new Date().getMonth(),
-                days: currentList,
-            },
-        ]);
-    }, []);
 
     useEffect(() => {
         const option = {
@@ -200,7 +191,11 @@ const Turnos = function ({ activeCard, setActiveCard, matchModelo }) {
         >
             {calendar.map((item) => (
                 <>
-                    <Mes key={`${item.year}-${item.month}`}>
+                    <Mes
+                        key={`${item.year}-${(item.month + 1)
+                            .toString()
+                            .padStart(2, "0")}`}
+                    >
                         <h4>
                             {new Date(
                                 item.year,
