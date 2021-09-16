@@ -21,8 +21,7 @@ const Mes = styled.div`
     border-radius: 4px;
     background: var(--surface-t);
     backdrop-filter: blur(0.4rem);
-    box-shadow: var(--shadow-variant);
-    border-bottom: var(--border-variant);
+    box-shadow: var(--shadow);
     display: grid;
     grid-template-columns: 1fr auto;
     align-items: center;

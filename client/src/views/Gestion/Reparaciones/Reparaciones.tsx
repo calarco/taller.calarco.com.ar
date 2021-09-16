@@ -8,7 +8,8 @@ import SectionComponent from "components/Section";
 import Create from "components/Create";
 import CardComponent from "components/Card";
 import Box from "./Box";
-import Actions from "./Actions";
+import Form from "./Form";
+import Remove from "./Remove";
 
 const Container = transition.div.attrs({
     unmountOnExit: true,
@@ -233,7 +234,7 @@ const Reparaciones = function ({ vehiculoId, activeCard, setActiveCard }) {
                         }
                         onClick={() => setCreate(true)}
                     >
-                        <Actions
+                        <Form
                             reparacion={{
                                 id: 0,
                                 vehiculoId: vehiculoId,
@@ -255,10 +256,6 @@ const Reparaciones = function ({ vehiculoId, activeCard, setActiveCard }) {
                             unEdit={() => {
                                 setActiveCard("");
                             }}
-                            remove={remove}
-                            unRemove={() => {
-                                setRemove(false);
-                            }}
                         />
                     </Create>
                     {reparaciones.data[0] ? (
@@ -275,14 +272,14 @@ const Reparaciones = function ({ vehiculoId, activeCard, setActiveCard }) {
                                         edit={
                                             !create &&
                                             selected === aReparacion.id &&
-                                            (activeCard === "Reparación" ||
-                                                remove)
+                                            activeCard === "Reparación"
                                                 ? true
                                                 : false
                                         }
                                         onEdit={() =>
                                             setActiveCard("Reparación")
                                         }
+                                        remove={remove}
                                         onRemove={() => {
                                             setRemove(true);
                                         }}
@@ -290,26 +287,36 @@ const Reparaciones = function ({ vehiculoId, activeCard, setActiveCard }) {
                                         <Box
                                             reparacion={aReparacion}
                                             onClick={() => {
-                                                setSelected(aReparacion.id);
+                                                selected === aReparacion.id
+                                                    ? setSelected(0)
+                                                    : setSelected(
+                                                          aReparacion.id
+                                                      );
                                             }}
                                         />
                                         {selected === aReparacion.id && (
-                                            <Actions
-                                                reparacion={aReparacion}
-                                                edit={
-                                                    activeCard ===
-                                                        "Reparación" && !create
-                                                        ? true
-                                                        : false
-                                                }
-                                                unEdit={() => {
-                                                    setActiveCard("");
-                                                }}
-                                                remove={remove}
-                                                unRemove={() => {
-                                                    setRemove(false);
-                                                }}
-                                            />
+                                            <>
+                                                <Form
+                                                    reparacion={aReparacion}
+                                                    edit={
+                                                        activeCard ===
+                                                            "Reparación" &&
+                                                        !create
+                                                            ? true
+                                                            : false
+                                                    }
+                                                    unEdit={() => {
+                                                        setActiveCard("");
+                                                    }}
+                                                />
+                                                <Remove
+                                                    id={aReparacion.id}
+                                                    remove={remove}
+                                                    unRemove={() => {
+                                                        setRemove(false);
+                                                    }}
+                                                />
+                                            </>
                                         )}
                                     </Card>
                                 ))}

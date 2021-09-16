@@ -3,13 +3,12 @@ import feathersClient from "feathersClient";
 import styled, { css } from "styled-components";
 
 import FormComponent from "components/Form";
-import Remove from "components/Remove";
 
 type Props = {
     readonly error?: boolean;
 };
 
-const Form = styled(FormComponent)`
+const Container = styled(FormComponent)`
     grid-template-columns: auto 1fr auto [end];
 `;
 
@@ -38,7 +37,7 @@ const Number = styled.label`
     text-align: right;
 `;
 
-const Actions = function ({ reparacion, edit, unEdit, remove, unRemove }) {
+const Form = function ({ reparacion, edit, unEdit }) {
     const [inputs, setInputs] = useState({
         fecha: "",
         km: "",
@@ -119,17 +118,6 @@ const Actions = function ({ reparacion, edit, unEdit, remove, unRemove }) {
                 });
     };
 
-    const handleDelete = (event) => {
-        event.preventDefault();
-        feathersClient
-            .service("reparaciones")
-            .remove(reparacion.id)
-            .then(() => {})
-            .catch((error) => {
-                console.error(error);
-            });
-    };
-
     const handleInputChange = (event) => {
         event.persist();
         setInputs((inputs) => ({
@@ -155,104 +143,91 @@ const Actions = function ({ reparacion, edit, unEdit, remove, unRemove }) {
     }, [reparacion]);
 
     return (
-        <>
-            <Form
-                edit={edit}
-                unEdit={unEdit}
-                onSubmit={reparacion.id === 0 ? handleCreate : handleEdit}
-            >
-                <label>
-                    Fecha
-                    <input
-                        type="date"
-                        name="fecha"
-                        placeholder="-"
-                        value={inputs.fecha}
-                        onChange={handleInputChange}
-                        required
-                    />
-                </label>
-                <Label error={errors.km === "" ? false : true}>
-                    {errors.km === "" ? "KM" : errors.km}
-                    <input
-                        type="number"
-                        min="0000000"
-                        max="9999999"
-                        name="km"
-                        placeholder={reparacion.km}
-                        value={inputs.km}
-                        onChange={handleInputChange}
-                    />
-                </Label>
-                <Number>
-                    Total
-                    <h4>
-                        $
-                        {(parseInt(inputs.costo, 10) || 0) +
-                            (parseInt(inputs.labor, 10) || 0)}
-                    </h4>
-                </Number>
-                <Text error={errors.reparacion === "" ? false : true}>
-                    {errors.reparacion === ""
-                        ? "Reparación"
-                        : errors.reparacion}
-                    <input
-                        type="text"
-                        name="reparacion"
-                        placeholder="-"
-                        value={inputs.reparacion}
-                        onChange={handleInputChange}
-                        autoComplete="off"
-                        required
-                    />
-                </Text>
-                <Number>
-                    Mano de obra
-                    <input
-                        type="number"
-                        min="0000000"
-                        max="9999999"
-                        name="labor"
-                        placeholder="$0"
-                        value={inputs.labor}
-                        onChange={handleInputChange}
-                    />
-                </Number>
-                <Text>
-                    Repuestos
-                    <input
-                        type="text"
-                        name="repuestos"
-                        placeholder="-"
-                        value={inputs.repuestos}
-                        onChange={handleInputChange}
-                        autoComplete="off"
-                    />
-                </Text>
-                <Number>
-                    Repuestos
-                    <input
-                        type="number"
-                        min="0000000"
-                        max="9999999"
-                        name="costo"
-                        placeholder="$0"
-                        value={inputs.costo}
-                        onChange={handleInputChange}
-                    />
-                </Number>
-            </Form>
-            {reparacion.id !== 0 && (
-                <Remove
-                    remove={remove}
-                    unRemove={unRemove}
-                    handleDelete={handleDelete}
-                >
-                    ¿Borrar reparación?
-                </Remove>
-            )}
-        </>
+        <Container
+            edit={edit}
+            unEdit={unEdit}
+            onSubmit={reparacion.id === 0 ? handleCreate : handleEdit}
+        >
+            <label>
+                Fecha
+                <input
+                    type="date"
+                    name="fecha"
+                    placeholder="-"
+                    value={inputs.fecha}
+                    onChange={handleInputChange}
+                    required
+                />
+            </label>
+            <Label error={errors.km === "" ? false : true}>
+                {errors.km === "" ? "KM" : errors.km}
+                <input
+                    type="number"
+                    min="0000000"
+                    max="9999999"
+                    name="km"
+                    placeholder={reparacion.km}
+                    value={inputs.km}
+                    onChange={handleInputChange}
+                />
+            </Label>
+            <Number>
+                Total
+                <h4>
+                    $
+                    {(parseInt(inputs.costo, 10) || 0) +
+                        (parseInt(inputs.labor, 10) || 0)}
+                </h4>
+            </Number>
+            <Text error={errors.reparacion === "" ? false : true}>
+                {errors.reparacion === "" ? "Reparación" : errors.reparacion}
+                <input
+                    type="text"
+                    name="reparacion"
+                    placeholder="-"
+                    value={inputs.reparacion}
+                    onChange={handleInputChange}
+                    autoComplete="off"
+                    required
+                />
+            </Text>
+            <Number>
+                Mano de obra
+                <input
+                    type="number"
+                    min="0000000"
+                    max="9999999"
+                    name="labor"
+                    placeholder="$0"
+                    value={inputs.labor}
+                    onChange={handleInputChange}
+                />
+            </Number>
+            <Text>
+                Repuestos
+                <input
+                    type="text"
+                    name="repuestos"
+                    placeholder="-"
+                    value={inputs.repuestos}
+                    onChange={handleInputChange}
+                    autoComplete="off"
+                />
+            </Text>
+            <Number>
+                Repuestos
+                <input
+                    type="number"
+                    min="0000000"
+                    max="9999999"
+                    name="costo"
+                    placeholder="$0"
+                    value={inputs.costo}
+                    onChange={handleInputChange}
+                />
+            </Number>
+        </Container>
     );
 };
 
-export default Actions;
+export default Form;

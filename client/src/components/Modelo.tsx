@@ -28,12 +28,18 @@ const Container = styled.fieldset`
         padding: 0.25rem 0.5rem;
         border-radius: 4px;
         background: rgba(236, 239, 241, 0.7);
-        border: none;
+        border: 1px solid rgba(0, 0, 0, 0);
         outline: none;
         font: var(--subhead1);
 
-        &:hover {
+        &:focus {
+            background: var(--primary-variant);
+            border: var(--border-primary);
+        }
+
+        &:not(:disabled):hover {
             cursor: pointer;
+            background: var(--primary-variant);
         }
 
         &:focus:hover {

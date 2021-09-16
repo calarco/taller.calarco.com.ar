@@ -26,7 +26,7 @@ const Buscador = styled.form<Props>`
         props.active &&
         css`
             border-radius: 4px;
-            background: var(--surface);
+            background: var(--surface-t);
             box-shadow: var(--shadow);
             transition: 0.2s ease-out;
         `};

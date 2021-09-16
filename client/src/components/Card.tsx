@@ -5,6 +5,7 @@ import transition from "styled-transition-group";
 type Props = {
     readonly active?: boolean;
     readonly edit?: boolean;
+    readonly remove?: boolean;
 };
 
 const Container = styled.div<Props>`
@@ -51,6 +52,12 @@ const Container = styled.div<Props>`
             backdrop-filter: none;
             border: 1px solid rgba(0, 0, 0, 0);
             box-shadow: var(--shadow-variant);
+        `};
+
+    ${(props) =>
+        props.remove &&
+        css`
+            backdrop-filter: none;
         `};
 
     &:not(:first-child)::after {
@@ -128,6 +135,7 @@ type ComponentProps = {
     active: boolean;
     edit: boolean;
     onEdit: (e: React.MouseEvent<HTMLButtonElement>) => void;
+    remove: boolean;
     onRemove: (e: React.MouseEvent<HTMLButtonElement>) => void;
     children: React.ReactNode;
     className?: string;
@@ -137,12 +145,18 @@ const Card = function ({
     active,
     edit,
     onEdit,
+    remove,
     onRemove,
     children,
     className,
 }: ComponentProps) {
     return (
-        <Container active={active} edit={edit} className={className}>
+        <Container
+            active={active}
+            edit={edit}
+            remove={remove}
+            className={className}
+        >
             {children}
             <Buttons in={active}>
                 <button type="button" onClick={onRemove}>

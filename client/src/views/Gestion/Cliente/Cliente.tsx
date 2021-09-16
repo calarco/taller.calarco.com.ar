@@ -6,7 +6,8 @@ import { SwitchTransition } from "react-transition-group";
 
 import CardComponent from "components/Card";
 import Box from "./Box";
-import Actions from "./Actions";
+import Form from "./Form";
+import Remove from "./Remove";
 
 const Card = transition(CardComponent).attrs({
     unmountOnExit: true,
@@ -149,7 +150,7 @@ const Cliente = function ({
                         setVehiculoId(0);
                     }}
                 />
-                <Actions
+                <Form
                     cliente={
                         create
                             ? {
@@ -169,6 +170,9 @@ const Cliente = function ({
                     unEdit={() => {
                         setActiveCard("");
                     }}
+                />
+                <Remove
+                    id={cliente.id}
                     remove={remove}
                     unRemove={() => {
                         setRemove(false);
@@ -177,7 +181,7 @@ const Cliente = function ({
             </Card>
         </SwitchTransition>
     ) : (
-        <Actions
+        <Form
             cliente={{
                 id: 0,
                 nombre: "",
@@ -192,10 +196,6 @@ const Cliente = function ({
             edit={activeCard === "Cliente" ? true : false}
             unEdit={() => {
                 setActiveCard("");
-            }}
-            remove={remove}
-            unRemove={() => {
-                setRemove(false);
             }}
         />
     );

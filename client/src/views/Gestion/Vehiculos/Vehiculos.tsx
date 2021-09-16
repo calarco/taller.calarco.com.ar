@@ -8,7 +8,8 @@ import SectionComponent from "components/Section";
 import Create from "components/Create";
 import CardComponent from "components/Card";
 import Box from "./Box";
-import Actions from "./Actions";
+import Form from "./Form";
+import Remove from "./Remove";
 
 const Section = transition(SectionComponent).attrs({
     unmountOnExit: true,
@@ -186,7 +187,7 @@ const Vehiculos = function ({
                         setCreate(true);
                     }}
                 >
-                    <Actions
+                    <Form
                         vehiculo={{
                             id: 0,
                             patente: "",
@@ -204,10 +205,6 @@ const Vehiculos = function ({
                         unEdit={() => {
                             setCreate(false);
                         }}
-                        remove={false}
-                        unRemove={() => {
-                            setRemove(false);
-                        }}
                     />
                 </Create>
                 <TransitionGroup component={null}>
@@ -221,36 +218,47 @@ const Vehiculos = function ({
                                 edit={
                                     !create &&
                                     vehiculoId === aVehiculo.id &&
-                                    (activeCard === "Vehículo" || remove)
+                                    activeCard === "Vehículo"
                                         ? true
                                         : false
                                 }
                                 onEdit={() => setActiveCard("Vehículo")}
+                                remove={remove}
                                 onRemove={() => {
                                     setRemove(true);
                                 }}
                             >
                                 <Box
                                     vehiculo={aVehiculo}
-                                    onClick={() => setVehiculoId(aVehiculo.id)}
+                                    onClick={() =>
+                                        vehiculoId === aVehiculo.id
+                                            ? setVehiculoId(0)
+                                            : setVehiculoId(aVehiculo.id)
+                                    }
                                     matchModelo={matchModelo}
                                 />
                                 {vehiculoId === aVehiculo.id && (
-                                    <Actions
-                                        vehiculo={aVehiculo}
-                                        edit={
-                                            !create && activeCard === "Vehículo"
-                                                ? true
-                                                : false
-                                        }
-                                        unEdit={() => {
-                                            setActiveCard("");
-                                        }}
-                                        remove={remove}
-                                        unRemove={() => {
-                                            setRemove(false);
-                                        }}
-                                    />
+                                    <>
+                                        <Form
+                                            vehiculo={aVehiculo}
+                                            edit={
+                                                !create &&
+                                                activeCard === "Vehículo"
+                                                    ? true
+                                                    : false
+                                            }
+                                            unEdit={() => {
+                                                setActiveCard("");
+                                            }}
+                                        />
+                                        <Remove
+                                            id={aVehiculo.id}
+                                            remove={remove}
+                                            unRemove={() => {
+                                                setRemove(false);
+                                            }}
+                                        />
+                                    </>
                                 )}
                             </Card>
                         ))

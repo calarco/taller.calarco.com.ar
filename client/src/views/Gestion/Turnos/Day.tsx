@@ -202,24 +202,6 @@ const Day = function ({
                 </p>
             </Dia>
             <List>
-                <Create type="Turno" active={active} onClick={setActive}>
-                    <Form
-                        turno={{
-                            id: 0,
-                            fecha: `${date[0]}-${(date[1] + 1)
-                                .toString()
-                                .padStart(2, "0")}-${date[2]
-                                .toString()
-                                .padStart(2, "0")}`,
-                            motivo: "",
-                            createdAt: "",
-                            updatedAt: "",
-                            modeloId: 0,
-                        }}
-                        edit={active ? true : false}
-                        unEdit={unActive}
-                    />
-                </Create>
                 <TransitionGroup component={null}>
                     {turnos[0] &&
                         turnos[0].id !== 0 &&
@@ -255,6 +237,24 @@ const Day = function ({
                             </Turno>
                         ))}
                 </TransitionGroup>
+                <Create type="Turno" active={active} onClick={setActive}>
+                    <Form
+                        turno={{
+                            id: 0,
+                            fecha: `${date[0]}-${(date[1] + 1)
+                                .toString()
+                                .padStart(2, "0")}-${date[2]
+                                .toString()
+                                .padStart(2, "0")}`,
+                            motivo: "",
+                            createdAt: "",
+                            updatedAt: "",
+                            modeloId: 0,
+                        }}
+                        edit={active ? true : false}
+                        unEdit={unActive}
+                    />
+                </Create>
             </List>
         </Container>
     );

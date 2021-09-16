@@ -98,6 +98,7 @@ const Actions = function ({ turno, edit, unEdit }) {
                     type="text"
                     name="motivo"
                     placeholder="-"
+                    autoComplete="off"
                     value={inputs.motivo}
                     onChange={handleInputChange}
                 />

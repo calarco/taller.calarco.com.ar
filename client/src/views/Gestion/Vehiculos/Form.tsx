@@ -3,10 +3,9 @@ import feathersClient from "feathersClient";
 import styled from "styled-components";
 
 import FormComponent from "components/Form";
-import Remove from "components/Remove";
 import ModeloComponent from "components/Modelo";
 
-const Form = styled(FormComponent)`
+const Container = styled(FormComponent)`
     grid-template-columns: 1fr 1fr 1fr [end];
 `;
 
@@ -19,7 +18,7 @@ const Wide = styled.label`
     grid-column-end: span 2;
 `;
 
-const Actions = function ({ vehiculo, edit, remove, unRemove, unEdit }) {
+const Form = function ({ vehiculo, edit, unEdit }) {
     const [inputs, setInputs] = useState({
         patente: "",
         year: "",
@@ -107,17 +106,6 @@ const Actions = function ({ vehiculo, edit, remove, unRemove, unEdit }) {
                 });
     };
 
-    const handleDelete = (event) => {
-        event.preventDefault();
-        feathersClient
-            .service("vehiculos")
-            .remove(vehiculo.id)
-            .then(() => {})
-            .catch((error) => {
-                console.error(error);
-            });
-    };
-
     const handleInputChange = (event) => {
         event.persist();
         setInputs((inputs) => ({
@@ -148,101 +136,91 @@ const Actions = function ({ vehiculo, edit, remove, unRemove, unEdit }) {
     }, [vehiculo]);
 
     return (
-        <>
-            <Form
-                edit={edit}
-                unEdit={unEdit}
-                onSubmit={vehiculo.id === 0 ? handleCreate : handleEdit}
-            >
-                <Modelo
-                    inputs={inputs}
-                    setInputs={setInputs}
+        <Container
+            edit={edit}
+            unEdit={unEdit}
+            onSubmit={vehiculo.id === 0 ? handleCreate : handleEdit}
+        >
+            <Modelo
+                inputs={inputs}
+                setInputs={setInputs}
+                onChange={handleInputChange}
+            />
+            <label>
+                Combustible
+                <select
+                    name="combustible"
+                    value={inputs.combustible}
+                    onChange={handleInputChange}
+                >
+                    <option value="Nafta">Nafta</option>
+                    <option value="Diesel">Diesel</option>
+                    <option value="GNC">GNC</option>
+                </select>
+            </label>
+            <label>
+                Cilindrada
+                <input
+                    type="number"
+                    min="0.1"
+                    max="20"
+                    step="0.1"
+                    name="cilindrada"
+                    placeholder="litros"
+                    value={inputs.cilindrada}
                     onChange={handleInputChange}
                 />
-                <label>
-                    Combustible
-                    <select
-                        name="combustible"
-                        value={inputs.combustible}
-                        onChange={handleInputChange}
-                    >
-                        <option value="Nafta">Nafta</option>
-                        <option value="Diesel">Diesel</option>
-                        <option value="GNC">GNC</option>
-                    </select>
-                </label>
-                <label>
-                    Cilindrada
-                    <input
-                        type="number"
-                        min="0.1"
-                        max="20"
-                        step="0.1"
-                        name="cilindrada"
-                        placeholder="litros"
-                        value={inputs.cilindrada}
-                        onChange={handleInputChange}
-                    />
-                </label>
-                <label>
-                    Año
-                    <input
-                        type="number"
-                        min="1900"
-                        max="9999"
-                        name="year"
-                        placeholder="-"
-                        value={inputs.year}
-                        onChange={handleInputChange}
-                    />
-                </label>
-                <Wide>
-                    {error === "" ? "VIN" : error}
-                    <input
-                        type="text"
-                        minLength={17}
-                        name="vin"
-                        placeholder="-"
-                        autoComplete="off"
-                        value={inputs.vin}
-                        onChange={handleInputChange}
-                    />
-                </Wide>
-                <label>
-                    {error === "" ? "Patente" : error}
-                    <input
-                        type="text"
-                        name="patente"
-                        placeholder="-"
-                        autoComplete="off"
-                        value={inputs.patente}
-                        onChange={handleInputChange}
-                        required
-                    />
-                </label>
-                <Wide>
-                    Propietario
-                    <select
-                        disabled
-                        name="clienteId"
-                        value={inputs.clienteId}
-                        onChange={handleInputChange}
-                    >
-                        <option value="">{inputs.clienteId}</option>
-                    </select>
-                </Wide>
-            </Form>
-            {vehiculo.id !== 0 && (
-                <Remove
-                    remove={remove}
-                    unRemove={unRemove}
-                    handleDelete={handleDelete}
+            </label>
+            <label>
+                Año
+                <input
+                    type="number"
+                    min="1900"
+                    max="9999"
+                    name="year"
+                    placeholder="-"
+                    value={inputs.year}
+                    onChange={handleInputChange}
+                    autoComplete="off"
+                />
+            </label>
+            <Wide>
+                {error === "" ? "VIN" : error}
+                <input
+                    type="text"
+                    minLength={17}
+                    name="vin"
+                    placeholder="-"
+                    autoComplete="off"
+                    value={inputs.vin}
+                    onChange={handleInputChange}
+                />
+            </Wide>
+            <label>
+                {error === "" ? "Patente" : error}
+                <input
+                    type="text"
+                    name="patente"
+                    placeholder="-"
+                    autoComplete="off"
+                    value={inputs.patente}
+                    onChange={handleInputChange}
+                    required
+                />
+            </label>
+            <Wide>
+                Propietario
+                <select
+                    disabled
+                    name="clienteId"
+                    value={inputs.clienteId}
+                    onChange={handleInputChange}
                 >
-                    ¿Borrar vehiculo?
-                </Remove>
-            )}
-        </>
+                    <option value="">{inputs.clienteId}</option>
+                </select>
+            </Wide>
+        </Container>
     );
 };
 
-export default Actions;
+export default Form;

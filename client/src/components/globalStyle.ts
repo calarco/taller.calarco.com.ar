@@ -321,28 +321,31 @@ const GlobalStyle = createGlobalStyle`
         padding: 0.25rem 0.5rem;
         border-radius: 4px;
         background: rgba(236, 239, 241, 0.7);
-        border: none;
-    }
-
-    select:hover {
-        cursor: pointer;
+        border: 1px solid rgba(0, 0, 0, 0);
     }
 
     input[type="checkbox"] {
         display: none;
     }
+    
+    input[type="search"]:hover,
+    input[type="text"]:hover,
+    input[type="number"]:hover,
+    input[type="email"]:hover,
+    input[type="tel"]:hover,
+    input[type="date"]:hover,
+    input[type="time"]:hover,
+    input[type="password"]:hover,
+    textarea:hover,
+    select:hover {
+        border: var(--border-primary);
+        transition: 0.15s ease-out;
+    }
 
-    input[type="search"]:disabled,
-    input[type="text"]:disabled,
-    input[type="number"]:disabled,
-    input[type="email"]:disabled,
-    input[type="tel"]:disabled,
-    input[type="date"]:disabled,
-    input[type="time"]:disabled,
-    input[type="password"]:disabled,
-    textarea:disabled,
-    select:disabled {
-        pointer-events: none;
+    select:not(:disabled):hover {
+        cursor: pointer;
+        background: var(--primary-variant);
+        border: 1px solid rgba(0, 0, 0, 0);
     }
     
     input[type="search"]:focus,
@@ -356,9 +359,33 @@ const GlobalStyle = createGlobalStyle`
     textarea:focus,
     select:focus {
         outline: none;
-        border: 1px solid var(--primary);
+        background: var(--primary-variant);
+        box-shadow: var(--shadow-variant);
         color: var(--on-background);
         transition: 0.15s ease-out;
+    }
+
+    select:focus {
+        border: var(--border-primary);
+    }
+
+    input[type="search"]:hover,
+    input[type="search"]:focus {
+        border: none;
+        background: none;
+    }
+
+    input[type="search"]:disabled,
+    input[type="text"]:disabled,
+    input[type="number"]:disabled,
+    input[type="email"]:disabled,
+    input[type="tel"]:disabled,
+    input[type="date"]:disabled,
+    input[type="time"]:disabled,
+    input[type="password"]:disabled,
+    textarea:disabled,
+    select:disabled {
+        pointer-events: none;
     }
 
     input:-webkit-autofill,
