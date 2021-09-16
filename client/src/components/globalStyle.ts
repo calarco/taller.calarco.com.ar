@@ -54,19 +54,21 @@ const GlobalStyle = createGlobalStyle`
 
         --border: ${(props) => props.theme.borders.border};
         --border-variant: ${(props) => props.theme.borders.borderVariant};
+        --border-primary: ${(props) => props.theme.borders.borderPrimary};
 
+        --background: ${(props) => props.theme.colors.background};
+        --surface: ${(props) => props.theme.colors.surface};
+        --surface-t: ${(props) => props.theme.colors.surfaceT};
+        --surface-variant: ${(props) => props.theme.colors.surfaceVariant};
         --primary: ${(props) => props.theme.colors.primary};
         --primary-variant: ${(props) => props.theme.colors.primaryVariant};
         --secondary: ${(props) => props.theme.colors.secondary};
         --secondary-variant: ${(props) => props.theme.colors.secondaryVariant};
-        --background: ${(props) => props.theme.colors.background};
         --on-background: ${(props) => props.theme.colors.onBackground};
         --on-background-variant: ${(props) =>
             props.theme.colors.onBackgroundVariant};
         --on-background-disabled: ${(props) =>
             props.theme.colors.onBackgroundDisabled};
-        --surface: ${(props) => props.theme.colors.surface};
-        --surface-variant: ${(props) => props.theme.colors.surfaceVariant};
         --error: ${(props) => props.theme.colors.error};
         --error-variant: ${(props) => props.theme.colors.errorVariant};
         --overlay: ${(props) => props.theme.colors.overlay};

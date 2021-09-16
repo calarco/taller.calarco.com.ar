@@ -99,10 +99,6 @@ const Create = styled(CreateComponent)`
     background: none;
     border: none;
     box-shadow: none;
-
-    &:hover {
-        border: none;
-    }
 `;
 
 const Turno = transition.div`
@@ -157,6 +153,7 @@ const Turno = transition.div`
 const Day = function ({
     date,
     turnos,
+    current,
     active,
     setActive,
     unActive,
@@ -181,7 +178,7 @@ const Day = function ({
     return (
         <Container active={active}>
             <Dia
-                active={false}
+                active={current}
                 inactive={
                     [0, 6].indexOf(
                         new Date(date[0], date[1], date[2]).getDay()

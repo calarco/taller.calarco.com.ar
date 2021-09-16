@@ -12,7 +12,7 @@ const Container = styled.div<Props>`
     height: 3rem;
     padding: 0 0 3rem 0;
     border-radius: 4px;
-    background: rgba(255, 255, 255, 0.75);
+    background: var(--surface-t);
     backdrop-filter: blur(0.4rem);
     border: 1px solid var(--secondary);
     box-shadow: var(--shadow);
@@ -20,7 +20,6 @@ const Container = styled.div<Props>`
 
     &:hover {
         cursor: pointer;
-        border: 1px solid var(--secondary);
         transition: 0.2s ease-in;
     }
 
@@ -46,9 +45,6 @@ const Buttons = styled.div`
     button {
         width: 100%;
         height: 3rem;
-        padding: 0 1.5rem;
-        border-radius: 0px;
-        background: none;
         border: none;
 
         &:not(:first-child)::after {

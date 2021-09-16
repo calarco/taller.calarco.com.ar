@@ -19,7 +19,7 @@ const Container = styled.div<Props>`
         css`
             &:hover {
                 cursor: pointer;
-                border: var(--border);
+                background: var(--primary-variant);
                 transition: 0.2s ease-in;
             }
         `};
@@ -31,7 +31,7 @@ const Container = styled.div<Props>`
             top: 4.5rem;
             bottom: 0;
             z-index: 1000;
-            background: rgba(255, 255, 255, 0.75);
+            background: var(--primary-variant);
             backdrop-filter: blur(0.4rem);
             border: 1px solid var(--primary);
             box-shadow: var(--shadow-variant);
@@ -84,7 +84,7 @@ const Buttons = transition.div.attrs({
     width: 100%;
     height: 3rem;
     overflow: hidden;
-    border-top: var(--border);
+    border-top: var(--border-primary);
     display: flex;
 
     button {
@@ -101,7 +101,7 @@ const Buttons = transition.div.attrs({
             top: calc(50% - 1rem);
             left: 0;
             height: 2rem;
-            border-left: var(--border);
+            border-left: var(--border-primary);
         }
     }
 

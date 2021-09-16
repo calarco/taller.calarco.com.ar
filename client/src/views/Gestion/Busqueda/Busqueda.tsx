@@ -51,6 +51,7 @@ const CreateButton = transition.button.attrs({
     height: 100%;
     padding: 0 1.5rem;
     margin: 0;
+    border-radius: 0 4px 4px 0;
     border: none;
 
     &::after {
@@ -59,15 +60,17 @@ const CreateButton = transition.button.attrs({
         top: calc(50% - 1rem);
         left: 0;
         height: 2rem;
-        border-left: var(--border);
+        border-left: var(--border-primary);
     }
     
     &:enter {
         opacity: 0;
+        transform: translateX(3rem);
     }
 
     &:enter-active {
         opacity: 1;
+        transform: initial;
         transition: 0.2s ease-out;
     }
 
@@ -77,6 +80,7 @@ const CreateButton = transition.button.attrs({
 
     &:exit-active {
         opacity: 0;
+        transform: translateX(3rem);
         transition: 0.15s ease-in;
     }
 `;
@@ -297,29 +301,15 @@ const Busqueda = function ({
                     value={busqueda}
                     autoFocus
                 />
-                <SwitchTransition>
-                    {!create ? (
-                        <CreateButton
-                            key={0}
-                            type="button"
-                            onClick={() => {
-                                setCreate(true);
-                            }}
-                        >
-                            Crear cliente
-                        </CreateButton>
-                    ) : (
-                        <CreateButton
-                            key={1}
-                            type="button"
-                            onClick={() => {
-                                setCreate(false);
-                            }}
-                        >
-                            Cancelar
-                        </CreateButton>
-                    )}
-                </SwitchTransition>
+                <CreateButton
+                    in={!create}
+                    type="button"
+                    onClick={() => {
+                        setCreate(true);
+                    }}
+                >
+                    Crear cliente
+                </CreateButton>
             </Buscador>
             <SwitchTransition>
                 <Container key={count}>

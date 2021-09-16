@@ -12,19 +12,21 @@ declare module "styled-components" {
         borders: {
             border: string;
             borderVariant: string;
+            borderPrimary: string;
         };
 
         colors: {
+            background: string;
+            surface: string;
+            surfaceT: string;
+            surfaceVariant: string;
             primary: string;
             primaryVariant: string;
             secondary: string;
             secondaryVariant: string;
-            background: string;
             onBackground: string;
             onBackgroundVariant: string;
             onBackgroundDisabled: string;
-            surface: string;
-            surfaceVariant: string;
             error: string;
             errorVariant: string;
             overlay: string;

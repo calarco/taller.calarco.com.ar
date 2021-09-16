@@ -19,7 +19,7 @@ const Mes = styled.div`
     height: 3rem;
     padding: 0 1.5rem;
     border-radius: 4px;
-    background: rgba(255, 255, 255, 0.75);
+    background: var(--surface-t);
     backdrop-filter: blur(0.4rem);
     box-shadow: var(--shadow-variant);
     border-bottom: var(--border-variant);
@@ -189,7 +189,7 @@ const Turnos = function ({ activeCard, setActiveCard, matchModelo }) {
                 setActiveCard("");
             }}
         >
-            {calendar.map((item) => (
+            {calendar.map((item, indexMonth) => (
                 <>
                     <Mes
                         key={`${item.year}-${(item.month + 1)
@@ -207,7 +207,7 @@ const Turnos = function ({ activeCard, setActiveCard, matchModelo }) {
                         </h4>
                         <h6>{item.year}</h6>
                     </Mes>
-                    {item.days.map((number) => (
+                    {item.days.map((number, indexDay) => (
                         <Day
                             key={`${item.year}-${(item.month + 1)
                                 .toString()
@@ -225,6 +225,7 @@ const Turnos = function ({ activeCard, setActiveCard, matchModelo }) {
                                         .toString()
                                         .padStart(2, "0")}`
                             )}
+                            current={indexMonth === 0 && indexDay === 0}
                             active={
                                 selected ===
                                     `${item.year}-${(item.month + 1)

@@ -16,7 +16,7 @@ const Container = transition.div<Props>`
     min-height: 3rem;
     border-radius: 4px;
     overflow: hidden;
-    background: rgba(255, 255, 255, 0.5);
+    background: var(--surface-t);
     backdrop-filter: blur(0.5rem);
     border: 1px solid var(--error);
     display: grid;
