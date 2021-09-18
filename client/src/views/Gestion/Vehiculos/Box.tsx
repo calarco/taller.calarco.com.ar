@@ -11,6 +11,7 @@ const Container = styled.article`
 
     h4 {
         text-align: right;
+        font: 400 1rem/1.75rem var(--font-family-alt);
     }
 
     div {

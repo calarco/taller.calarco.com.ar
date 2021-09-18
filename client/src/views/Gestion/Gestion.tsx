@@ -79,43 +79,6 @@ const Right = transition.div.attrs({
     }
 `;
 
-const Right1 = transition.div.attrs({
-    unmountOnExit: true,
-    timeout: {
-        enter: 300,
-        exit: 150,
-    },
-})`
-    position: relative;
-    height: calc(100vh - 4.75rem);
-    border-radius: 4px;
-    background: var(--surface-variant);
-    border: var(--border-variant);
-    box-shadow: var(--shadow-variant);
-    display: grid;
-    grid-template-rows: auto 1fr;
-    
-    &:enter {
-        opacity: 0;
-        transform: translateY(-1rem);
-    }
-
-    &:enter-active {
-        opacity: 1;
-        transform: initial;
-        transition: 0.3s ease-out;
-    }
-
-    &:exit {
-        opacity: 1;
-    }
-
-    &:exit-active {
-        opacity: 0;
-        transition: 0.2s ease-in;
-    }
-`;
-
 const Bar = styled.div`
     width: 100%;
     background: var(--surface);
@@ -262,42 +225,44 @@ const Gestion = function ({ setUser }) {
                     />
                 </Left>
                 <SwitchTransition>
-                    {clienteId !== 0 ? (
-                        <Right key={0}>
-                            <Vehiculos
-                                clienteId={clienteId}
-                                vehiculoId={vehiculoId}
-                                setVehiculoId={setVehiculoId}
-                                activeCard={activeCard}
-                                setActiveCard={setActiveCard}
-                                matchModelo={matchModelo}
-                            />
-                            <Cliente
-                                clienteId={clienteId}
-                                setClienteId={setClienteId}
-                                setVehiculoId={setVehiculoId}
-                                create={create}
-                                activeCard={activeCard}
-                                setActiveCard={setActiveCard}
-                            />
-                        </Right>
-                    ) : (
-                        <Right1 key={1}>
-                            <Turnos
-                                activeCard={activeCard}
-                                setActiveCard={setActiveCard}
-                                matchModelo={matchModelo}
-                            />
-                            <Cliente
-                                clienteId={clienteId}
-                                setClienteId={setClienteId}
-                                setVehiculoId={setVehiculoId}
-                                create={create}
-                                activeCard={activeCard}
-                                setActiveCard={setActiveCard}
-                            />
-                        </Right1>
-                    )}
+                    <Right key={clienteId !== 0 ? 0 : 1}>
+                        {clienteId !== 0 ? (
+                            <>
+                                <Vehiculos
+                                    clienteId={clienteId}
+                                    vehiculoId={vehiculoId}
+                                    setVehiculoId={setVehiculoId}
+                                    activeCard={activeCard}
+                                    setActiveCard={setActiveCard}
+                                    matchModelo={matchModelo}
+                                />
+                                <Cliente
+                                    clienteId={clienteId}
+                                    setClienteId={setClienteId}
+                                    setVehiculoId={setVehiculoId}
+                                    create={create}
+                                    activeCard={activeCard}
+                                    setActiveCard={setActiveCard}
+                                />
+                            </>
+                        ) : (
+                            <>
+                                <Turnos
+                                    activeCard={activeCard}
+                                    setActiveCard={setActiveCard}
+                                    matchModelo={matchModelo}
+                                />
+                                <Cliente
+                                    clienteId={clienteId}
+                                    setClienteId={setClienteId}
+                                    setVehiculoId={setVehiculoId}
+                                    create={create}
+                                    activeCard={activeCard}
+                                    setActiveCard={setActiveCard}
+                                />
+                            </>
+                        )}
+                    </Right>
                 </SwitchTransition>
             </Panels>
             <Bar>

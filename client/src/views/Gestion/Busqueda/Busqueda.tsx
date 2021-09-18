@@ -12,12 +12,13 @@ type Props = {
 };
 
 const Buscador = styled.form<Props>`
-    grid-column-end: 1;
-    grid-row-start: 1;
+    position: absolute;
+    z-index: 500;
+    top: 0;
     width: 100%;
     height: 3rem;
     border-radius: 4px;
-    overflow: hidden;
+    backdrop-filter: blur(0.4rem);
     display: grid;
     grid-template-columns: 1fr auto;
     transition: 0.15s ease-in;
@@ -92,15 +93,13 @@ const Container = transition.section.attrs({
         exit: 150,
     },
 })`
-    grid-column-end: 1;
-    grid-row-start: 2;
-    grid-row-end: 2;
     content-visibility: auto;
     position: relative;
     width: 100%;
     height: 100%;
     min-height: 25rem;
     max-height: 100%;
+    padding-top: 3rem;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
@@ -284,33 +283,6 @@ const Busqueda = function ({
 
     return (
         <>
-            <Buscador
-                autoComplete="off"
-                active={vehiculoId === 0 ? true : false}
-            >
-                <input
-                    type="search"
-                    name="search"
-                    placeholder="Buscar"
-                    onChange={(event) =>
-                        startTransition(() => {
-                            setBusqueda(event.target.value);
-                        })
-                    }
-                    onFocus={() => setVehiculoId(0)}
-                    value={busqueda}
-                    autoFocus
-                />
-                <CreateButton
-                    in={!create}
-                    type="button"
-                    onClick={() => {
-                        setCreate(true);
-                    }}
-                >
-                    Crear cliente
-                </CreateButton>
-            </Buscador>
             <SwitchTransition>
                 <Container key={count}>
                     {busqueda === "" ? (
@@ -357,6 +329,33 @@ const Busqueda = function ({
                     )}
                 </Container>
             </SwitchTransition>
+            <Buscador
+                autoComplete="off"
+                active={vehiculoId === 0 ? true : false}
+            >
+                <input
+                    type="search"
+                    name="search"
+                    placeholder="Buscar"
+                    onChange={(event) =>
+                        startTransition(() => {
+                            setBusqueda(event.target.value);
+                        })
+                    }
+                    onFocus={() => setVehiculoId(0)}
+                    value={busqueda}
+                    autoFocus
+                />
+                <CreateButton
+                    in={!create}
+                    type="button"
+                    onClick={() => {
+                        setCreate(true);
+                    }}
+                >
+                    Crear cliente
+                </CreateButton>
+            </Buscador>
         </>
     );
 };

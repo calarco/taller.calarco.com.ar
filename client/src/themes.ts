@@ -26,7 +26,7 @@ const themeLight: DefaultTheme = {
         onBackground: "rgba(0, 0, 0, 0.9)",
         onBackgroundVariant: "rgba(0, 0, 0, 0.6)",
         onBackgroundDisabled: "rgba(0, 0, 0, 0.3)",
-        error: "#ec4758",
+        error: "rgba(236, 71, 88, 1)",
         errorVariant: "#ef948f",
         overlay: "rgba(160, 160, 160, 0.1)",
     },

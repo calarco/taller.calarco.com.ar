@@ -6,7 +6,6 @@ import SectionComponent from "components/Section";
 import Day from "./Day";
 
 const Section = styled(SectionComponent)`
-    grid-row-end: span 2;
     padding: 0;
     gap: 0;
 `;

@@ -17,7 +17,7 @@ const Container = transition.div<Props>`
     border-radius: 4px;
     overflow: hidden;
     background: var(--surface-t);
-    backdrop-filter: blur(0.5rem);
+    backdrop-filter: blur(0.5rem) saturate(0);
     border: 1px solid var(--error);
     display: grid;
     align-items: center;
@@ -32,6 +32,10 @@ const Container = transition.div<Props>`
             right: 0;
             bottom: 0;
             left: 0;
+            border-radius: 0;
+            border: none;
+            background: var(--primary-variant);
+            box-shadow: var(--shadow-variant);
             grid-template-rows: 1fr;
             grid-template-columns: 1fr auto;
         `};

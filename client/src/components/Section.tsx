@@ -32,11 +32,12 @@ const Overlay = styled.div<Props>`
     visibility: hidden;
     opacity: 0;
     position: absolute;
+    z-index: 1001;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 1001;
+    border-radius: 4px;
     background: rgba(236, 239, 241, 0.7);
     backdrop-filter: blur(0.5rem);
     transition: 0.25s ease-in;

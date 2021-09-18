@@ -19,12 +19,12 @@ const Container = transition.div.attrs({
     },
 })`
     will-change: opacity;
-    position: relative;
-    grid-column-end: 1;
-    grid-row-start: 2;
-    grid-row-end: 2;
-    width: 100%;
-    height: 100%;
+    position: absolute;
+    z-index: 600;
+    top: 3rem;
+    right: 0;
+    bottom: 0;
+    left: 0;
     overflow: hidden;
     border-radius: 4px;
     background: var(--surface);

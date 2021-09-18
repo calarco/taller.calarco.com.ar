@@ -59,13 +59,13 @@ const Dia = styled.div<Props>`
     display: grid;
     grid-template-rows: auto auto;
 
-    ${(props) =>
-        props.active &&
-        css`
-            & > * {
-                color: var(--secondary);
-            }
-        `};
+    h3 {
+        font: 400 1.25rem/1.75rem var(--font-family-alt);
+    }
+
+    p {
+        font: 400 0.9rem/1.25rem var(--font-family-alt);
+    }
 
     ${(props) =>
         props.inactive &&
@@ -74,23 +74,29 @@ const Dia = styled.div<Props>`
                 color: var(--on-background-variant);
             }
         `};
+
+    ${(props) =>
+        props.active &&
+        css`
+            & > * {
+                color: var(--secondary);
+            }
+        `};
 `;
 
-const List = styled.div`
+const List = styled.div<Props>`
     position: relative;
     border-radius: 4px;
     display: flex;
     flex-direction: column;
+    transition: 0.15s ease-in;
 
-    &::after {
-        content: "";
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        z-index: 0;
-        border-left: var(--border-variant);
-    }
+    ${(props) =>
+        props.active &&
+        css`
+            background: var(--surface-t);
+            box-shadow: var(--shadow);
+        `};
 `;
 
 const Create = styled(CreateComponent)`
@@ -193,15 +199,32 @@ const Day = function ({
             >
                 <h3>{date[2]}</h3>
                 <p>
-                    {new Date(date[0], date[1], date[2]).toLocaleDateString(
-                        "default",
-                        {
+                    {new Date(date[0], date[1], date[2])
+                        .toLocaleDateString("default", {
                             weekday: "short",
-                        }
-                    )}
+                        })
+                        .substring(0, 3)}
                 </p>
             </Dia>
-            <List>
+            <List active={turnos[0] && turnos[0].id !== 0}>
+                <Create type="Turno" active={active} onClick={setActive}>
+                    <Form
+                        turno={{
+                            id: 0,
+                            fecha: `${date[0]}-${(date[1] + 1)
+                                .toString()
+                                .padStart(2, "0")}-${date[2]
+                                .toString()
+                                .padStart(2, "0")}`,
+                            motivo: "",
+                            createdAt: "",
+                            updatedAt: "",
+                            modeloId: 0,
+                        }}
+                        edit={active ? true : false}
+                        unEdit={unActive}
+                    />
+                </Create>
                 <TransitionGroup component={null}>
                     {turnos[0] &&
                         turnos[0].id !== 0 &&
@@ -237,24 +260,6 @@ const Day = function ({
                             </Turno>
                         ))}
                 </TransitionGroup>
-                <Create type="Turno" active={active} onClick={setActive}>
-                    <Form
-                        turno={{
-                            id: 0,
-                            fecha: `${date[0]}-${(date[1] + 1)
-                                .toString()
-                                .padStart(2, "0")}-${date[2]
-                                .toString()
-                                .padStart(2, "0")}`,
-                            motivo: "",
-                            createdAt: "",
-                            updatedAt: "",
-                            modeloId: 0,
-                        }}
-                        edit={active ? true : false}
-                        unEdit={unActive}
-                    />
-                </Create>
             </List>
         </Container>
     );

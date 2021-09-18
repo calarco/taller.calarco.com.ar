@@ -74,7 +74,7 @@ const GlobalStyle = createGlobalStyle`
         --overlay: ${(props) => props.theme.colors.overlay};
 
         --font-family: "Supreme-Variable";
-        --font-family-alt: "Helvetica";
+        --font-family-alt: "SpaceMono-Regular";
 
         --label: 300 0.75rem/1.25rem var(--font-family);
         --body1: 300 0.9rem/1.25rem var(--font-family);
@@ -90,7 +90,8 @@ const GlobalStyle = createGlobalStyle`
         text-rendering: optimizeLegibility;
         font-feature-settings: "kern" 1;
         font-kerning: normal;
-        font-family: var(--font-family), sans-serif;
+        font-family: var(--font-family), var(--font-family-alt), sans-serif;
+
         background: var(--background);
         color: var(--on-background);
         

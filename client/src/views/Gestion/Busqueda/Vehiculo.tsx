@@ -6,17 +6,12 @@ type Props = {
     readonly active?: boolean;
 };
 
-const Container = styled.div<Props>`
+const Container = styled.div`
     position: relative;
     width: 100%;
     display: grid;
     grid-template-columns: 1fr auto;
     transition: 0.15s ease-in;
-
-    &:hover {
-        cursor: pointer;
-        transition: 0.15s ease-out;
-    }
 
     &:not(:first-child)::after {
         content: "";
@@ -26,51 +21,83 @@ const Container = styled.div<Props>`
         width: 100%;
         border-top: var(--border-variant);
     }
+`;
 
-    div {
-        padding: 1.5rem 2.5rem;
-        display: grid;
-        grid-auto-flow: column;
-        align-items: center;
-        justify-content: start;
-        gap: 1rem;
+const Box = styled.div`
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    justify-content: start;
 
-        &:hover {
-            cursor: pointer;
-            background: var(--primary-variant);
-            transition: 0.15s ease-out;
-        }
+    &:hover {
+        cursor: pointer;
+        background: var(--primary-variant);
+        transition: 0.15s ease-out;
     }
 
-    h5 {
+    div:first-child {
         position: relative;
-        padding: 1.5rem 2.5rem;
-        border: 1px solid rgba(0, 0, 0, 0);
-        text-align: right;
-        transition: 0.15s ease-in;
+        padding: 1rem 2rem;
+        text-align: center;
+        text-transform: uppercase;
 
-        &:hover {
-            cursor: pointer;
-            background: var(--primary-variant);
-            transition: 0.15s ease-out;
+        h6,
+        p {
+            font-family: var(--font-family-alt);
         }
 
         &::after {
             content: "";
             position: absolute;
             top: calc(50% - 1rem);
-            left: 0;
+            right: 0;
             height: 2rem;
-            border-left: var(--border-variant);
+            border-right: var(--border-variant);
         }
-
-        ${(props) =>
-            props.active &&
-            css`
-                background: var(--primary-variant);
-                transition: 0.15s ease-out;
-            `};
     }
+
+    div:last-child {
+        padding: 1.5rem 2.5rem;
+        display: grid;
+        grid-auto-flow: column;
+        align-items: center;
+        justify-content: start;
+        gap: 1rem;
+    }
+
+    h4 {
+        font: 400 1rem/1.75rem var(--font-family-alt);
+    }
+`;
+
+const Cliente = styled.h5<Props>`
+    position: relative;
+    padding: 1.5rem 2.5rem;
+    border: 1px solid rgba(0, 0, 0, 0);
+    display: grid;
+    transition: 0.15s ease-in;
+
+    &:hover {
+        cursor: pointer;
+        background: var(--primary-variant);
+        transition: 0.15s ease-out;
+    }
+
+    &::after {
+        content: "";
+        position: absolute;
+        top: calc(50% - 1rem);
+        left: 0;
+        height: 2rem;
+        border-left: var(--border-variant);
+    }
+
+    ${(props) =>
+        props.active &&
+        css`
+            background: var(--primary-variant);
+            transition: 0.15s ease-out;
+        `};
 `;
 
 const Vehiculo = function ({
@@ -104,19 +131,33 @@ const Vehiculo = function ({
     }, [vehiculo]);
 
     return (
-        <Container active={active}>
-            <div
+        <Container>
+            <Box
                 onClick={() => {
                     setVehiculoId(vehiculo.id);
                     setClienteId(vehiculo.clienteId);
                 }}
             >
-                <h4>{vehiculo.patente}</h4>
-                <p>{matchModelo(vehiculo.modeloId)}</p>
-            </div>
-            <h5 onClick={() => setClienteId(cliente.id)}>
+                <div>
+                    <p>
+                        {vehiculo.updatedAt.substring(8, 10)}
+                        <span>
+                            {new Date(vehiculo.updatedAt)
+                                .toLocaleDateString("default", {
+                                    month: "short",
+                                })
+                                .substring(0, 3)}
+                        </span>
+                    </p>
+                </div>
+                <div>
+                    <h4>{vehiculo.patente}</h4>
+                    <p>{matchModelo(vehiculo.modeloId)}</p>
+                </div>
+            </Box>
+            <Cliente active={active} onClick={() => setClienteId(cliente.id)}>
                 {cliente.nombre} {cliente.apellido}
-            </h5>
+            </Cliente>
         </Container>
     );
 };
