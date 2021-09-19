@@ -69,7 +69,7 @@ const Buttons = styled.div<Props>`
     width: 100%;
     height: 3rem;
     overflow: hidden;
-    border-top: var(--border);
+    border-top: 1px solid var(--primary-variant);
     display: flex;
     transition: 0.25s ease-out;
 
@@ -85,7 +85,7 @@ const Buttons = styled.div<Props>`
                 top: calc(50% - 1rem);
                 left: 0;
                 height: 2rem;
-                border-left: var(--border);
+                border-left: 1px solid var(--primary-variant);
             }
         `};
 
@@ -102,7 +102,7 @@ const Buttons = styled.div<Props>`
             top: calc(50% - 1rem);
             left: 0;
             height: 2rem;
-            border-left: var(--border);
+            border-left: 1px solid var(--primary-variant);
         }
     }
 `;

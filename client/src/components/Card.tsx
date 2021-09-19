@@ -91,7 +91,7 @@ const Buttons = transition.div.attrs({
     width: 100%;
     height: 3rem;
     overflow: hidden;
-    border-top: var(--border-primary);
+    border-top: 1px solid var(--primary-variant);
     display: flex;
 
     button {
@@ -108,7 +108,7 @@ const Buttons = transition.div.attrs({
             top: calc(50% - 1rem);
             left: 0;
             height: 2rem;
-            border-left: var(--border-primary);
+            border-left: 1px solid var(--primary-variant);
         }
     }
 

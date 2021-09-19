@@ -105,7 +105,7 @@ const Bar = styled.div`
     }
 `;
 
-const Gestion = function ({ setUser }) {
+const Gestion = function ({ setUser, darkTheme, setDarkTheme }) {
     const [clienteId, setClienteId] = useState(0);
     const [vehiculoId, setVehiculoId] = useState(0);
     const [activeCard, setActiveCard] = useState("");
@@ -266,6 +266,25 @@ const Gestion = function ({ setUser }) {
                 </SwitchTransition>
             </Panels>
             <Bar>
+                {darkTheme ? (
+                    <button
+                        type="button"
+                        onClick={() => {
+                            setDarkTheme(false);
+                        }}
+                    >
+                        Tema Claro
+                    </button>
+                ) : (
+                    <button
+                        type="button"
+                        onClick={() => {
+                            setDarkTheme(true);
+                        }}
+                    >
+                        Tema Oscuro
+                    </button>
+                )}
                 <button
                     type="button"
                     onClick={() => {

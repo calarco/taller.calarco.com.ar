@@ -78,7 +78,7 @@ const Buttons = styled.div`
             top: calc(50% - 1rem);
             left: 0;
             height: 2rem;
-            border-left: var(--border-primary);
+            border-left: 1px solid var(--primary-variant);
         }
     }
 `;

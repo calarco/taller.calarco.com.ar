@@ -53,7 +53,6 @@ const App = function () {
     const [darkTheme, setDarkTheme] = useState(false);
 
     useEffect(() => {
-        setDarkTheme(false);
         feathersClient
             .reAuthenticate()
             .then(({ user }) => setUser(user))
@@ -71,7 +70,11 @@ const App = function () {
             <SwitchTransition>
                 <Main key={user ? "0" : "1"}>
                     {user ? (
-                        <Gestion setUser={setUser} />
+                        <Gestion
+                            setUser={setUser}
+                            darkTheme={darkTheme}
+                            setDarkTheme={setDarkTheme}
+                        />
                     ) : (
                         <Login setUser={setUser} />
                     )}

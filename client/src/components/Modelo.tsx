@@ -35,6 +35,7 @@ const Container = styled.fieldset`
         &:focus {
             background: var(--primary-variant);
             border: var(--border-primary);
+            box-shadow: var(--shadow-variant);
         }
 
         &:not(:disabled):hover {

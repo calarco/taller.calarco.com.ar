@@ -35,16 +35,13 @@ const Box = styled.div`
         transition: 0.15s ease-out;
     }
 
-    div:first-child {
+    > p {
         position: relative;
-        padding: 1rem 2rem;
+        width: 8.5rem;
         text-align: center;
         text-transform: uppercase;
-
-        h6,
-        p {
-            font-family: var(--font-family-alt);
-        }
+        font-family: var(--font-family-alt);
+        color: var(--on-background-variant);
 
         &::after {
             content: "";
@@ -56,7 +53,7 @@ const Box = styled.div`
         }
     }
 
-    div:last-child {
+    div {
         padding: 1.5rem 2.5rem;
         display: grid;
         grid-auto-flow: column;
@@ -77,11 +74,15 @@ const Cliente = styled.h5<Props>`
     display: grid;
     transition: 0.15s ease-in;
 
-    &:hover {
-        cursor: pointer;
-        background: var(--primary-variant);
-        transition: 0.15s ease-out;
-    }
+    ${(props) =>
+        !props.active &&
+        css`
+            &:hover {
+                cursor: pointer;
+                background: var(--primary-variant);
+                transition: 0.15s ease-out;
+            }
+        `};
 
     &::after {
         content: "";
@@ -138,24 +139,27 @@ const Vehiculo = function ({
                     setClienteId(vehiculo.clienteId);
                 }}
             >
-                <div>
-                    <p>
-                        {vehiculo.updatedAt.substring(8, 10)}
-                        <span>
-                            {new Date(vehiculo.updatedAt)
-                                .toLocaleDateString("default", {
-                                    month: "short",
-                                })
-                                .substring(0, 3)}
-                        </span>
-                    </p>
-                </div>
+                <p>
+                    {vehiculo.updatedAt.substring(8, 10)}
+                    <span>
+                        {new Date(vehiculo.updatedAt)
+                            .toLocaleDateString("default", {
+                                month: "short",
+                            })
+                            .substring(0, 3)}
+                    </span>
+                </p>
                 <div>
                     <h4>{vehiculo.patente}</h4>
                     <p>{matchModelo(vehiculo.modeloId)}</p>
                 </div>
             </Box>
-            <Cliente active={active} onClick={() => setClienteId(cliente.id)}>
+            <Cliente
+                active={active}
+                onClick={() => {
+                    active ? setClienteId(0) : setClienteId(cliente.id);
+                }}
+            >
                 {cliente.nombre} {cliente.apellido}
             </Cliente>
         </Container>

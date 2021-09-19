@@ -283,7 +283,6 @@ const GlobalStyle = createGlobalStyle`
     select {
         display: block;
         width: 100%;
-        margin: 0.5rem 0rem;
         padding: 0.25rem 0.5rem;
         border-radius: 4px;
         outline: none;
@@ -318,9 +317,7 @@ const GlobalStyle = createGlobalStyle`
 
     select {
         appearance: none;
-        margin: 0.5rem 0rem;
         padding: 0.25rem 0.5rem;
-        border-radius: 4px;
         background: rgba(236, 239, 241, 0.7);
         border: 1px solid rgba(0, 0, 0, 0);
     }
@@ -339,7 +336,7 @@ const GlobalStyle = createGlobalStyle`
     input[type="password"]:hover,
     textarea:hover,
     select:hover {
-        border: var(--border-primary);
+        border: 1px solid var(--primary-variant);
         transition: 0.15s ease-out;
     }
 

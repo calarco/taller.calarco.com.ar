@@ -11,81 +11,6 @@ type Props = {
     readonly loading?: boolean;
 };
 
-const Buscador = styled.form<Props>`
-    position: absolute;
-    z-index: 500;
-    top: 0;
-    width: 100%;
-    height: 3rem;
-    border-radius: 4px;
-    backdrop-filter: blur(0.4rem);
-    display: grid;
-    grid-template-columns: 1fr auto;
-    transition: 0.15s ease-in;
-
-    ${(props) =>
-        props.active &&
-        css`
-            border-radius: 4px;
-            background: var(--surface-t);
-            box-shadow: var(--shadow);
-            transition: 0.2s ease-out;
-        `};
-
-    input[type="search"] {
-        margin: 0;
-        border: none;
-    }
-
-    input[type="search"]:focus {
-        border: none;
-    }
-`;
-
-const CreateButton = transition.button.attrs({
-    unmountOnExit: true,
-    timeout: {
-        enter: 200,
-        exit: 150,
-    },
-})`
-    height: 100%;
-    padding: 0 1.5rem;
-    margin: 0;
-    border-radius: 0 4px 4px 0;
-    border: none;
-
-    &::after {
-        content: "";
-        position: absolute;
-        top: calc(50% - 1rem);
-        left: 0;
-        height: 2rem;
-        border-left: var(--border-primary);
-    }
-    
-    &:enter {
-        opacity: 0;
-        transform: translateX(3rem);
-    }
-
-    &:enter-active {
-        opacity: 1;
-        transform: initial;
-        transition: 0.2s ease-out;
-    }
-
-    &:exit {
-        opacity: 1;
-    }
-
-    &:exit-active {
-        opacity: 0;
-        transform: translateX(3rem);
-        transition: 0.15s ease-in;
-    }
-`;
-
 const Container = transition.section.attrs({
     unmountOnExit: true,
     timeout: {
@@ -132,11 +57,9 @@ const Empty = styled.h5`
 const Cliente = styled.div`
     position: relative;
     width: 100%;
-    padding: 1.5rem 2.5rem;
     transition: 0.1s ease-in;
     display: grid;
-    grid-auto-flow: column;
-    gap: 1rem;
+    grid-template-columns: auto 1fr;
     align-items: center;
     justify-content: start;
 
@@ -153,6 +76,122 @@ const Cliente = styled.div`
         z-index: 0;
         width: 100%;
         border-top: var(--border-variant);
+    }
+
+    > p {
+        position: relative;
+        width: 8.5rem;
+        text-align: center;
+        text-transform: uppercase;
+        font-family: var(--font-family-alt);
+        color: var(--on-background-variant);
+
+        &::after {
+            content: "";
+            position: absolute;
+            top: calc(50% - 1rem);
+            right: 0;
+            height: 2rem;
+            border-right: var(--border-variant);
+        }
+    }
+
+    h4 {
+        padding: 1.5rem 2.5rem;
+    }
+`;
+
+const Buscador = styled.form<Props>`
+    position: absolute;
+    z-index: 500;
+    top: 0;
+    width: 100%;
+    height: 3rem;
+    border-radius: 4px;
+    backdrop-filter: blur(0.4rem);
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    transition: 0.15s ease-in;
+
+    ${(props) =>
+        props.active &&
+        css`
+            border-radius: 4px;
+            background: var(--surface-t);
+            box-shadow: var(--shadow);
+            transition: 0.2s ease-out;
+        `};
+
+    input[type="search"] {
+        margin: 0;
+        border: none;
+    }
+
+    input[type="search"]:focus {
+        border: none;
+    }
+`;
+
+const FilterButton = styled.button`
+    height: 100%;
+    width: 8.5rem;
+    padding: 0;
+    border-radius: 4px 0 0 4px;
+    border: none;
+    text-align: center;
+
+    &::after {
+        content: "";
+        position: absolute;
+        top: calc(50% - 1rem);
+        right: 0;
+        height: 2rem;
+        border-right: 1px solid var(--secondary-variant);
+    }
+`;
+
+const CreateButton = transition.button.attrs({
+    unmountOnExit: true,
+    timeout: {
+        enter: 200,
+        exit: 150,
+    },
+})`
+    height: 100%;
+    padding: 0 1.5rem;
+    margin: 0;
+    border-radius: 0 4px 4px 0;
+    border: none;
+    color: var(--secondary);
+
+    &::after {
+        content: "";
+        position: absolute;
+        top: calc(50% - 1rem);
+        left: 0;
+        height: 2rem;
+        border-left: 1px solid var(--secondary-variant);
+    }
+    
+    &:enter {
+        opacity: 0;
+        transform: translateX(3rem);
+    }
+
+    &:enter-active {
+        opacity: 1;
+        transform: initial;
+        transition: 0.2s ease-out;
+    }
+
+    &:exit {
+        opacity: 1;
+    }
+
+    &:exit-active {
+        opacity: 0;
+        transform: translateX(3rem);
+        transition: 0.15s ease-in;
     }
 `;
 
@@ -318,6 +357,16 @@ const Busqueda = function ({
                                         setVehiculoId(0);
                                     }}
                                 >
+                                    <p>
+                                        {aCliente.updatedAt.substring(8, 10)}
+                                        <span>
+                                            {new Date(aCliente.updatedAt)
+                                                .toLocaleDateString("default", {
+                                                    month: "short",
+                                                })
+                                                .substring(0, 3)}
+                                        </span>
+                                    </p>
                                     <h4>
                                         {aCliente.nombre} {aCliente.apellido}
                                     </h4>
@@ -333,6 +382,7 @@ const Busqueda = function ({
                 autoComplete="off"
                 active={vehiculoId === 0 ? true : false}
             >
+                <FilterButton type="button">Vehiculos</FilterButton>
                 <input
                     type="search"
                     name="search"

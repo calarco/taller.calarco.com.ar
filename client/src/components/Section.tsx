@@ -38,7 +38,7 @@ const Overlay = styled.div<Props>`
     width: 100%;
     height: 100%;
     border-radius: 4px;
-    background: rgba(236, 239, 241, 0.7);
+    background: var(--overlay);
     backdrop-filter: blur(0.5rem);
     transition: 0.25s ease-in;
 

@@ -30,8 +30,7 @@ const Container = styled.article`
         height: 3rem;
         padding: 0.5rem 1.5rem;
         border-radius: 0 0 0 4px;
-        background: var(--surface);
-        border: var(--border-primary);
+        border: 1px solid var(--primary-variant);
         border-top: none;
         border-right: none;
     }

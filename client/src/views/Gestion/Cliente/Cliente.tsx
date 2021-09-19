@@ -16,7 +16,6 @@ const Card = transition(CardComponent).attrs({
         exit: 150,
     },
 })`
-    will-change: opacity;
     
     &:enter {
         opacity: 0;
@@ -46,7 +45,7 @@ const Card = transition(CardComponent).attrs({
             grid-row-start: 1;
             overflow: visible;
             backdrop-filter: none;
-            background: var(--surface);
+            background: var(--surface-t);
             border: none;
             box-shadow: var(--shadow);
 

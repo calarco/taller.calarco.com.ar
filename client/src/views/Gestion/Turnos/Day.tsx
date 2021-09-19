@@ -27,7 +27,7 @@ const Container = styled.div<Props>`
         css`
             position: sticky;
             top: 0;
-            bottom: 17rem;
+            bottom: 15.75rem;
             z-index: 1500;
             transition: 0.2s ease-out;
         `};
@@ -109,11 +109,12 @@ const Create = styled(CreateComponent)`
 
 const Turno = transition.div`
     position: relative;
+    height: 3rem;
     display: grid;
     grid-template-columns: 1fr auto;
 
     h6 {
-        padding: 1rem 1.5rem;
+        padding: 0.5rem 1.5rem;
     }
 
     button {
@@ -207,7 +208,12 @@ const Day = function ({
                 </p>
             </Dia>
             <List active={turnos[0] && turnos[0].id !== 0}>
-                <Create type="Turno" active={active} onClick={setActive}>
+                <Create
+                    type="Turno"
+                    active={active}
+                    variant={!current}
+                    onClick={setActive}
+                >
                     <Form
                         turno={{
                             id: 0,
