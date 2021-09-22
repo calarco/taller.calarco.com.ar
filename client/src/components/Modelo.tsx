@@ -5,6 +5,7 @@ import feathersClient from "feathersClient";
 const Container = styled.fieldset`
     height: 100%;
     display: grid;
+    grid-auto-flow: column;
     align-items: center;
 
     label {
@@ -12,7 +13,7 @@ const Container = styled.fieldset`
 
         button {
             position: absolute;
-            bottom: 1rem;
+            bottom: calc(0.75rem + 1px);
             right: 1rem;
             padding: 0.25rem 0.5rem;
             border: none;
@@ -24,7 +25,6 @@ const Container = styled.fieldset`
         display: block;
         appearance: none;
         width: 100%;
-        margin: 0.5rem 0rem;
         padding: 0.25rem 0.5rem;
         border-radius: 4px;
         background: rgba(236, 239, 241, 0.7);

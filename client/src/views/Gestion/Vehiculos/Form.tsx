@@ -12,6 +12,7 @@ const Container = styled(FormComponent)`
 const Modelo = styled(ModeloComponent)`
     grid-column-end: span 2;
     grid-row-end: span 2;
+    grid-auto-flow: row;
 `;
 
 const Wide = styled.label`

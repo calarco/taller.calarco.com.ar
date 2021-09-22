@@ -231,14 +231,6 @@ const GlobalStyle = createGlobalStyle`
         font: var(--label);
         color: var(--on-background-variant);
 
-        &::before {
-            content: '';
-            display: inline-block;
-            height: 0;
-            width: 0;
-            margin-top: calc((1 - 1.25) * 0.5em);
-        }
-
         &:focus-within {
             color: var(--primary)
         }
@@ -304,7 +296,6 @@ const GlobalStyle = createGlobalStyle`
         width: auto;
         width: 100%;
         text-align: inherit;
-        text-transform: uppercase;
     }
 
     input[type="date"] {
@@ -364,7 +355,7 @@ const GlobalStyle = createGlobalStyle`
     }
 
     select:focus {
-        border: var(--border-primary);
+        border: 1px solid var(--primary-variant);
     }
 
     input[type="search"]:hover,

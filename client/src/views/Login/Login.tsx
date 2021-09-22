@@ -45,9 +45,11 @@ const Form = styled.form`
     align-items: start;
 
     label {
-        height: 100%;
-        padding: 0.5rem 1rem;
+        height: 5rem;
+        padding: 0.5rem 1rem 0.75rem 1rem;
         background: var(--surface);
+        display: grid;
+        align-content: space-between;
     }
 
     label:first-child {

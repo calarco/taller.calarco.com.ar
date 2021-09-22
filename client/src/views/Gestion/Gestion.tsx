@@ -5,10 +5,11 @@ import transition from "styled-transition-group";
 import { SwitchTransition } from "react-transition-group";
 
 import { Busqueda } from "./Busqueda";
-import { Turnos } from "./Turnos";
 import { Cliente } from "./Cliente";
 import { Vehiculos } from "./Vehiculos";
 import { Reparaciones } from "./Reparaciones";
+import { Turnos } from "./Turnos";
+import { Presupuesto } from "./Presupuesto";
 
 const Container = styled.main`
     width: 100vw;
@@ -75,13 +76,15 @@ const Right = transition.div.attrs({
 
     &:exit-active {
         opacity: 0;
+        transform: translateY(1rem);
         transition: 0.2s ease-in;
     }
 `;
 
 const Bar = styled.div`
     width: 100%;
-    background: var(--surface);
+    border-radius: 4px 4px 0 0;
+    background: var(--surface-variant);
     border-top: var(--border-variant);
     box-shadow: var(--shadow-variant);
     text-align: right;
@@ -110,6 +113,7 @@ const Gestion = function ({ setUser, darkTheme, setDarkTheme }) {
     const [vehiculoId, setVehiculoId] = useState(0);
     const [activeCard, setActiveCard] = useState("");
     const [create, setCreate] = useState(false);
+    const [presupuesto, setPresupuesto] = useState(false);
 
     const [fabricantes, setFabricantes] = useState({
         total: 0,
@@ -216,12 +220,17 @@ const Gestion = function ({ setUser, darkTheme, setDarkTheme }) {
                         setVehiculoId={setVehiculoId}
                         create={create}
                         setCreate={setCreate}
+                        setPresupuesto={setPresupuesto}
                         matchModelo={matchModelo}
                     />
                     <Reparaciones
                         vehiculoId={vehiculoId}
                         activeCard={activeCard}
                         setActiveCard={setActiveCard}
+                    />
+                    <Presupuesto
+                        edit={presupuesto}
+                        unEdit={() => setPresupuesto(false)}
                     />
                 </Left>
                 <SwitchTransition>

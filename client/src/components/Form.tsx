@@ -26,9 +26,11 @@ const Container = transition.form.attrs({
     align-items: start;
 
     label {
-        height: 100%;
-        padding: 0.5rem 1rem;
+        min-height: 5rem;
+        padding: 0.5rem 1rem 0.75rem 1rem;
         background: var(--surface);
+        display: grid;
+        align-content: space-between;
     }
 
     &:enter {
@@ -89,6 +91,7 @@ type ComponentProps = {
     onSubmit: (e: React.FormEvent) => void;
     children: React.ReactNode;
     className?: string;
+    noButtons?: boolean;
 };
 
 const Form = function ({
@@ -97,18 +100,21 @@ const Form = function ({
     onSubmit,
     children,
     className,
+    noButtons,
 }: ComponentProps) {
     return (
         <Container in={edit} onSubmit={onSubmit} className={className}>
             {children}
-            <Buttons>
-                <button type="button" onClick={unEdit}>
-                    Cancelar
-                </button>
-                <button type="submit" onClick={() => {}}>
-                    Guardar
-                </button>
-            </Buttons>
+            {!noButtons && (
+                <Buttons>
+                    <button type="button" onClick={unEdit}>
+                        Cancelar
+                    </button>
+                    <button type="submit" onClick={() => {}}>
+                        Guardar
+                    </button>
+                </Buttons>
+            )}
         </Container>
     );
 };

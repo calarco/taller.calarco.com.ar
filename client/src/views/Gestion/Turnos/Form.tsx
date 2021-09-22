@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import feathersClient from "feathersClient";
 
-import Form from "components/Form";
+import FormComponent from "components/Form";
 import Modelo from "components/Modelo";
 
-const Actions = function ({ turno, edit, unEdit }) {
+const Form = function ({ turno, edit, unEdit }) {
     const [inputs, setInputs] = useState({
         fecha: "",
         motivo: "",
@@ -87,7 +87,7 @@ const Actions = function ({ turno, edit, unEdit }) {
     }, [turno]);
 
     return (
-        <Form
+        <FormComponent
             edit={edit}
             unEdit={unEdit}
             onSubmit={turno.id === 0 ? handleCreate : handleEdit}
@@ -108,8 +108,8 @@ const Actions = function ({ turno, edit, unEdit }) {
                 setInputs={setInputs}
                 onChange={handleInputChange}
             />
-        </Form>
+        </FormComponent>
     );
 };
 
-export default Actions;
+export default Form;

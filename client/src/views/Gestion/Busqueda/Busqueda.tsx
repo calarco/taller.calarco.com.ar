@@ -129,6 +129,7 @@ const Buscador = styled.form<Props>`
 
     input[type="search"]:focus {
         border: none;
+        box-shadow: none;
     }
 `;
 
@@ -138,7 +139,7 @@ const FilterButton = styled.button`
     padding: 0;
     border-radius: 4px 0 0 4px;
     border: none;
-    text-align: center;
+    color: var(--secondary);
 
     &::after {
         content: "";
@@ -202,6 +203,7 @@ const Busqueda = function ({
     setVehiculoId,
     create,
     setCreate,
+    setPresupuesto,
     matchModelo,
 }) {
     const [count, setCount] = useState(0);
@@ -382,7 +384,12 @@ const Busqueda = function ({
                 autoComplete="off"
                 active={vehiculoId === 0 ? true : false}
             >
-                <FilterButton type="button">Vehiculos</FilterButton>
+                <FilterButton
+                    type="button"
+                    onClick={() => setPresupuesto(true)}
+                >
+                    Presupuesto
+                </FilterButton>
                 <input
                     type="search"
                     name="search"

@@ -42,25 +42,25 @@ const themeDark: DefaultTheme = {
 
     borders: {
         border: "1px solid rgba(0, 0, 0, 0.3)",
-        borderVariant: "1px solid rgba(0, 0, 0, 0.1)",
+        borderVariant: "1px solid rgba(255, 255, 255, 0.1)",
         borderPrimary: "1px solid rgba(80, 152, 206, 0.3)",
     },
 
     colors: {
-        background: "rgba(0, 0, 0, 1)",
-        surface: "rgba(80, 80, 80, 1)",
-        surfaceT: "rgba(255, 255, 255, 0.1)",
-        surfaceVariant: "rgba(236, 239, 241, 0.2)",
-        primary: "#546e7a",
-        primaryVariant: "#819ca9",
-        secondary: "#fbc02d",
-        secondaryVariant: "#fff263",
+        background: "#1a1a1a",
+        surface: "#2a2a2a",
+        surfaceT: "rgba(51, 51, 51, 0.7)",
+        surfaceVariant: "#1e1e1e",
+        primary: "rgba(66, 121, 152, 1)",
+        primaryVariant: "rgba(66, 121, 152, 0.2)",
+        secondary: "rgba(192, 128, 102, 1)",
+        secondaryVariant: "rgba(192, 128, 102, 0.2)",
         onBackground: "rgba(255, 255, 255, 0.87)",
         onBackgroundVariant: "rgba(255, 255, 255, 0.6)",
         onBackgroundDisabled: "rgba(255, 255, 255, 0.038)",
-        error: "#cf6679",
+        error: "rgba(236, 71, 88, 1)",
         errorVariant: "#f45104",
-        overlay: "rgba(18, 18, 18, 0.8)",
+        overlay: "rgba(40, 40, 40, 0.7)",
     },
 };
 

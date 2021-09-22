@@ -27,7 +27,7 @@ const Container = styled.div<Props>`
         css`
             position: sticky;
             top: 0;
-            bottom: 15.75rem;
+            bottom: 10.75rem;
             z-index: 1500;
             transition: 0.2s ease-out;
         `};
@@ -109,7 +109,7 @@ const Create = styled(CreateComponent)`
 
 const Turno = transition.div`
     position: relative;
-    height: 3rem;
+    min-height: 3rem;
     display: grid;
     grid-template-columns: 1fr auto;
 
@@ -227,7 +227,7 @@ const Day = function ({
                             updatedAt: "",
                             modeloId: 0,
                         }}
-                        edit={active ? true : false}
+                        edit={active}
                         unEdit={unActive}
                     />
                 </Create>
