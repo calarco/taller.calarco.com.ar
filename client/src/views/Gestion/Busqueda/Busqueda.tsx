@@ -4,6 +4,7 @@ import styled, { css } from "styled-components";
 import transition from "styled-transition-group";
 import { SwitchTransition } from "react-transition-group";
 
+import SectionComponent from "components/Section";
 import Vehiculo from "./Vehiculo";
 
 type Props = {
@@ -11,7 +12,7 @@ type Props = {
     readonly loading?: boolean;
 };
 
-const Container = transition.section.attrs({
+const Container = transition(SectionComponent).attrs({
     unmountOnExit: true,
     timeout: {
         enter: 300,
@@ -24,10 +25,12 @@ const Container = transition.section.attrs({
     height: 100%;
     min-height: 25rem;
     max-height: 100%;
+    padding: 0;
     padding-top: 3rem;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
+    gap: 0;
 
     &:enter {
         opacity: 0;
@@ -201,9 +204,13 @@ const Busqueda = function ({
     setClienteId,
     vehiculoId,
     setVehiculoId,
+    presupuestoId,
+    setPresupuestoId,
     create,
     setCreate,
     setPresupuesto,
+    activeCard,
+    setActiveCard,
     matchModelo,
 }) {
     const [count, setCount] = useState(0);
@@ -244,27 +251,28 @@ const Busqueda = function ({
             },
         ],
     });
+    const [presupuestos, setPresupuestos] = useState({
+        total: 0,
+        limit: 0,
+        skip: 0,
+        data: [
+            {
+                id: 0,
+                patente: "",
+                km: "",
+                motivo: "",
+                labor: "",
+                repuestos: [{ cantidad: "", repuesto: "", precio: "" }],
+                createdAt: "",
+                updatedAt: "",
+                modeloId: 0,
+            },
+        ],
+    });
 
     useEffect(() => {
         busqueda === ""
             ? feathersClient
-                  .service("clientes")
-                  .find({
-                      query: {
-                          $limit: 50,
-                          $sort: {
-                              updatedAt: -1,
-                          },
-                      },
-                  })
-                  .then((clientes) => {
-                      setCount((count) => count + 1);
-                      setClientes(clientes);
-                  })
-                  .catch((error) => {
-                      console.log("error", error);
-                  }) &&
-              feathersClient
                   .service("vehiculos")
                   .find({
                       query: {
@@ -277,6 +285,23 @@ const Busqueda = function ({
                   .then((vehiculos) => {
                       setCount((count) => count + 1);
                       setVehiculos(vehiculos);
+                  })
+                  .catch((error) => {
+                      console.log("error", error);
+                  }) &&
+              feathersClient
+                  .service("presupuestos")
+                  .find({
+                      query: {
+                          $limit: 50,
+                          $sort: {
+                              updatedAt: -1,
+                          },
+                      },
+                  })
+                  .then((presupuestos) => {
+                      setCount((count) => count + 1);
+                      setPresupuestos(presupuestos);
                   })
                   .catch((error) => {
                       console.log("error", error);
@@ -319,28 +344,111 @@ const Busqueda = function ({
                   })
                   .catch((error) => {
                       console.log("error", error);
+                  }) &&
+              feathersClient
+                  .service("presupuestos")
+                  .find({
+                      query: {
+                          patente: { $iLike: `${busqueda}%` },
+                          $limit: 10,
+                          $sort: {
+                              updatedAt: -1,
+                          },
+                      },
+                  })
+                  .then((presupuestos) => {
+                      setCount((count) => count + 1);
+                      setPresupuestos(presupuestos);
+                  })
+                  .catch((error) => {
+                      console.log("error", error);
                   });
     }, [busqueda]);
 
     return (
         <>
             <SwitchTransition>
-                <Container key={count}>
+                <Container
+                    key={count}
+                    overlay={activeCard === "Presupuesto" ? true : false}
+                    onClick={() => {
+                        setActiveCard("");
+                    }}
+                >
                     {busqueda === "" ? (
-                        vehiculos.data[0] &&
-                        vehiculos.data[0].id !== 0 &&
-                        vehiculos.data.map((aVehiculo) => (
-                            <Vehiculo
-                                key={aVehiculo.id}
-                                active={aVehiculo.clienteId === clienteId}
-                                vehiculo={aVehiculo}
-                                setClienteId={setClienteId}
-                                setVehiculoId={setVehiculoId}
-                                matchModelo={matchModelo}
-                            />
-                        ))
-                    ) : vehiculos.data[0] || clientes.data[0] ? (
                         <>
+                            {presupuestos.data[0] &&
+                                presupuestos.data[0].id !== 0 &&
+                                presupuestos.data.map((aPresupuesto) => (
+                                    <Cliente
+                                        key={aPresupuesto.id}
+                                        onClick={() => {
+                                            setPresupuestoId(aPresupuesto.id);
+                                        }}
+                                    >
+                                        <p>
+                                            {aPresupuesto.updatedAt.substring(
+                                                8,
+                                                10
+                                            )}
+                                            <span>
+                                                {new Date(
+                                                    aPresupuesto.updatedAt
+                                                )
+                                                    .toLocaleDateString(
+                                                        "default",
+                                                        {
+                                                            month: "short",
+                                                        }
+                                                    )
+                                                    .substring(0, 3)}
+                                            </span>
+                                        </p>
+                                        <h4>{aPresupuesto.patente}</h4>
+                                    </Cliente>
+                                ))}
+                            {vehiculos.data[0] &&
+                                vehiculos.data[0].id !== 0 &&
+                                vehiculos.data.map((aVehiculo) => (
+                                    <Vehiculo
+                                        key={aVehiculo.id}
+                                        active={
+                                            aVehiculo.clienteId === clienteId
+                                        }
+                                        vehiculo={aVehiculo}
+                                        setClienteId={setClienteId}
+                                        setVehiculoId={setVehiculoId}
+                                        matchModelo={matchModelo}
+                                    />
+                                ))}
+                        </>
+                    ) : presupuestos.data[0] ||
+                      vehiculos.data[0] ||
+                      clientes.data[0] ? (
+                        <>
+                            {presupuestos.data.map((aPresupuesto) => (
+                                <Cliente
+                                    key={aPresupuesto.id}
+                                    onClick={() => {
+                                        setPresupuestoId(aPresupuesto.id);
+                                    }}
+                                >
+                                    <p>
+                                        {aPresupuesto.updatedAt.substring(
+                                            8,
+                                            10
+                                        )}
+                                        <span>
+                                            {new Date(aPresupuesto.updatedAt)
+                                                .toLocaleDateString("default", {
+                                                    month: "short",
+                                                })
+                                                .substring(0, 3)}
+                                        </span>
+                                    </p>
+                                    <h4>{aPresupuesto.patente}</h4>
+                                </Cliente>
+                            ))}
                             {vehiculos.data.map((aVehiculo) => (
                                 <Vehiculo
                                     key={aVehiculo.id}
@@ -382,7 +490,7 @@ const Busqueda = function ({
             </SwitchTransition>
             <Buscador
                 autoComplete="off"
-                active={vehiculoId === 0 ? true : false}
+                active={vehiculoId === 0 && presupuestoId === 0 ? true : false}
             >
                 <FilterButton
                     type="button"
@@ -399,7 +507,10 @@ const Busqueda = function ({
                             setBusqueda(event.target.value);
                         })
                     }
-                    onFocus={() => setVehiculoId(0)}
+                    onFocus={() => {
+                        setVehiculoId(0);
+                        setPresupuestoId(0);
+                    }}
                     value={busqueda}
                     autoFocus
                 />

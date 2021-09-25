@@ -31,6 +31,7 @@ const Container = transition.form.attrs({
         background: var(--surface);
         display: grid;
         align-content: space-between;
+        gap: 0.25rem;
     }
 
     &:enter {

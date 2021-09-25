@@ -111,6 +111,7 @@ const Bar = styled.div`
 const Gestion = function ({ setUser, darkTheme, setDarkTheme }) {
     const [clienteId, setClienteId] = useState(0);
     const [vehiculoId, setVehiculoId] = useState(0);
+    const [presupuestoId, setPresupuestoId] = useState(0);
     const [activeCard, setActiveCard] = useState("");
     const [create, setCreate] = useState(false);
     const [presupuesto, setPresupuesto] = useState(false);
@@ -202,12 +203,25 @@ const Gestion = function ({ setUser, darkTheme, setDarkTheme }) {
     }, []);
 
     useEffect(() => {
+        vehiculoId !== 0 && setPresupuestoId(0);
+    }, [vehiculoId]);
+
+    useEffect(() => {
+        presupuestoId !== 0 && setVehiculoId(0);
+    }, [presupuestoId]);
+
+    useEffect(() => {
         activeCard !== "Cliente" && setCreate(false);
+        activeCard !== "Presupuesto" && setPresupuesto(false);
     }, [activeCard]);
 
     useEffect(() => {
         create ? setActiveCard("Cliente") : setActiveCard("");
     }, [create, setActiveCard]);
+
+    useEffect(() => {
+        presupuesto ? setActiveCard("Presupuesto") : setActiveCard("");
+    }, [presupuesto, setActiveCard]);
 
     return (
         <Container>
@@ -218,9 +232,13 @@ const Gestion = function ({ setUser, darkTheme, setDarkTheme }) {
                         setClienteId={setClienteId}
                         vehiculoId={vehiculoId}
                         setVehiculoId={setVehiculoId}
+                        presupuestoId={presupuestoId}
+                        setPresupuestoId={setPresupuestoId}
                         create={create}
                         setCreate={setCreate}
                         setPresupuesto={setPresupuesto}
+                        activeCard={activeCard}
+                        setActiveCard={setActiveCard}
                         matchModelo={matchModelo}
                     />
                     <Reparaciones
@@ -229,8 +247,12 @@ const Gestion = function ({ setUser, darkTheme, setDarkTheme }) {
                         setActiveCard={setActiveCard}
                     />
                     <Presupuesto
+                        presupuestoId={presupuestoId}
+                        activeCard={activeCard}
+                        setActiveCard={setActiveCard}
                         edit={presupuesto}
                         unEdit={() => setPresupuesto(false)}
+                        matchModelo={matchModelo}
                     />
                 </Left>
                 <SwitchTransition>

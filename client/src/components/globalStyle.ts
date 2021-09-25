@@ -428,6 +428,7 @@ const GlobalStyle = createGlobalStyle`
     button:focus,
     input[type="submit"]:focus {
         outline: none;
+        background: var(--secondary-variant);
     }
 
     button:disabled,
