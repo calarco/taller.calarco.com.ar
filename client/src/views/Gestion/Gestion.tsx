@@ -248,6 +248,7 @@ const Gestion = function ({ setUser, darkTheme, setDarkTheme }) {
                     />
                     <Presupuesto
                         presupuestoId={presupuestoId}
+                        setPresupuestoId={setPresupuestoId}
                         activeCard={activeCard}
                         setActiveCard={setActiveCard}
                         edit={presupuesto}

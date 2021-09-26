@@ -101,7 +101,7 @@ const Cliente = styled.h5<Props>`
         `};
 `;
 
-const Vehiculo = function ({
+const VehiculoBox = function ({
     vehiculo,
     active,
     setClienteId,
@@ -166,4 +166,4 @@ const Vehiculo = function ({
     );
 };
 
-export default Vehiculo;
+export default VehiculoBox;

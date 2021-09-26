@@ -5,7 +5,9 @@ import transition from "styled-transition-group";
 import { SwitchTransition } from "react-transition-group";
 
 import SectionComponent from "components/Section";
-import Vehiculo from "./Vehiculo";
+import Cliente from "./ClienteBox";
+import Vehiculo from "./VehiculoBox";
+import Presupuesto from "./PresupuestoBox";
 
 type Props = {
     readonly active?: boolean;
@@ -55,53 +57,6 @@ const Empty = styled.h5`
     padding: 2rem;
     text-align: center;
     color: var(--on-background-variant);
-`;
-
-const Cliente = styled.div`
-    position: relative;
-    width: 100%;
-    transition: 0.1s ease-in;
-    display: grid;
-    grid-template-columns: auto 1fr;
-    align-items: center;
-    justify-content: start;
-
-    &:hover {
-        cursor: pointer;
-        background: var(--primary-variant);
-        transition: 0.15s ease-out;
-    }
-
-    &:not(:first-child)::after {
-        content: "";
-        position: absolute;
-        top: 0;
-        z-index: 0;
-        width: 100%;
-        border-top: var(--border-variant);
-    }
-
-    > p {
-        position: relative;
-        width: 8.5rem;
-        text-align: center;
-        text-transform: uppercase;
-        font-family: var(--font-family-alt);
-        color: var(--on-background-variant);
-
-        &::after {
-            content: "";
-            position: absolute;
-            top: calc(50% - 1rem);
-            right: 0;
-            height: 2rem;
-            border-right: var(--border-variant);
-        }
-    }
-
-    h4 {
-        padding: 1.5rem 2.5rem;
-    }
 `;
 
 const Buscador = styled.form<Props>`
@@ -380,32 +335,14 @@ const Busqueda = function ({
                             {presupuestos.data[0] &&
                                 presupuestos.data[0].id !== 0 &&
                                 presupuestos.data.map((aPresupuesto) => (
-                                    <Cliente
+                                    <Presupuesto
                                         key={aPresupuesto.id}
+                                        presupuesto={aPresupuesto}
                                         onClick={() => {
                                             setPresupuestoId(aPresupuesto.id);
                                         }}
-                                    >
-                                        <p>
-                                            {aPresupuesto.updatedAt.substring(
-                                                8,
-                                                10
-                                            )}
-                                            <span>
-                                                {new Date(
-                                                    aPresupuesto.updatedAt
-                                                )
-                                                    .toLocaleDateString(
-                                                        "default",
-                                                        {
-                                                            month: "short",
-                                                        }
-                                                    )
-                                                    .substring(0, 3)}
-                                            </span>
-                                        </p>
-                                        <h4>{aPresupuesto.patente}</h4>
-                                    </Cliente>
+                                        matchModelo={matchModelo}
+                                    />
                                 ))}
                             {vehiculos.data[0] &&
                                 vehiculos.data[0].id !== 0 &&
@@ -426,29 +363,6 @@ const Busqueda = function ({
                       vehiculos.data[0] ||
                       clientes.data[0] ? (
                         <>
-                            {presupuestos.data.map((aPresupuesto) => (
-                                <Cliente
-                                    key={aPresupuesto.id}
-                                    onClick={() => {
-                                        setPresupuestoId(aPresupuesto.id);
-                                    }}
-                                >
-                                    <p>
-                                        {aPresupuesto.updatedAt.substring(
-                                            8,
-                                            10
-                                        )}
-                                        <span>
-                                            {new Date(aPresupuesto.updatedAt)
-                                                .toLocaleDateString("default", {
-                                                    month: "short",
-                                                })
-                                                .substring(0, 3)}
-                                        </span>
-                                    </p>
-                                    <h4>{aPresupuesto.patente}</h4>
-                                </Cliente>
-                            ))}
                             {vehiculos.data.map((aVehiculo) => (
                                 <Vehiculo
                                     key={aVehiculo.id}
@@ -459,28 +373,25 @@ const Busqueda = function ({
                                     matchModelo={matchModelo}
                                 />
                             ))}
+                            {presupuestos.data.map((aPresupuesto) => (
+                                <Presupuesto
+                                    key={aPresupuesto.id}
+                                    presupuesto={aPresupuesto}
+                                    onClick={() => {
+                                        setPresupuestoId(aPresupuesto.id);
+                                    }}
+                                    matchModelo={matchModelo}
+                                />
+                            ))}
                             {clientes.data.map((aCliente) => (
                                 <Cliente
                                     key={aCliente.id}
+                                    cliente={aCliente}
                                     onClick={() => {
                                         setClienteId(aCliente.id);
                                         setVehiculoId(0);
                                     }}
-                                >
-                                    <p>
-                                        {aCliente.updatedAt.substring(8, 10)}
-                                        <span>
-                                            {new Date(aCliente.updatedAt)
-                                                .toLocaleDateString("default", {
-                                                    month: "short",
-                                                })
-                                                .substring(0, 3)}
-                                        </span>
-                                    </p>
-                                    <h4>
-                                        {aCliente.nombre} {aCliente.apellido}
-                                    </h4>
-                                </Cliente>
+                                />
                             ))}
                         </>
                     ) : (

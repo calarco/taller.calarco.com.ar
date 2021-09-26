@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import feathersClient from "feathersClient";
+import styled from "styled-components";
 import transition from "styled-transition-group";
 
 import SectionComponent from "components/Section";
@@ -54,8 +55,48 @@ const Container = transition(SectionComponent).attrs({
     }
 `;
 
+const Buttons = styled.div`
+    position: sticky;
+    top: 1.5rem;
+    right: 1.5rem;
+    left: 1.5rem;
+    width: calc(100%-3rem);
+    height: 3rem;
+    overflow: hidden;
+    border-radius: 4px;
+    background: var(--surface-t);
+    backdrop-filter: blur(0.4rem);
+    border: 1px solid var(--primary-variant);
+    box-shadow: var(--shadow);
+    display: grid;
+    grid-template-columns: 2fr 3fr 2fr;
+    align-items: center;
+    gap: 0.5rem;
+    transition: 0.25s ease-out;
+
+    button {
+        width: 100%;
+        height: 3rem;
+        margin: 0;
+        padding: 0 1.5rem;
+        border-radius: 0px;
+        background: none;
+        border: none;
+
+        &:first-child::after {
+            content: "";
+            position: absolute;
+            top: calc(50% - 1rem);
+            right: 0;
+            height: 2rem;
+            border-right: 1px solid var(--primary-variant);
+        }
+    }
+`;
+
 const Presupuesto = function ({
     presupuestoId,
+    setPresupuestoId,
     activeCard,
     setActiveCard,
     edit,
@@ -73,18 +114,60 @@ const Presupuesto = function ({
         updatedAt: "",
         modeloId: 0,
     });
+    const [inputs, setInputs] = useState({
+        email: "",
+    });
 
-    const loadPresupuesto = useCallback(() => {
+    const handleInputChange = (event) => {
+        event.persist();
+        setInputs((inputs) => ({
+            ...inputs,
+            [event.target.name]: event.target.value,
+        }));
+    };
+
+    const loadPresupuesto = useCallback(
+        (last?: boolean) => {
+            last
+                ? feathersClient
+                      .service("presupuestos")
+                      .find({
+                          query: {
+                              $limit: 1,
+                              $sort: {
+                                  updatedAt: -1,
+                              },
+                          },
+                      })
+                      .then((found) => {
+                          setPresupuesto(found.data[0]);
+                          setPresupuestoId(found.data[0].id);
+                          setActiveCard("");
+                      })
+                      .catch((error) => {
+                          console.error(error);
+                      })
+                : feathersClient
+                      .service("presupuestos")
+                      .get(presupuestoId)
+                      .then((found) => {
+                          setPresupuesto(found);
+                      })
+                      .catch((error) => {
+                          console.log("error", error);
+                      });
+        },
+        [presupuestoId, setPresupuestoId, setActiveCard]
+    );
+
+    useEffect(() => {
         feathersClient
             .service("presupuestos")
-            .get(presupuestoId)
-            .then((found) => {
-                setPresupuesto(found);
-            })
-            .catch((error) => {
-                console.log("error", error);
-            });
-    }, [presupuestoId]);
+            .on("created", () => loadPresupuesto(true));
+        feathersClient
+            .service("presupuestos")
+            .on("removed", () => setPresupuestoId(0));
+    }, [loadPresupuesto, setPresupuestoId]);
 
     useEffect(() => {
         presupuestoId !== 0 && loadPresupuesto();
@@ -92,7 +175,7 @@ const Presupuesto = function ({
 
     return (
         <>
-            <Form edit={edit} unEdit={unEdit} />
+            <Form edit={edit} unEdit={unEdit} matchModelo={matchModelo} />
             <Container
                 in={presupuestoId !== 0}
                 overlay={activeCard === "Presupuesto" ? true : false}
@@ -100,6 +183,19 @@ const Presupuesto = function ({
                     setActiveCard("");
                 }}
             >
+                <Buttons>
+                    <button type="button" onClick={unEdit}>
+                        Borrar
+                    </button>
+                    <input
+                        type="email"
+                        name="email"
+                        placeholder="Direccion de correo"
+                        value={inputs.email}
+                        onChange={handleInputChange}
+                    />
+                    <button type="submit">Enviar</button>
+                </Buttons>
                 <Mensaje
                     user={"montiel"}
                     factura={"mezannotte"}

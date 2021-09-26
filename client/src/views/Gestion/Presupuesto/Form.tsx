@@ -3,9 +3,11 @@ import feathersClient from "feathersClient";
 import styled from "styled-components";
 import transition from "styled-transition-group";
 import { TransitionGroup } from "react-transition-group";
+import { renderEmail, Email } from "react-html-email";
 
 import FormComponent from "components/Form";
 import ModeloComponent from "components/Modelo";
+import Mensaje from "./Mensaje";
 
 const Container = styled(FormComponent)`
     grid-template-columns: 3fr 4fr 3fr 3fr [end];
@@ -160,9 +162,9 @@ const Buttons = styled.div`
     overflow: hidden;
     background: var(--surface);
     display: grid;
-    grid-template-columns: 1fr 1fr 2fr 1fr;
+    grid-template-columns: 2fr 3fr 2fr;
     align-items: center;
-    gap: 1rem;
+    gap: 0.5rem;
     transition: 0.25s ease-out;
 
     button {
@@ -183,25 +185,9 @@ const Buttons = styled.div`
             border-right: 1px solid var(--primary-variant);
         }
     }
-
-    div {
-        position: relative;
-
-        &::after {
-            content: "";
-            position: absolute;
-            top: calc(50% - 1rem);
-            right: 0;
-            height: 2rem;
-            border-right: 1px solid var(--primary-variant);
-        }
-    }
-
-    input {
-    }
 `;
 
-const Form = function ({ edit, unEdit }) {
+const Form = function ({ edit, unEdit, matchModelo }) {
     const [inputs, setInputs] = useState({
         patente: "",
         km: "",
@@ -255,7 +241,31 @@ const Form = function ({ edit, unEdit }) {
                     repuestos: repuestos,
                     modeloId: inputs.modeloId,
                 })
-                .then(() => {})
+                .then((created) => {
+                    inputs.email !== "" &&
+                        feathersClient
+                            .service("mailer")
+                            .create({
+                                to: inputs.email,
+                                subject:
+                                    "Servicio Especializado Gabriel Mezzanotte | Facturar a: " +
+                                    inputs.factura,
+                                html: renderEmail(
+                                    <Email title="Presupuesto">
+                                        <Mensaje
+                                            user={"montiel"}
+                                            factura={"mezannotte"}
+                                            presupuesto={created}
+                                            auto={matchModelo(created.modeloId)}
+                                        />
+                                    </Email>
+                                ),
+                            })
+                            .then(() => {})
+                            .catch((error) => {
+                                console.error(error);
+                            });
+                })
                 .catch((error) => {
                     console.error(error);
                 });
@@ -433,12 +443,11 @@ const Form = function ({ edit, unEdit }) {
                 <button type="button" onClick={unEdit}>
                     Cancelar
                 </button>
-                <div>Total $0</div>
                 <input
                     type="email"
                     name="email"
                     placeholder="Direccion de correo"
-                    value={inputs.email || ""}
+                    value={inputs.email}
                     onChange={handleInputChange}
                 />
                 <button type="submit">Enviar</button>
