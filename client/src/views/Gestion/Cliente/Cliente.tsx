@@ -45,7 +45,7 @@ const Card = transition(CardComponent).attrs({
             grid-row-start: 1;
             overflow: visible;
             backdrop-filter: none;
-            background: var(--surface-t);
+            background: var(--surface);
             border: none;
             box-shadow: var(--shadow);
 

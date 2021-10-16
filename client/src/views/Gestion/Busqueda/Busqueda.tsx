@@ -8,6 +8,7 @@ import SectionComponent from "components/Section";
 import Cliente from "./ClienteBox";
 import Vehiculo from "./VehiculoBox";
 import Presupuesto from "./PresupuestoBox";
+import Recents from "./Recents";
 
 type Props = {
     readonly active?: boolean;
@@ -226,98 +227,64 @@ const Busqueda = function ({
     });
 
     useEffect(() => {
-        busqueda === ""
-            ? feathersClient
-                  .service("vehiculos")
-                  .find({
-                      query: {
-                          $limit: 50,
-                          $sort: {
-                              updatedAt: -1,
-                          },
-                      },
-                  })
-                  .then((vehiculos) => {
-                      setCount((count) => count + 1);
-                      setVehiculos(vehiculos);
-                  })
-                  .catch((error) => {
-                      console.log("error", error);
-                  }) &&
-              feathersClient
-                  .service("presupuestos")
-                  .find({
-                      query: {
-                          $limit: 50,
-                          $sort: {
-                              updatedAt: -1,
-                          },
-                      },
-                  })
-                  .then((presupuestos) => {
-                      setCount((count) => count + 1);
-                      setPresupuestos(presupuestos);
-                  })
-                  .catch((error) => {
-                      console.log("error", error);
-                  })
-            : feathersClient
-                  .service("clientes")
-                  .find({
-                      query: {
-                          $or: [
-                              { nombre: { $iLike: `${busqueda}%` } },
-                              { apellido: { $iLike: `${busqueda}%` } },
-                          ],
-                          $limit: 10,
-                          $sort: {
-                              updatedAt: -1,
-                          },
-                      },
-                  })
-                  .then((clientes) => {
-                      setCount((count) => count + 1);
-                      setClientes(clientes);
-                  })
-                  .catch((error) => {
-                      console.log("error", error);
-                  }) &&
-              feathersClient
-                  .service("vehiculos")
-                  .find({
-                      query: {
-                          patente: { $iLike: `${busqueda}%` },
-                          $limit: 10,
-                          $sort: {
-                              updatedAt: -1,
-                          },
-                      },
-                  })
-                  .then((vehiculos) => {
-                      setCount((count) => count + 1);
-                      setVehiculos(vehiculos);
-                  })
-                  .catch((error) => {
-                      console.log("error", error);
-                  }) &&
-              feathersClient
-                  .service("presupuestos")
-                  .find({
-                      query: {
-                          patente: { $iLike: `${busqueda}%` },
-                          $limit: 10,
-                          $sort: {
-                              updatedAt: -1,
-                          },
-                      },
-                  })
-                  .then((presupuestos) => {
-                      setCount((count) => count + 1);
-                      setPresupuestos(presupuestos);
-                  })
-                  .catch((error) => {
-                      console.log("error", error);
-                  });
+        busqueda !== "" &&
+            feathersClient
+                .service("clientes")
+                .find({
+                    query: {
+                        $or: [
+                            { nombre: { $iLike: `${busqueda}%` } },
+                            { apellido: { $iLike: `${busqueda}%` } },
+                        ],
+                        $limit: 10,
+                        $sort: {
+                            updatedAt: -1,
+                        },
+                    },
+                })
+                .then((clientes) => {
+                    setCount((count) => count + 1);
+                    setClientes(clientes);
+                })
+                .catch((error) => {
+                    console.log("error", error);
+                }) &&
+            feathersClient
+                .service("vehiculos")
+                .find({
+                    query: {
+                        patente: { $iLike: `${busqueda}%` },
+                        $limit: 10,
+                        $sort: {
+                            updatedAt: -1,
+                        },
+                    },
+                })
+                .then((vehiculos) => {
+                    setCount((count) => count + 1);
+                    setVehiculos(vehiculos);
+                })
+                .catch((error) => {
+                    console.log("error", error);
+                }) &&
+            feathersClient
+                .service("presupuestos")
+                .find({
+                    query: {
+                        patente: { $iLike: `${busqueda}%` },
+                        $limit: 10,
+                        $sort: {
+                            updatedAt: -1,
+                        },
+                    },
+                })
+                .then((presupuestos) => {
+                    setCount((count) => count + 1);
+                    setPresupuestos(presupuestos);
+                })
+                .catch((error) => {
+                    console.log("error", error);
+                });
     }, [busqueda]);
 
     return (
@@ -331,34 +298,13 @@ const Busqueda = function ({
                     }}
                 >
                     {busqueda === "" ? (
-                        <>
-                            {presupuestos.data[0] &&
-                                presupuestos.data[0].id !== 0 &&
-                                presupuestos.data.map((aPresupuesto) => (
-                                    <Presupuesto
-                                        key={aPresupuesto.id}
-                                        presupuesto={aPresupuesto}
-                                        onClick={() => {
-                                            setPresupuestoId(aPresupuesto.id);
-                                        }}
-                                        matchModelo={matchModelo}
-                                    />
-                                ))}
-                            {vehiculos.data[0] &&
-                                vehiculos.data[0].id !== 0 &&
-                                vehiculos.data.map((aVehiculo) => (
-                                    <Vehiculo
-                                        key={aVehiculo.id}
-                                        active={
-                                            aVehiculo.clienteId === clienteId
-                                        }
-                                        vehiculo={aVehiculo}
-                                        setClienteId={setClienteId}
-                                        setVehiculoId={setVehiculoId}
-                                        matchModelo={matchModelo}
-                                    />
-                                ))}
-                        </>
+                        <Recents
+                            clienteId={clienteId}
+                            setClienteId={setClienteId}
+                            setVehiculoId={setVehiculoId}
+                            setPresupuestoId={setPresupuestoId}
+                            matchModelo={matchModelo}
+                        />
                     ) : presupuestos.data[0] ||
                       vehiculos.data[0] ||
                       clientes.data[0] ? (

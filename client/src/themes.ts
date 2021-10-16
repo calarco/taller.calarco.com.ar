@@ -41,26 +41,26 @@ const themeDark: DefaultTheme = {
     },
 
     borders: {
-        border: "1px solid rgba(0, 0, 0, 0.3)",
-        borderVariant: "1px solid rgba(255, 255, 255, 0.1)",
-        borderPrimary: "1px solid rgba(80, 152, 206, 0.3)",
+        border: "1px solid rgba(255, 255, 255, 0.3)",
+        borderVariant: "1px solid hsla(17, 42%, 68%, 0.1)",
+        borderPrimary: "1px solid hsla(202, 39%, 53%, 0.3)",
     },
 
     colors: {
-        background: "#1a1a1a",
-        surface: "#2a2a2a",
-        surfaceT: "rgba(51, 51, 51, 0.7)",
-        surfaceVariant: "#1e1e1e",
-        primary: "rgba(66, 121, 152, 1)",
-        primaryVariant: "rgba(66, 121, 152, 0.2)",
-        secondary: "rgba(192, 128, 102, 1)",
-        secondaryVariant: "rgba(192, 128, 102, 0.2)",
+        background: "#000",
+        surface: "hsla(202, 10%, 12%, 1)",
+        surfaceT: "hsla(202, 10%, 14%, 0.7)",
+        surfaceVariant: "hsla(202, 10%, 8%, 1)",
+        primary: "hsla(202, 39%, 53%, 1)",
+        primaryVariant: "hsla(202, 39%, 53%, 0.1)",
+        secondary: "hsla(17, 42%, 68%, 1)",
+        secondaryVariant: "hsla(17, 42%, 68%, 0.1)",
         onBackground: "rgba(255, 255, 255, 0.87)",
         onBackgroundVariant: "rgba(255, 255, 255, 0.6)",
         onBackgroundDisabled: "rgba(255, 255, 255, 0.038)",
         error: "rgba(236, 71, 88, 1)",
         errorVariant: "#f45104",
-        overlay: "rgba(40, 40, 40, 0.7)",
+        overlay: "hsla(202, 10%, 6%, 0.7)",
     },
 };
 

@@ -22,7 +22,6 @@ const Container = transition(SectionComponent).attrs({
     bottom: 0;
     left: 0;
     height: auto;
-    padding: 0;
     overflow: overlay;
     border-radius: 4px;
     background: var(--surface);
@@ -57,16 +56,14 @@ const Container = transition(SectionComponent).attrs({
 
 const Buttons = styled.div`
     position: sticky;
-    top: 1.5rem;
-    right: 1.5rem;
-    left: 1.5rem;
-    width: calc(100%-3rem);
+    top: 0;
+    width: 100%;
     height: 3rem;
     overflow: hidden;
     border-radius: 4px;
-    background: var(--surface-t);
+    background: var(--primary-variant);
     backdrop-filter: blur(0.4rem);
-    border: 1px solid var(--primary-variant);
+    border: 1px solid var(--primary);
     box-shadow: var(--shadow);
     display: grid;
     grid-template-columns: 2fr 3fr 2fr;
