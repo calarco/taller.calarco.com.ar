@@ -3,6 +3,7 @@ import feathersClient from "feathersClient";
 import styled from "styled-components";
 import transition from "styled-transition-group";
 
+import { useGestion } from "views/Gestion/context";
 import SectionComponent from "components/Section";
 import Form from "./Form";
 import Mensaje from "./Mensaje";
@@ -91,15 +92,9 @@ const Buttons = styled.div`
     }
 `;
 
-const Presupuesto = function ({
-    presupuestoId,
-    setPresupuestoId,
-    activeCard,
-    setActiveCard,
-    edit,
-    unEdit,
-    matchModelo,
-}) {
+const Presupuesto = function ({ edit, unEdit, matchModelo }) {
+    const { presupuestoId, setPresupuestoId, activeCard, setActiveCard } =
+        useGestion();
     const [presupuesto, setPresupuesto] = useState({
         id: 0,
         patente: "",

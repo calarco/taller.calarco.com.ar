@@ -4,6 +4,8 @@ import styled from "styled-components";
 import transition from "styled-transition-group";
 import { SwitchTransition } from "react-transition-group";
 
+import { Device } from "components/globalStyle";
+import { useGestion } from "./context";
 import { Busqueda } from "./Busqueda";
 import { Cliente } from "./Cliente";
 import { Vehiculos } from "./Vehiculos";
@@ -29,6 +31,11 @@ const Panels = styled.div`
     display: grid;
     gap: 2rem;
     grid-template-columns: 3fr 2fr;
+
+    @media ${Device.desktop} {
+        padding: 1.5rem 2rem;
+        gap: 2rem;
+    }
 `;
 
 const Left = styled.div`
@@ -109,12 +116,9 @@ const Bar = styled.div`
 `;
 
 const Gestion = function ({ setUser, darkTheme, setDarkTheme }) {
-    const [clienteId, setClienteId] = useState(0);
-    const [vehiculoId, setVehiculoId] = useState(0);
-    const [presupuestoId, setPresupuestoId] = useState(0);
-    const [activeCard, setActiveCard] = useState("");
-    const [create, setCreate] = useState(false);
-    const [presupuesto, setPresupuesto] = useState(false);
+    const { clienteId, activeCard, setActiveCard } = useGestion();
+    const [createCliente, setCreateCliente] = useState(false);
+    const [createPresupuesto, setCreatePresupuesto] = useState(false);
 
     const [fabricantes, setFabricantes] = useState({
         total: 0,
@@ -179,7 +183,7 @@ const Gestion = function ({ setUser, darkTheme, setDarkTheme }) {
             });
     }
 
-    const matchModelo = (modeloId) => {
+    const matchModelo = (modeloId: number) => {
         try {
             return (
                 fabricantes.data.find(
@@ -203,98 +207,47 @@ const Gestion = function ({ setUser, darkTheme, setDarkTheme }) {
     }, []);
 
     useEffect(() => {
-        vehiculoId !== 0 && setPresupuestoId(0);
-    }, [vehiculoId]);
-
-    useEffect(() => {
-        presupuestoId !== 0 && setVehiculoId(0);
-    }, [presupuestoId]);
-
-    useEffect(() => {
-        activeCard !== "Cliente" && setCreate(false);
-        activeCard !== "Presupuesto" && setPresupuesto(false);
+        activeCard !== "Cliente" && setCreateCliente(false);
+        activeCard !== "Presupuesto" && setCreatePresupuesto(false);
     }, [activeCard]);
 
     useEffect(() => {
-        create ? setActiveCard("Cliente") : setActiveCard("");
-    }, [create, setActiveCard]);
+        createCliente ? setActiveCard("Cliente") : setActiveCard("");
+    }, [createCliente, setActiveCard]);
 
     useEffect(() => {
-        presupuesto ? setActiveCard("Presupuesto") : setActiveCard("");
-    }, [presupuesto, setActiveCard]);
+        createPresupuesto ? setActiveCard("Presupuesto") : setActiveCard("");
+    }, [createPresupuesto, setActiveCard]);
 
     return (
         <Container>
             <Panels>
                 <Left>
                     <Busqueda
-                        clienteId={clienteId}
-                        setClienteId={setClienteId}
-                        vehiculoId={vehiculoId}
-                        setVehiculoId={setVehiculoId}
-                        presupuestoId={presupuestoId}
-                        setPresupuestoId={setPresupuestoId}
-                        create={create}
-                        setCreate={setCreate}
-                        setPresupuesto={setPresupuesto}
-                        activeCard={activeCard}
-                        setActiveCard={setActiveCard}
+                        createCliente={createCliente}
+                        setCreateCliente={setCreateCliente}
+                        setCreatePresupuesto={setCreatePresupuesto}
                         matchModelo={matchModelo}
                     />
-                    <Reparaciones
-                        vehiculoId={vehiculoId}
-                        activeCard={activeCard}
-                        setActiveCard={setActiveCard}
-                    />
+                    <Reparaciones />
                     <Presupuesto
-                        presupuestoId={presupuestoId}
-                        setPresupuestoId={setPresupuestoId}
-                        activeCard={activeCard}
-                        setActiveCard={setActiveCard}
-                        edit={presupuesto}
-                        unEdit={() => setPresupuesto(false)}
+                        edit={createPresupuesto}
+                        unEdit={() => setCreatePresupuesto(false)}
                         matchModelo={matchModelo}
                     />
                 </Left>
                 <SwitchTransition>
-                    <Right key={clienteId !== 0 ? 0 : 1}>
-                        {clienteId !== 0 ? (
-                            <>
-                                <Vehiculos
-                                    clienteId={clienteId}
-                                    vehiculoId={vehiculoId}
-                                    setVehiculoId={setVehiculoId}
-                                    activeCard={activeCard}
-                                    setActiveCard={setActiveCard}
-                                    matchModelo={matchModelo}
-                                />
-                                <Cliente
-                                    clienteId={clienteId}
-                                    setClienteId={setClienteId}
-                                    setVehiculoId={setVehiculoId}
-                                    create={create}
-                                    activeCard={activeCard}
-                                    setActiveCard={setActiveCard}
-                                />
-                            </>
-                        ) : (
-                            <>
-                                <Turnos
-                                    activeCard={activeCard}
-                                    setActiveCard={setActiveCard}
-                                    matchModelo={matchModelo}
-                                />
-                                <Cliente
-                                    clienteId={clienteId}
-                                    setClienteId={setClienteId}
-                                    setVehiculoId={setVehiculoId}
-                                    create={create}
-                                    activeCard={activeCard}
-                                    setActiveCard={setActiveCard}
-                                />
-                            </>
-                        )}
-                    </Right>
+                    {clienteId === 0 ? (
+                        <Right key={0}>
+                            <Turnos matchModelo={matchModelo} />
+                            <Cliente createCliente={createCliente} />
+                        </Right>
+                    ) : (
+                        <Right key={1}>
+                            <Vehiculos matchModelo={matchModelo} />
+                            <Cliente createCliente={createCliente} />
+                        </Right>
+                    )}
                 </SwitchTransition>
             </Panels>
             <Bar>

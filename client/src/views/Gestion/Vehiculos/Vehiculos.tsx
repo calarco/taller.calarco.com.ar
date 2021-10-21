@@ -4,6 +4,7 @@ import styled, { css } from "styled-components";
 import transition from "styled-transition-group";
 import { SwitchTransition, TransitionGroup } from "react-transition-group";
 
+import { useGestion } from "views/Gestion/context";
 import SectionComponent from "components/Section";
 import Create from "components/Create";
 import CardComponent from "components/Card";
@@ -81,14 +82,9 @@ const Empty = styled.h5`
     color: var(--on-background-variant);
 `;
 
-const Vehiculos = function ({
-    clienteId,
-    vehiculoId,
-    setVehiculoId,
-    activeCard,
-    setActiveCard,
-    matchModelo,
-}) {
+const Vehiculos = function ({ matchModelo }) {
+    const { clienteId, vehiculoId, setVehiculoId, activeCard, setActiveCard } =
+        useGestion();
     const [count, setCount] = useState(0);
     const [create, setCreate] = useState(false);
     const [remove, setRemove] = useState(false);

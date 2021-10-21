@@ -4,6 +4,7 @@ import styled, { css } from "styled-components";
 import transition from "styled-transition-group";
 import { SwitchTransition, TransitionGroup } from "react-transition-group";
 
+import { useGestion } from "views/Gestion/context";
 import SectionComponent from "components/Section";
 import Create from "components/Create";
 import CardComponent from "components/Card";
@@ -21,7 +22,7 @@ const Container = transition.div.attrs({
     will-change: opacity;
     position: absolute;
     z-index: 600;
-    top: 3rem;
+    top: calc(3rem - 1px);
     right: 0;
     bottom: 0;
     left: 0;
@@ -117,12 +118,12 @@ const Empty = styled.h5`
     color: var(--on-background-variant);
 `;
 
-const Reparaciones = function ({ vehiculoId, activeCard, setActiveCard }) {
+const Reparaciones = function () {
+    const { vehiculoId, activeCard, setActiveCard } = useGestion();
     const [count, setCount] = useState(0);
     const [selected, setSelected] = useState(0);
     const [create, setCreate] = useState(false);
     const [remove, setRemove] = useState(false);
-
     const [reparaciones, setReparaciones] = useState({
         total: 0,
         limit: 0,

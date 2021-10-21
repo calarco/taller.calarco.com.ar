@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import feathersClient from "feathersClient";
 import styled, { css } from "styled-components";
 
+import { useGestion } from "views/Gestion/context";
+
 type Props = {
     readonly active?: boolean;
 };
@@ -84,15 +86,6 @@ const Cliente = styled.h5<Props>`
             }
         `};
 
-    &::after {
-        content: "";
-        position: absolute;
-        top: calc(50% - 1rem);
-        left: 0;
-        height: 2rem;
-        border-left: var(--border-variant);
-    }
-
     ${(props) =>
         props.active &&
         css`
@@ -101,13 +94,8 @@ const Cliente = styled.h5<Props>`
         `};
 `;
 
-const VehiculoBox = function ({
-    vehiculo,
-    active,
-    setClienteId,
-    setVehiculoId,
-    matchModelo,
-}) {
+const VehiculoBox = function ({ vehiculo, active, matchModelo }) {
+    const { setClienteId, setVehiculoId } = useGestion();
     const [cliente, setCliente] = useState({
         id: 0,
         nombre: "",

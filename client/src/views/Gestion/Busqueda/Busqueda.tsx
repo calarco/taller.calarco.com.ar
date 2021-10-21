@@ -4,6 +4,7 @@ import styled, { css } from "styled-components";
 import transition from "styled-transition-group";
 import { SwitchTransition } from "react-transition-group";
 
+import { useGestion } from "views/Gestion/context";
 import SectionComponent from "components/Section";
 import Cliente from "./ClienteBox";
 import Vehiculo from "./VehiculoBox";
@@ -156,19 +157,21 @@ const CreateButton = transition.button.attrs({
 `;
 
 const Busqueda = function ({
-    clienteId,
-    setClienteId,
-    vehiculoId,
-    setVehiculoId,
-    presupuestoId,
-    setPresupuestoId,
-    create,
-    setCreate,
-    setPresupuesto,
-    activeCard,
-    setActiveCard,
+    createCliente,
+    setCreateCliente,
+    setCreatePresupuesto,
     matchModelo,
 }) {
+    const {
+        clienteId,
+        setClienteId,
+        vehiculoId,
+        setVehiculoId,
+        presupuestoId,
+        setPresupuestoId,
+        activeCard,
+        setActiveCard,
+    } = useGestion();
     const [count, setCount] = useState(0);
     const [busqueda, setBusqueda] = useState("");
 
@@ -298,13 +301,7 @@ const Busqueda = function ({
                     }}
                 >
                     {busqueda === "" ? (
-                        <Recents
-                            clienteId={clienteId}
-                            setClienteId={setClienteId}
-                            setVehiculoId={setVehiculoId}
-                            setPresupuestoId={setPresupuestoId}
-                            matchModelo={matchModelo}
-                        />
+                        <Recents matchModelo={matchModelo} />
                     ) : presupuestos.data[0] ||
                       vehiculos.data[0] ||
                       clientes.data[0] ? (
@@ -314,8 +311,6 @@ const Busqueda = function ({
                                     key={aVehiculo.id}
                                     vehiculo={aVehiculo}
                                     active={aVehiculo.clienteId === clienteId}
-                                    setClienteId={setClienteId}
-                                    setVehiculoId={setVehiculoId}
                                     matchModelo={matchModelo}
                                 />
                             ))}
@@ -351,7 +346,7 @@ const Busqueda = function ({
             >
                 <FilterButton
                     type="button"
-                    onClick={() => setPresupuesto(true)}
+                    onClick={() => setCreatePresupuesto(true)}
                 >
                     Presupuesto
                 </FilterButton>
@@ -372,10 +367,10 @@ const Busqueda = function ({
                     autoFocus
                 />
                 <CreateButton
-                    in={!create}
+                    in={!createCliente}
                     type="button"
                     onClick={() => {
-                        setCreate(true);
+                        setCreateCliente(true);
                     }}
                 >
                     Crear cliente

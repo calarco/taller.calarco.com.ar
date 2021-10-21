@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import feathersClient from "feathersClient";
 import styled from "styled-components";
 
+import { useGestion } from "views/Gestion/context";
 import SectionComponent from "components/Section";
 import Day from "./Day";
 
@@ -51,7 +52,8 @@ const Loading = styled.div`
     animation-iteration-count: infinite;
 `;
 
-const Turnos = function ({ activeCard, setActiveCard, matchModelo }) {
+const Turnos = function ({ matchModelo }) {
+    const { activeCard, setActiveCard } = useGestion();
     const loader = useRef<HTMLDivElement | null>(null);
     const [selected, setSelected] = useState("");
 

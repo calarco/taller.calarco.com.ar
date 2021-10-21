@@ -5,8 +5,9 @@ import transition from "styled-transition-group";
 import { SwitchTransition } from "react-transition-group";
 
 import { themeDark, themeLight } from "themes";
-import GlobalStyle, { Device } from "components/globalStyle";
+import GlobalStyle from "components/globalStyle";
 import Login from "views/Login/Login";
+import { GestionProvider } from "views/Gestion/context";
 import { Gestion } from "views/Gestion";
 
 const Main = transition.div.attrs({
@@ -43,9 +44,6 @@ const Main = transition.div.attrs({
         transform: scale(0.9);
         transition: 0.2s ease-in;
     }
-
-    @media ${Device.desktop} {
-    }
 `;
 
 const App = function () {
@@ -70,11 +68,13 @@ const App = function () {
             <SwitchTransition>
                 <Main key={user ? "0" : "1"}>
                     {user ? (
-                        <Gestion
-                            setUser={setUser}
-                            darkTheme={darkTheme}
-                            setDarkTheme={setDarkTheme}
-                        />
+                        <GestionProvider>
+                            <Gestion
+                                setUser={setUser}
+                                darkTheme={darkTheme}
+                                setDarkTheme={setDarkTheme}
+                            />
+                        </GestionProvider>
                     ) : (
                         <Login setUser={setUser} />
                     )}

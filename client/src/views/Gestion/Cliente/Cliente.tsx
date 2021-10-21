@@ -4,6 +4,7 @@ import { css } from "styled-components";
 import transition from "styled-transition-group";
 import { SwitchTransition } from "react-transition-group";
 
+import { useGestion } from "views/Gestion/context";
 import CardComponent from "components/Card";
 import Box from "./Box";
 import Form from "./Form";
@@ -61,16 +62,15 @@ const Card = transition(CardComponent).attrs({
         `};
 `;
 
-const Cliente = function ({
-    clienteId,
-    setClienteId,
-    setVehiculoId,
-    create,
-    activeCard,
-    setActiveCard,
-}) {
+const Cliente = function ({ createCliente }) {
+    const {
+        clienteId,
+        setClienteId,
+        setVehiculoId,
+        activeCard,
+        setActiveCard,
+    } = useGestion();
     const [remove, setRemove] = useState(false);
-
     const [cliente, setCliente] = useState({
         id: 0,
         nombre: "",
@@ -151,7 +151,7 @@ const Cliente = function ({
                 />
                 <Form
                     cliente={
-                        create
+                        createCliente
                             ? {
                                   id: 0,
                                   nombre: "",
