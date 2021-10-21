@@ -1,7 +1,11 @@
 import React from "react";
 import { Box, Item, Span, A } from "react-html-email";
 
-function Mensaje({ user, factura, presupuesto, auto }) {
+import { useCarName } from "views/Gestion/carNameContext";
+
+function Mensaje({ user, factura, presupuesto }) {
+    const { getCarName } = useCarName();
+
     return (
         <Box cellSpacing={30} width="700">
             <Item>
@@ -86,7 +90,7 @@ function Mensaje({ user, factura, presupuesto, auto }) {
                     </tr>
                     <tr>
                         <td>{presupuesto.patente.toUpperCase()}</td>
-                        <td>{auto}</td>
+                        <td>{getCarName(presupuesto.modeloId)}</td>
                         <td align="right">{presupuesto.km}</td>
                     </tr>
                 </Box>

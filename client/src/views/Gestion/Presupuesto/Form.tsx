@@ -187,7 +187,7 @@ const Buttons = styled.div`
     }
 `;
 
-const Form = function ({ edit, unEdit, matchModelo }) {
+const Form = function ({ edit, unEdit }) {
     const [inputs, setInputs] = useState({
         patente: "",
         km: "",
@@ -256,7 +256,6 @@ const Form = function ({ edit, unEdit, matchModelo }) {
                                             user={"montiel"}
                                             factura={"mezannotte"}
                                             presupuesto={created}
-                                            auto={matchModelo(created.modeloId)}
                                         />
                                     </Email>
                                 ),

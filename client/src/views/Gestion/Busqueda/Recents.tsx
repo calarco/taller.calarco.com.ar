@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import feathersClient from "feathersClient";
 
-import { useGestion } from "views/Gestion/context";
+import { useGestion } from "views/Gestion/gestionContext";
 import Vehiculo from "./VehiculoBox";
 import Presupuesto from "./PresupuestoBox";
 
-const Recents = function ({ matchModelo }) {
+const Recents = function () {
     const { clienteId, setPresupuestoId } = useGestion();
     const [result, setResult] = useState([
         {
@@ -81,14 +81,12 @@ const Recents = function ({ matchModelo }) {
                             onClick={() => {
                                 setPresupuestoId(aResult.id);
                             }}
-                            matchModelo={matchModelo}
                         />
                     ) : (
                         <Vehiculo
                             key={index}
                             active={aResult.clienteId === clienteId}
                             vehiculo={aResult}
-                            matchModelo={matchModelo}
                         />
                     )
                 )}

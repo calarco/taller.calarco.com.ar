@@ -1,6 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 
+import { useCarName } from "views/Gestion/carNameContext";
+
 const Container = styled.div`
     position: relative;
     width: 100%;
@@ -61,7 +63,9 @@ const Container = styled.div`
     }
 `;
 
-const PresupuestoBox = function ({ presupuesto, onClick, matchModelo }) {
+const PresupuestoBox = function ({ presupuesto, onClick }) {
+    const { getCarName } = useCarName();
+
     return (
         <Container onClick={onClick}>
             <p>
@@ -76,7 +80,7 @@ const PresupuestoBox = function ({ presupuesto, onClick, matchModelo }) {
             </p>
             <div>
                 <h4>{presupuesto.patente}</h4>
-                <p>{matchModelo(presupuesto.modeloId)}</p>
+                <p>{getCarName(presupuesto.modeloId)}</p>
             </div>
             <h5>aoeu@aoeu.com</h5>
         </Container>

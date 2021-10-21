@@ -4,7 +4,7 @@ import styled, { css } from "styled-components";
 import transition from "styled-transition-group";
 import { SwitchTransition, TransitionGroup } from "react-transition-group";
 
-import { useGestion } from "views/Gestion/context";
+import { useGestion } from "views/Gestion/gestionContext";
 import SectionComponent from "components/Section";
 import Create from "components/Create";
 import CardComponent from "components/Card";
@@ -82,7 +82,7 @@ const Empty = styled.h5`
     color: var(--on-background-variant);
 `;
 
-const Vehiculos = function ({ matchModelo }) {
+const Vehiculos = function () {
     const { clienteId, vehiculoId, setVehiculoId, activeCard, setActiveCard } =
         useGestion();
     const [count, setCount] = useState(0);
@@ -231,7 +231,6 @@ const Vehiculos = function ({ matchModelo }) {
                                             ? setVehiculoId(0)
                                             : setVehiculoId(aVehiculo.id)
                                     }
-                                    matchModelo={matchModelo}
                                 />
                                 {vehiculoId === aVehiculo.id && (
                                     <>

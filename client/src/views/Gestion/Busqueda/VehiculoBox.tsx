@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import feathersClient from "feathersClient";
 import styled, { css } from "styled-components";
 
-import { useGestion } from "views/Gestion/context";
+import { useGestion } from "views/Gestion/gestionContext";
+import { useCarName } from "views/Gestion/carNameContext";
 
 type Props = {
     readonly active?: boolean;
@@ -94,8 +95,9 @@ const Cliente = styled.h5<Props>`
         `};
 `;
 
-const VehiculoBox = function ({ vehiculo, active, matchModelo }) {
+const VehiculoBox = function ({ vehiculo, active }) {
     const { setClienteId, setVehiculoId } = useGestion();
+    const { getCarName } = useCarName();
     const [cliente, setCliente] = useState({
         id: 0,
         nombre: "",
@@ -139,7 +141,7 @@ const VehiculoBox = function ({ vehiculo, active, matchModelo }) {
                 </p>
                 <div>
                     <h4>{vehiculo.patente}</h4>
-                    <p>{matchModelo(vehiculo.modeloId)}</p>
+                    <p>{getCarName(vehiculo.modeloId)}</p>
                 </div>
             </Box>
             <Cliente

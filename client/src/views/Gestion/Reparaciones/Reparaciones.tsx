@@ -4,7 +4,7 @@ import styled, { css } from "styled-components";
 import transition from "styled-transition-group";
 import { SwitchTransition, TransitionGroup } from "react-transition-group";
 
-import { useGestion } from "views/Gestion/context";
+import { useGestion } from "views/Gestion/gestionContext";
 import SectionComponent from "components/Section";
 import Create from "components/Create";
 import CardComponent from "components/Card";
@@ -22,10 +22,10 @@ const Container = transition.div.attrs({
     will-change: opacity;
     position: absolute;
     z-index: 600;
-    top: calc(3rem - 1px);
-    right: 0;
+    top: calc(3rem - 2px);
+    right: -1px;
     bottom: 0;
-    left: 0;
+    left: -1px;
     overflow: hidden;
     border-radius: 4px;
     background: var(--surface);

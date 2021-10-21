@@ -3,7 +3,7 @@ import feathersClient from "feathersClient";
 import styled from "styled-components";
 import transition from "styled-transition-group";
 
-import { useGestion } from "views/Gestion/context";
+import { useGestion } from "views/Gestion/gestionContext";
 import SectionComponent from "components/Section";
 import Form from "./Form";
 import Mensaje from "./Mensaje";
@@ -18,7 +18,7 @@ const Container = transition(SectionComponent).attrs({
     will-change: opacity;
     position: absolute;
     z-index: 600;
-    top: 3rem;
+    top: calc(3rem - 2px);
     right: 0;
     bottom: 0;
     left: 0;
@@ -92,7 +92,7 @@ const Buttons = styled.div`
     }
 `;
 
-const Presupuesto = function ({ edit, unEdit, matchModelo }) {
+const Presupuesto = function ({ edit, unEdit }) {
     const { presupuestoId, setPresupuestoId, activeCard, setActiveCard } =
         useGestion();
     const [presupuesto, setPresupuesto] = useState({
@@ -167,7 +167,7 @@ const Presupuesto = function ({ edit, unEdit, matchModelo }) {
 
     return (
         <>
-            <Form edit={edit} unEdit={unEdit} matchModelo={matchModelo} />
+            <Form edit={edit} unEdit={unEdit} />
             <Container
                 in={presupuestoId !== 0}
                 overlay={activeCard === "Presupuesto" ? true : false}
@@ -192,7 +192,6 @@ const Presupuesto = function ({ edit, unEdit, matchModelo }) {
                     user={"montiel"}
                     factura={"mezannotte"}
                     presupuesto={presupuesto}
-                    auto={matchModelo(presupuesto.modeloId)}
                 />
             </Container>
         </>

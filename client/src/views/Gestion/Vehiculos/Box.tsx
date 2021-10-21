@@ -1,6 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 
+import { useCarName } from "views/Gestion/carNameContext";
+
 const Container = styled.article`
     padding: 1rem 1.5rem;
     display: grid;
@@ -20,12 +22,14 @@ const Container = styled.article`
     }
 `;
 
-const VehiculoBox = function ({ vehiculo, onClick, matchModelo }) {
+const VehiculoBox = function ({ vehiculo, onClick }) {
+    const { getCarName } = useCarName();
+
     return (
         <Container onClick={onClick}>
             <h4>{vehiculo.patente}</h4>
             <div>
-                <h6>{matchModelo(vehiculo.modeloId)}</h6>
+                <h6>{getCarName(vehiculo.modeloId)}</h6>
                 <p>
                     {vehiculo.combustible} {vehiculo.cilindrada}
                     <small>{vehiculo.year}</small>

@@ -4,7 +4,7 @@ import styled, { css } from "styled-components";
 import transition from "styled-transition-group";
 import { SwitchTransition } from "react-transition-group";
 
-import { useGestion } from "views/Gestion/context";
+import { useGestion } from "views/Gestion/gestionContext";
 import SectionComponent from "components/Section";
 import Cliente from "./ClienteBox";
 import Vehiculo from "./VehiculoBox";
@@ -64,10 +64,17 @@ const Empty = styled.h5`
 const Buscador = styled.form<Props>`
     position: absolute;
     z-index: 500;
-    top: 0;
-    width: 100%;
+    top: -1px;
+    right: -1px;
+    left: -1px;
     height: 3rem;
-    border-radius: 4px;
+    border-radius: 4px 4px 0 0;
+    overflow: hidden;
+    background: var(--overlay);
+    border: 1px solid rgba(0, 0, 0, 0);
+    border-top: var(--border-variant);
+    border-right: var(--border-variant);
+    border-left: var(--border-variant);
     backdrop-filter: blur(0.4rem);
     display: grid;
     grid-template-columns: auto 1fr auto;
@@ -78,6 +85,7 @@ const Buscador = styled.form<Props>`
         css`
             border-radius: 4px;
             background: var(--surface-t);
+            border: 1px solid rgba(0, 0, 0, 0);
             box-shadow: var(--shadow);
             transition: 0.2s ease-out;
         `};
@@ -160,7 +168,6 @@ const Busqueda = function ({
     createCliente,
     setCreateCliente,
     setCreatePresupuesto,
-    matchModelo,
 }) {
     const {
         clienteId,
@@ -301,7 +308,7 @@ const Busqueda = function ({
                     }}
                 >
                     {busqueda === "" ? (
-                        <Recents matchModelo={matchModelo} />
+                        <Recents />
                     ) : presupuestos.data[0] ||
                       vehiculos.data[0] ||
                       clientes.data[0] ? (
@@ -311,7 +318,6 @@ const Busqueda = function ({
                                     key={aVehiculo.id}
                                     vehiculo={aVehiculo}
                                     active={aVehiculo.clienteId === clienteId}
-                                    matchModelo={matchModelo}
                                 />
                             ))}
                             {presupuestos.data.map((aPresupuesto) => (
@@ -321,7 +327,6 @@ const Busqueda = function ({
                                     onClick={() => {
                                         setPresupuestoId(aPresupuesto.id);
                                     }}
-                                    matchModelo={matchModelo}
                                 />
                             ))}
                             {clientes.data.map((aCliente) => (

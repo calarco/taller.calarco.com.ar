@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import feathersClient from "feathersClient";
 import styled from "styled-components";
 import transition from "styled-transition-group";
 import { SwitchTransition } from "react-transition-group";
 
 import { Device } from "components/globalStyle";
-import { useGestion } from "./context";
+import { useGestion } from "views/Gestion/gestionContext";
+import { CarNameProvider } from "views/Gestion/carNameContext";
 import { Busqueda } from "./Busqueda";
 import { Cliente } from "./Cliente";
 import { Vehiculos } from "./Vehiculos";
@@ -120,92 +120,6 @@ const Gestion = function ({ setUser, darkTheme, setDarkTheme }) {
     const [createCliente, setCreateCliente] = useState(false);
     const [createPresupuesto, setCreatePresupuesto] = useState(false);
 
-    const [fabricantes, setFabricantes] = useState({
-        total: 0,
-        limit: 0,
-        skip: 0,
-        data: [
-            {
-                id: 0,
-                nombre: "",
-                createdAt: "",
-                updatedAt: "",
-            },
-        ],
-    });
-    const [modelos, setModelos] = useState({
-        total: 0,
-        limit: 0,
-        skip: 0,
-        data: [
-            {
-                id: 0,
-                nombre: "",
-                createdAt: "",
-                updatedAt: "",
-                fabricanteId: 0,
-            },
-        ],
-    });
-
-    function loadCars() {
-        feathersClient
-            .service("fabricantes")
-            .find({
-                query: {
-                    $limit: 100,
-                    $sort: {
-                        nombre: 1,
-                    },
-                },
-            })
-            .then((found) => {
-                found.data[0] && setFabricantes(found);
-            })
-            .catch((error) => {
-                console.error(error);
-            });
-        feathersClient
-            .service("modelos")
-            .find({
-                query: {
-                    $limit: 200,
-                    $sort: {
-                        nombre: 1,
-                    },
-                },
-            })
-            .then((found) => {
-                found.data[0] && setModelos(found);
-            })
-            .catch((error) => {
-                console.error(error);
-            });
-    }
-
-    const matchModelo = (modeloId: number) => {
-        try {
-            return (
-                fabricantes.data.find(
-                    ({ id }) =>
-                        id ===
-                        modelos.data.find(({ id }) => id === modeloId)!
-                            .fabricanteId
-                )!.nombre +
-                " " +
-                modelos.data.find(({ id }) => id === modeloId)!.nombre
-            );
-        } catch {
-            return "error";
-        }
-    };
-
-    useEffect(() => {
-        loadCars();
-        feathersClient.service("fabricantes").on("created", () => loadCars());
-        feathersClient.service("modelos").on("created", () => loadCars());
-    }, []);
-
     useEffect(() => {
         activeCard !== "Cliente" && setCreateCliente(false);
         activeCard !== "Presupuesto" && setCreatePresupuesto(false);
@@ -220,67 +134,67 @@ const Gestion = function ({ setUser, darkTheme, setDarkTheme }) {
     }, [createPresupuesto, setActiveCard]);
 
     return (
-        <Container>
-            <Panels>
-                <Left>
-                    <Busqueda
-                        createCliente={createCliente}
-                        setCreateCliente={setCreateCliente}
-                        setCreatePresupuesto={setCreatePresupuesto}
-                        matchModelo={matchModelo}
-                    />
-                    <Reparaciones />
-                    <Presupuesto
-                        edit={createPresupuesto}
-                        unEdit={() => setCreatePresupuesto(false)}
-                        matchModelo={matchModelo}
-                    />
-                </Left>
-                <SwitchTransition>
-                    {clienteId === 0 ? (
-                        <Right key={0}>
-                            <Turnos matchModelo={matchModelo} />
-                            <Cliente createCliente={createCliente} />
-                        </Right>
+        <CarNameProvider>
+            <Container>
+                <Panels>
+                    <Left>
+                        <Busqueda
+                            createCliente={createCliente}
+                            setCreateCliente={setCreateCliente}
+                            setCreatePresupuesto={setCreatePresupuesto}
+                        />
+                        <Reparaciones />
+                        <Presupuesto
+                            edit={createPresupuesto}
+                            unEdit={() => setCreatePresupuesto(false)}
+                        />
+                    </Left>
+                    <SwitchTransition>
+                        {clienteId === 0 ? (
+                            <Right key={0}>
+                                <Turnos />
+                                <Cliente createCliente={createCliente} />
+                            </Right>
+                        ) : (
+                            <Right key={1}>
+                                <Vehiculos />
+                                <Cliente createCliente={createCliente} />
+                            </Right>
+                        )}
+                    </SwitchTransition>
+                </Panels>
+                <Bar>
+                    {darkTheme ? (
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setDarkTheme(false);
+                            }}
+                        >
+                            Tema Claro
+                        </button>
                     ) : (
-                        <Right key={1}>
-                            <Vehiculos matchModelo={matchModelo} />
-                            <Cliente createCliente={createCliente} />
-                        </Right>
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setDarkTheme(true);
+                            }}
+                        >
+                            Tema Oscuro
+                        </button>
                     )}
-                </SwitchTransition>
-            </Panels>
-            <Bar>
-                {darkTheme ? (
                     <button
                         type="button"
                         onClick={() => {
-                            setDarkTheme(false);
+                            window.localStorage.removeItem("feathers-jwt");
+                            setUser(null);
                         }}
                     >
-                        Tema Claro
+                        Cerrar sesión
                     </button>
-                ) : (
-                    <button
-                        type="button"
-                        onClick={() => {
-                            setDarkTheme(true);
-                        }}
-                    >
-                        Tema Oscuro
-                    </button>
-                )}
-                <button
-                    type="button"
-                    onClick={() => {
-                        window.localStorage.removeItem("feathers-jwt");
-                        setUser(null);
-                    }}
-                >
-                    Cerrar sesión
-                </button>
-            </Bar>
-        </Container>
+                </Bar>
+            </Container>
+        </CarNameProvider>
     );
 };
 

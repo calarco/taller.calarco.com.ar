@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import feathersClient from "feathersClient";
 import styled from "styled-components";
 
-import { useGestion } from "views/Gestion/context";
+import { useGestion } from "views/Gestion/gestionContext";
 import SectionComponent from "components/Section";
 import Day from "./Day";
 
@@ -52,7 +52,7 @@ const Loading = styled.div`
     animation-iteration-count: infinite;
 `;
 
-const Turnos = function ({ matchModelo }) {
+const Turnos = function () {
     const { activeCard, setActiveCard } = useGestion();
     const loader = useRef<HTMLDivElement | null>(null);
     const [selected, setSelected] = useState("");
@@ -214,7 +214,6 @@ const Turnos = function ({ matchModelo }) {
                                 .padStart(2, "0")}-${number
                                 .toString()
                                 .padStart(2, "0")}`}
-                            matchModelo={matchModelo}
                             date={[item.year, item.month, number]}
                             turnos={turnos.data.filter(
                                 ({ fecha }) =>
