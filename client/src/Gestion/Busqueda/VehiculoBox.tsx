@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import feathersClient from "feathersClient";
 import styled, { css } from "styled-components";
 
-import { useGestion } from "views/Gestion/gestionContext";
-import { useCarName } from "views/Gestion/carNameContext";
+import { useGestion } from "Gestion/gestionContext";
+import { useCarName } from "Gestion/carNameContext";
 
 type Props = {
     readonly active?: boolean;
@@ -98,6 +98,7 @@ const Cliente = styled.h5<Props>`
 const VehiculoBox = function ({ vehiculo, active }) {
     const { setClienteId, setVehiculoId } = useGestion();
     const { getCarName } = useCarName();
+
     const [cliente, setCliente] = useState({
         id: 0,
         nombre: "",

@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Item, Span, A } from "react-html-email";
 
-import { useCarName } from "views/Gestion/carNameContext";
+import { useCarName } from "Gestion/carNameContext";
 
 function Mensaje({ user, factura, presupuesto }) {
     const { getCarName } = useCarName();

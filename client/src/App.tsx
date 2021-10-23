@@ -6,9 +6,9 @@ import { SwitchTransition } from "react-transition-group";
 
 import { themeDark, themeLight } from "themes";
 import GlobalStyle from "components/globalStyle";
-import Login from "views/Login/Login";
-import { GestionProvider } from "views/Gestion/gestionContext";
-import { Gestion } from "views/Gestion";
+import Login from "Login/Login";
+import { GestionProvider } from "Gestion/gestionContext";
+import { Gestion } from "Gestion";
 
 const Main = transition.div.attrs({
     unmountOnExit: true,

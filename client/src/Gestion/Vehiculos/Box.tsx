@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
-import { useCarName } from "views/Gestion/carNameContext";
+import { useCarName } from "Gestion/carNameContext";
 
 const Container = styled.article`
     padding: 1rem 1.5rem;

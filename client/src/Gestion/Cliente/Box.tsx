@@ -2,57 +2,39 @@ import React from "react";
 import styled from "styled-components";
 
 const Container = styled.article`
-    padding-bottom: 1.25rem;
+    padding: 1rem 1.5rem;
     display: grid;
     gap: 1rem;
+    grid-template-columns: 1fr auto;
+    align-items: center;
 
     div:first-child {
         display: grid;
         gap: 0.5rem;
-        grid-template-columns: 1fr auto;
         align-items: top;
-
-        h2 {
-            padding-top: 1.25rem;
-            padding-left: 2rem;
-        }
     }
 
     div:last-child {
-        padding: 0 2rem;
         display: grid;
-        grid-template-columns: auto auto;
-        justify-content: space-between;
+        justify-items: end;
         gap: 0.5rem 1rem;
-    }
-
-    button {
-        height: 3rem;
-        padding: 0.5rem 1.5rem;
-        border-radius: 0 0 0 4px;
-        border: 1px solid var(--primary-variant);
-        border-top: none;
-        border-right: none;
     }
 `;
 
-const ClienteBox = function ({ cliente, onClose }) {
+const ClienteBox = function ({ cliente }) {
     return (
         <Container>
             <div>
                 <h2>
                     {cliente.nombre} {cliente.apellido}
-                    {cliente.dni && <small>{cliente.dni}</small>}
                 </h2>
-                <button type="button" onClick={onClose}>
-                    Cerrar
-                </button>
+                {cliente.email && <p>{cliente.email}</p>}
             </div>
             <div>
-                {cliente.email && (
+                {cliente.dni && (
                     <label>
-                        Email
-                        <span>{cliente.email}</span>
+                        DNI
+                        <span>{cliente.dni}</span>
                     </label>
                 )}
                 {cliente.telefono && (

@@ -3,9 +3,8 @@ import feathersClient from "feathersClient";
 import styled from "styled-components";
 import transition from "styled-transition-group";
 
-import { useGestion } from "views/Gestion/gestionContext";
+import { useGestion } from "Gestion/gestionContext";
 import SectionComponent from "components/Section";
-import Form from "./Form";
 import Mensaje from "./Mensaje";
 
 const Container = transition(SectionComponent).attrs({
@@ -18,7 +17,7 @@ const Container = transition(SectionComponent).attrs({
     will-change: opacity;
     position: absolute;
     z-index: 600;
-    top: calc(3rem - 2px);
+    top: 3rem;
     right: 0;
     bottom: 0;
     left: 0;
@@ -92,9 +91,10 @@ const Buttons = styled.div`
     }
 `;
 
-const Presupuesto = function ({ edit, unEdit }) {
+const Presupuesto = function () {
     const { presupuestoId, setPresupuestoId, activeCard, setActiveCard } =
         useGestion();
+
     const [presupuesto, setPresupuesto] = useState({
         id: 0,
         patente: "",
@@ -162,39 +162,46 @@ const Presupuesto = function ({ edit, unEdit }) {
     }, [loadPresupuesto, setPresupuestoId]);
 
     useEffect(() => {
-        presupuestoId !== 0 && loadPresupuesto();
+        presupuestoId !== 0
+            ? loadPresupuesto()
+            : setPresupuesto({
+                  id: 0,
+                  patente: "",
+                  km: "",
+                  motivo: "",
+                  labor: "",
+                  repuestos: [{ cantidad: "", repuesto: "", precio: "" }],
+                  createdAt: "",
+                  updatedAt: "",
+                  modeloId: 0,
+              });
     }, [presupuestoId, loadPresupuesto]);
 
     return (
-        <>
-            <Form edit={edit} unEdit={unEdit} />
-            <Container
-                in={presupuestoId !== 0}
-                overlay={activeCard === "Presupuesto" ? true : false}
-                onClick={() => {
-                    setActiveCard("");
-                }}
-            >
-                <Buttons>
-                    <button type="button" onClick={unEdit}>
-                        Borrar
-                    </button>
-                    <input
-                        type="email"
-                        name="email"
-                        placeholder="Direccion de correo"
-                        value={inputs.email}
-                        onChange={handleInputChange}
-                    />
-                    <button type="submit">Enviar</button>
-                </Buttons>
-                <Mensaje
-                    user={"montiel"}
-                    factura={"mezannotte"}
-                    presupuesto={presupuesto}
+        <Container
+            in={presupuesto.id !== 0}
+            overlay={activeCard === "Presupuesto" ? true : false}
+            onClick={() => {
+                setActiveCard("");
+            }}
+        >
+            <Buttons>
+                <button type="button">Borrar</button>
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="Direccion de correo"
+                    value={inputs.email}
+                    onChange={handleInputChange}
                 />
-            </Container>
-        </>
+                <button type="submit">Enviar</button>
+            </Buttons>
+            <Mensaje
+                user={"montiel"}
+                factura={"mezannotte"}
+                presupuesto={presupuesto}
+            />
+        </Container>
     );
 };
 

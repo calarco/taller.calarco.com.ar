@@ -4,17 +4,12 @@ import styled, { css } from "styled-components";
 import transition from "styled-transition-group";
 import { SwitchTransition } from "react-transition-group";
 
-import { useGestion } from "views/Gestion/gestionContext";
+import { useGestion } from "Gestion/gestionContext";
 import SectionComponent from "components/Section";
-import Cliente from "./ClienteBox";
-import Vehiculo from "./VehiculoBox";
-import Presupuesto from "./PresupuestoBox";
+import ClienteBox from "./ClienteBox";
+import VehiculoBox from "./VehiculoBox";
+import PresupuestoBox from "./PresupuestoBox";
 import Recents from "./Recents";
-
-type Props = {
-    readonly active?: boolean;
-    readonly loading?: boolean;
-};
 
 const Container = transition(SectionComponent).attrs({
     unmountOnExit: true,
@@ -61,20 +56,21 @@ const Empty = styled.h5`
     color: var(--on-background-variant);
 `;
 
+type Props = {
+    readonly active?: boolean;
+    readonly loading?: boolean;
+};
+
 const Buscador = styled.form<Props>`
     position: absolute;
     z-index: 500;
-    top: -1px;
-    right: -1px;
-    left: -1px;
+    top: 0;
+    right: 0;
+    left: 0;
     height: 3rem;
     border-radius: 4px 4px 0 0;
     overflow: hidden;
     background: var(--overlay);
-    border: 1px solid rgba(0, 0, 0, 0);
-    border-top: var(--border-variant);
-    border-right: var(--border-variant);
-    border-left: var(--border-variant);
     backdrop-filter: blur(0.4rem);
     display: grid;
     grid-template-columns: auto 1fr auto;
@@ -85,7 +81,6 @@ const Buscador = styled.form<Props>`
         css`
             border-radius: 4px;
             background: var(--surface-t);
-            border: 1px solid rgba(0, 0, 0, 0);
             box-shadow: var(--shadow);
             transition: 0.2s ease-out;
         `};
@@ -179,9 +174,9 @@ const Busqueda = function ({
         activeCard,
         setActiveCard,
     } = useGestion();
+
     const [count, setCount] = useState(0);
     const [busqueda, setBusqueda] = useState("");
-
     const [clientes, setClientes] = useState({
         total: 0,
         limit: 0,
@@ -314,14 +309,14 @@ const Busqueda = function ({
                       clientes.data[0] ? (
                         <>
                             {vehiculos.data.map((aVehiculo) => (
-                                <Vehiculo
+                                <VehiculoBox
                                     key={aVehiculo.id}
                                     vehiculo={aVehiculo}
                                     active={aVehiculo.clienteId === clienteId}
                                 />
                             ))}
                             {presupuestos.data.map((aPresupuesto) => (
-                                <Presupuesto
+                                <PresupuestoBox
                                     key={aPresupuesto.id}
                                     presupuesto={aPresupuesto}
                                     onClick={() => {
@@ -330,7 +325,7 @@ const Busqueda = function ({
                                 />
                             ))}
                             {clientes.data.map((aCliente) => (
-                                <Cliente
+                                <ClienteBox
                                     key={aCliente.id}
                                     cliente={aCliente}
                                     onClick={() => {

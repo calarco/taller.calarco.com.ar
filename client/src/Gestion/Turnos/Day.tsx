@@ -4,7 +4,7 @@ import styled, { css } from "styled-components";
 import transition from "styled-transition-group";
 import { TransitionGroup } from "react-transition-group";
 
-import { useCarName } from "views/Gestion/carNameContext";
+import { useCarName } from "Gestion/carNameContext";
 import CreateComponent from "components/Create";
 import Form from "./Form";
 import Remove from "components/Remove";
@@ -160,6 +160,7 @@ const Turno = transition.div`
 
 const Day = function ({ date, turnos, current, active, setActive, unActive }) {
     const { getCarName } = useCarName();
+
     const [remove, setRemove] = useState(0);
 
     const handleDelete = (id) => {

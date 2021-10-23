@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import feathersClient from "feathersClient";
 import styled from "styled-components";
 
-import { useGestion } from "views/Gestion/gestionContext";
+import { useGestion } from "Gestion/gestionContext";
 import SectionComponent from "components/Section";
 import Day from "./Day";
 
@@ -16,8 +16,8 @@ const Mes = styled.div`
     top: 0;
     z-index: 900;
     width: 100%;
-    height: 3rem;
-    padding: 0 1.5rem;
+    min-height: 3rem;
+    padding: 0.5rem 1.5rem;
     border-radius: 4px;
     background: var(--surface-t);
     backdrop-filter: blur(0.4rem);
@@ -52,8 +52,9 @@ const Loading = styled.div`
     animation-iteration-count: infinite;
 `;
 
-const Turnos = function () {
+const Turnos = function ({ overlay }) {
     const { activeCard, setActiveCard } = useGestion();
+
     const loader = useRef<HTMLDivElement | null>(null);
     const [selected, setSelected] = useState("");
 
@@ -181,7 +182,7 @@ const Turnos = function () {
     return (
         <Section
             overlay={
-                activeCard === "Turno" || activeCard === "Cliente"
+                activeCard === "Turno" || activeCard === "Cliente" || overlay
                     ? true
                     : false
             }

@@ -6,7 +6,7 @@ const feathersClient = feathers();
 feathersClient.configure(
     feathers.socketio(
         io("http://localhost:3030", {
-            transports: ["websocket"]
+            transports: ["websocket"],
         })
     )
 );

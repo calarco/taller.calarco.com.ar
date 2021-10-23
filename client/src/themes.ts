@@ -47,7 +47,7 @@ const themeDark: DefaultTheme = {
     },
 
     colors: {
-        background: "#000",
+        background: "#010101",
         surface: "hsla(202, 10%, 12%, 1)",
         surfaceT: "hsla(202, 10%, 14%, 0.7)",
         surfaceVariant: "hsla(202, 10%, 8%, 1)",
