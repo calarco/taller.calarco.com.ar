@@ -1,16 +1,16 @@
-import React, { useState, useEffect, useCallback } from "react";
-import feathersClient from "feathersClient";
+import React, { useState, useEffect } from "react";
 import styled, { css } from "styled-components";
 import transition from "styled-transition-group";
 import { SwitchTransition, TransitionGroup } from "react-transition-group";
 
 import { useGestion } from "Gestion/gestionContext";
+import useReparaciones from "Gestion/hooks/useReparaciones";
 import SectionComponent from "components/Section";
 import Create from "components/Create";
 import CardComponent from "components/Card";
 import Box from "./Box";
-import Form from "./Form";
-import Remove from "./Remove";
+import ReparacionForm from "Gestion/forms/ReparacionForm";
+import Remove from "components/Remove";
 
 const Container = transition.div.attrs({
     unmountOnExit: true,
@@ -126,88 +126,11 @@ const Reparaciones = function () {
     const { vehiculoId, activeCard, setActiveCard } = useGestion();
 
     const [selected, setSelected] = useState(0);
+    const { reparaciones } = useReparaciones({
+        setSelected: setSelected,
+    });
     const [create, setCreate] = useState(false);
     const [remove, setRemove] = useState(false);
-    const [reparaciones, setReparaciones] = useState<Reparaciones>({
-        total: 0,
-        limit: 0,
-        skip: 0,
-        data: [
-            {
-                id: 0,
-                vehiculoId: 0,
-                reparacion: "",
-                repuestos: "",
-                labor: "",
-                costo: "",
-                km: "0",
-                createdAt: "",
-                updatedAt: "",
-            },
-        ],
-    });
-
-    const loadReparaciones = useCallback(
-        (setId?: boolean) => {
-            feathersClient
-                .service("reparaciones")
-                .find({
-                    query: {
-                        vehiculoId: vehiculoId,
-                        $limit: 100,
-                        $sort: {
-                            createdAt: -1,
-                        },
-                    },
-                })
-                .then((found: Reparaciones) => {
-                    setReparaciones(found);
-                    setActiveCard("");
-                    setId && setSelected(found.data[0].id);
-                })
-                .catch((error: FeathersErrorJSON) => {
-                    console.error(error.message);
-                });
-        },
-        [vehiculoId, setActiveCard]
-    );
-
-    useEffect(() => {
-        feathersClient
-            .service("reparaciones")
-            .on("created", () => loadReparaciones(true));
-        feathersClient
-            .service("reparaciones")
-            .on("patched", () => loadReparaciones());
-        feathersClient.service("reparaciones").on("removed", () => {
-            loadReparaciones();
-            setSelected(0);
-        });
-    }, [loadReparaciones]);
-
-    useEffect(() => {
-        vehiculoId !== 0
-            ? loadReparaciones()
-            : setReparaciones({
-                  total: 0,
-                  limit: 0,
-                  skip: 0,
-                  data: [
-                      {
-                          id: 0,
-                          vehiculoId: 0,
-                          reparacion: "",
-                          repuestos: "",
-                          labor: "",
-                          costo: "",
-                          km: "0",
-                          createdAt: "",
-                          updatedAt: "",
-                      },
-                  ],
-              });
-        setSelected(0);
-    }, [vehiculoId, loadReparaciones]);
 
     useEffect(() => {
         setRemove(false);
@@ -238,7 +161,7 @@ const Reparaciones = function () {
                         }
                         onClick={() => setCreate(true)}
                     >
-                        <Form
+                        <ReparacionForm
                             reparacion={{
                                 id: 0,
                                 vehiculoId: vehiculoId,
@@ -300,7 +223,7 @@ const Reparaciones = function () {
                                         />
                                         {selected === aReparacion.id && (
                                             <>
-                                                <Form
+                                                <ReparacionForm
                                                     reparacion={aReparacion}
                                                     edit={
                                                         activeCard ===
@@ -315,6 +238,7 @@ const Reparaciones = function () {
                                                 />
                                                 <Remove
                                                     id={aReparacion.id}
+                                                    service="reparaciones"
                                                     remove={remove}
                                                     unRemove={() => {
                                                         setRemove(false);

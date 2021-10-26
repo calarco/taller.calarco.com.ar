@@ -1,12 +1,11 @@
 import React, { MouseEvent, useState, useEffect } from "react";
-import feathersClient from "feathersClient";
 import styled, { css } from "styled-components";
 import transition from "styled-transition-group";
 import { TransitionGroup } from "react-transition-group";
 
 import { useCarName } from "Gestion/carNameContext";
 import CreateComponent from "components/Create";
-import Form from "./Form";
+import TurnoForm from "Gestion/forms/TurnoForm";
 import Remove from "components/Remove";
 
 type Props = {
@@ -180,16 +179,6 @@ const Day = function ({
 
     const [remove, setRemove] = useState(0);
 
-    const handleDelete = (id: number) => {
-        feathersClient
-            .service("turnos")
-            .remove(id)
-            .then(() => {})
-            .catch((error: FeathersErrorJSON) => {
-                console.error(error.message);
-            });
-    };
-
     useEffect(() => {
         setRemove(0);
     }, [turnos]);
@@ -226,7 +215,7 @@ const Day = function ({
                     variant={!current}
                     onClick={setActive}
                 >
-                    <Form
+                    <TurnoForm
                         turno={{
                             id: 0,
                             fecha: `${date[0]}-${(date[1] + 1)
@@ -266,15 +255,14 @@ const Day = function ({
                                     Borrar
                                 </button>
                                 <Remove
-                                    inline
+                                    id={aTurno.id}
+                                    service="turnos"
                                     remove={remove === aTurno.id}
                                     unRemove={() => {
                                         setRemove(0);
                                     }}
-                                    handleDelete={() => handleDelete(aTurno.id)}
-                                >
-                                    ¿Borrar turno?
-                                </Remove>
+                                    inline
+                                />
                             </Turno>
                         ))}
                 </TransitionGroup>

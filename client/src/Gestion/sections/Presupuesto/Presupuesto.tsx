@@ -1,9 +1,9 @@
-import React, { ChangeEvent, useState, useEffect, useCallback } from "react";
-import feathersClient from "feathersClient";
+import React, { ChangeEvent, useState } from "react";
 import styled from "styled-components";
 import transition from "styled-transition-group";
 
 import { useGestion } from "Gestion/gestionContext";
+import usePresupuesto from "Gestion/hooks/usePresupuesto";
 import SectionComponent from "components/Section";
 import Mensaje from "./Mensaje";
 
@@ -91,20 +91,9 @@ const Buttons = styled.div`
 `;
 
 const Presupuesto = function () {
-    const { presupuestoId, setPresupuestoId, activeCard, setActiveCard } =
-        useGestion();
+    const { activeCard, setActiveCard } = useGestion();
+    const { presupuesto } = usePresupuesto();
 
-    const [presupuesto, setPresupuesto] = useState({
-        id: 0,
-        patente: "",
-        km: "",
-        motivo: "",
-        labor: "",
-        repuestos: [{ cantidad: "", repuesto: "", precio: "" }],
-        createdAt: "",
-        updatedAt: "",
-        modeloId: 0,
-    });
     const [inputs, setInputs] = useState({
         email: "",
     });
@@ -116,65 +105,6 @@ const Presupuesto = function () {
             [event.target.name]: event.target.value,
         }));
     };
-
-    const loadPresupuesto = useCallback(
-        (last?: boolean) => {
-            last
-                ? feathersClient
-                      .service("presupuestos")
-                      .find({
-                          query: {
-                              $limit: 1,
-                              $sort: {
-                                  updatedAt: -1,
-                              },
-                          },
-                      })
-                      .then((found: Presupuestos) => {
-                          setPresupuesto(found.data[0]);
-                          setPresupuestoId(found.data[0].id);
-                          setActiveCard("");
-                      })
-                      .catch((error: FeathersErrorJSON) => {
-                          console.error(error);
-                      })
-                : feathersClient
-                      .service("presupuestos")
-                      .get(presupuestoId)
-                      .then((found: Presupuesto) => {
-                          setPresupuesto(found);
-                      })
-                      .catch((error: FeathersErrorJSON) => {
-                          console.log("error", error);
-                      });
-        },
-        [presupuestoId, setPresupuestoId, setActiveCard]
-    );
-
-    useEffect(() => {
-        feathersClient
-            .service("presupuestos")
-            .on("created", () => loadPresupuesto(true));
-        feathersClient
-            .service("presupuestos")
-            .on("removed", () => setPresupuestoId(0));
-    }, [loadPresupuesto, setPresupuestoId]);
-
-    useEffect(() => {
-        presupuestoId !== 0
-            ? loadPresupuesto()
-            : setPresupuesto({
-                  id: 0,
-                  patente: "",
-                  km: "",
-                  motivo: "",
-                  labor: "",
-                  repuestos: [{ cantidad: "", repuesto: "", precio: "" }],
-                  createdAt: "",
-                  updatedAt: "",
-                  modeloId: 0,
-              });
-    }, [presupuestoId, loadPresupuesto]);
 
     return (
         <Container

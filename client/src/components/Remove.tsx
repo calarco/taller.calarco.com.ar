@@ -1,4 +1,5 @@
-import React, { MouseEvent, FormEvent, ReactNode } from "react";
+import React, { MouseEvent } from "react";
+import feathersClient from "feathersClient";
 import styled, { css } from "styled-components";
 import transition from "styled-transition-group";
 
@@ -6,7 +7,13 @@ type Props = {
     inline?: boolean;
 };
 
-const Container = transition.div<Props>`
+const Container = transition.div.attrs({
+    unmountOnExit: true,
+    timeout: {
+        enter: 200,
+        exit: 150,
+    },
+})<Props>`
     position: absolute;
     z-index: 1001;
     top: 0;
@@ -22,7 +29,6 @@ const Container = transition.div<Props>`
     align-items: center;
     text-align: center;
     grid-template-rows: 1fr auto;
-    transition: 0.25s ease-in;
 
     ${(props: Props) =>
         props.inline &&
@@ -106,34 +112,35 @@ const Buttons = styled.div<Props>`
 `;
 
 type ComponentProps = {
-    inline?: boolean;
+    id: number;
+    service: string;
     remove: boolean;
     unRemove: (e: MouseEvent<HTMLButtonElement>) => void;
-    handleDelete: (e: FormEvent) => void;
-    children: ReactNode;
+    inline?: boolean;
     className?: string;
 };
 
 const VehiculoForm = function ({
-    inline,
+    id,
+    service,
     remove,
     unRemove,
-    handleDelete,
-    children,
+    inline,
     className,
 }: ComponentProps) {
+    const handleDelete = () => {
+        feathersClient
+            .service(service)
+            .remove(id)
+            .then(() => {})
+            .catch((error: FeathersErrorJSON) => {
+                console.error(error);
+            });
+    };
+
     return (
-        <Container
-            unmountOnExit
-            timeout={{
-                enter: 200,
-                exit: 150,
-            }}
-            in={remove}
-            className={className}
-            inline={inline}
-        >
-            <h5>{children}</h5>
+        <Container in={remove} className={className} inline={inline}>
+            <h5>¿Borrar ?</h5>
             <Buttons inline={inline}>
                 <button type="button" onClick={unRemove}>
                     Cancelar

@@ -3,12 +3,8 @@ import feathersClient from "feathersClient";
 
 import { useGestion } from "Gestion/gestionContext";
 
-type HookProps = {
-    clienteId: number;
-};
-
-const useFeathers = ({ clienteId }: HookProps) => {
-    const { setVehiculoId, setActiveCard } = useGestion();
+const useVehiculos = () => {
+    const { clienteId, setVehiculoId, setActiveCard } = useGestion();
 
     const [vehiculos, setVehiculos] = useState<Vehiculos>({
         total: 0,
@@ -96,4 +92,4 @@ const useFeathers = ({ clienteId }: HookProps) => {
     return { vehiculos, error };
 };
 
-export default useFeathers;
+export default useVehiculos;

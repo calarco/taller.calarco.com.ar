@@ -7,7 +7,7 @@ import { renderEmail, Email } from "react-html-email";
 
 import FormComponent from "components/Form";
 import ModeloComponent from "components/Modelo";
-import Mensaje from "./Mensaje";
+import Mensaje from "Gestion/sections/Presupuesto/Mensaje";
 
 const Container = styled(FormComponent)`
     grid-template-columns: 3fr 4fr 3fr 3fr [end];

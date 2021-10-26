@@ -4,13 +4,13 @@ import transition from "styled-transition-group";
 import { SwitchTransition, TransitionGroup } from "react-transition-group";
 
 import { useGestion } from "Gestion/gestionContext";
-import useFeathers from "./useFeathers";
+import useVehiculos from "Gestion/hooks/useVehiculos";
 import SectionComponent from "components/Section";
 import Create from "components/Create";
 import CardComponent from "components/Card";
 import Box from "./Box";
-import Form from "./Form";
-import Remove from "./Remove";
+import VehiculoForm from "Gestion/forms/VehiculoForm";
+import Remove from "components/Remove";
 
 const Container = transition.div.attrs({
     unmountOnExit: true,
@@ -119,7 +119,7 @@ const Empty = styled.h5`
 const Vehiculos = function () {
     const { clienteId, vehiculoId, setVehiculoId, activeCard, setActiveCard } =
         useGestion();
-    const { vehiculos } = useFeathers({ clienteId: clienteId });
+    const { vehiculos } = useVehiculos();
 
     const [create, setCreate] = useState(false);
     const [remove, setRemove] = useState(false);
@@ -159,7 +159,7 @@ const Vehiculos = function () {
                             setCreate(true);
                         }}
                     >
-                        <Form
+                        <VehiculoForm
                             vehiculo={{
                                 id: 0,
                                 patente: "",
@@ -215,7 +215,7 @@ const Vehiculos = function () {
                                     />
                                     {vehiculoId === aVehiculo.id && !create && (
                                         <>
-                                            <Form
+                                            <VehiculoForm
                                                 vehiculo={aVehiculo}
                                                 edit={
                                                     activeCard === "Vehículo"
@@ -228,6 +228,7 @@ const Vehiculos = function () {
                                             />
                                             <Remove
                                                 id={aVehiculo.id}
+                                                service="clientes"
                                                 remove={remove}
                                                 unRemove={() => {
                                                     setRemove(false);

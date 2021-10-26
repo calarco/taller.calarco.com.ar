@@ -1,13 +1,13 @@
-import React, { useState, useEffect, useCallback } from "react";
-import feathersClient from "feathersClient";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import transition from "styled-transition-group";
 import { SwitchTransition } from "react-transition-group";
 
 import { useGestion } from "Gestion/gestionContext";
+import useCliente from "Gestion/hooks/useCliente";
 import Box from "./Box";
-import Form from "./Form";
-import Remove from "./Remove";
+import ClienteForm from "Gestion/forms/ClienteForm";
+import Remove from "components/Remove";
 
 const Container = transition.div.attrs({
     unmountOnExit: true,
@@ -84,80 +84,13 @@ const Cliente = function ({ createCliente }: ComponentProps) {
         activeCard,
         setActiveCard,
     } = useGestion();
+    const { cliente } = useCliente();
 
     const [remove, setRemove] = useState(false);
-    const [cliente, setCliente] = useState<Cliente>({
-        id: 0,
-        nombre: "",
-        apellido: "",
-        email: "",
-        dni: "",
-        telefono: " ",
-        empresa: "",
-        createdAt: "",
-        updatedAt: "",
-    });
-
-    const loadCliente = useCallback(
-        (last?: boolean) => {
-            last
-                ? feathersClient
-                      .service("clientes")
-                      .find({
-                          query: {
-                              $limit: 1,
-                              $sort: {
-                                  updatedAt: -1,
-                              },
-                          },
-                      })
-                      .then((found: Clientes) => {
-                          setCliente(found.data[0]);
-                          setClienteId(found.data[0].id);
-                          setVehiculoId(0);
-                          setActiveCard("");
-                      })
-                      .catch((error: FeathersErrorJSON) => {
-                          console.error(error);
-                      })
-                : feathersClient
-                      .service("clientes")
-                      .get(clienteId)
-                      .then((found: Cliente) => {
-                          setCliente(found);
-                          setActiveCard("");
-                      })
-                      .catch((error: FeathersErrorJSON) => {
-                          console.log("error", error);
-                      });
-        },
-        [clienteId, setClienteId, setVehiculoId, setActiveCard]
-    );
-
-    useEffect(() => {
-        feathersClient
-            .service("clientes")
-            .on("created", () => loadCliente(true));
-        feathersClient.service("clientes").on("patched", () => loadCliente());
-        feathersClient.service("clientes").on("removed", () => setClienteId(0));
-    }, [loadCliente, setClienteId]);
 
     useEffect(() => {
         setRemove(false);
-        clienteId !== 0
-            ? loadCliente()
-            : setCliente({
-                  id: 0,
-                  nombre: "",
-                  apellido: "",
-                  email: "",
-                  dni: "",
-                  telefono: " ",
-                  empresa: "",
-                  createdAt: "",
-                  updatedAt: "",
-              });
-    }, [clienteId, loadCliente]);
+    }, [clienteId]);
 
     return (
         <Container in={cliente.id !== 0}>
@@ -190,7 +123,7 @@ const Cliente = function ({ createCliente }: ComponentProps) {
                     </Buttons>
                     <Box cliente={cliente} />
                     {!createCliente && (
-                        <Form
+                        <ClienteForm
                             cliente={cliente}
                             edit={activeCard === "Cliente" ? true : false}
                             unEdit={() => {
@@ -200,6 +133,7 @@ const Cliente = function ({ createCliente }: ComponentProps) {
                     )}
                     <Remove
                         id={cliente.id}
+                        service="clientes"
                         remove={remove}
                         unRemove={() => {
                             setRemove(false);

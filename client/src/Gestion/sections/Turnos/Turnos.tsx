@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import feathersClient from "feathersClient";
 import styled from "styled-components";
 
 import { useGestion } from "Gestion/gestionContext";
+import useTurnos from "Gestion/hooks/useTurnos";
 import SectionComponent from "components/Section";
 import Day from "./Day";
 
@@ -58,6 +58,7 @@ type ComponentProps = {
 
 const Turnos = function ({ overlay }: ComponentProps) {
     const { activeCard, setActiveCard } = useGestion();
+    const { turnos } = useTurnos();
 
     const loader = useRef<HTMLDivElement | null>(null);
     const [selected, setSelected] = useState("");
@@ -75,21 +76,6 @@ const Turnos = function ({ overlay }: ComponentProps) {
     const [calendar, setCalendar] = useState([
         { year: year, month: month, days: days },
     ]);
-    const [turnos, setTurnos] = useState<Turnos>({
-        total: 0,
-        limit: 0,
-        skip: 0,
-        data: [
-            {
-                id: 0,
-                fecha: "",
-                motivo: "",
-                createdAt: "",
-                updatedAt: "",
-                modeloId: 0,
-            },
-        ],
-    });
 
     const loadDays = useCallback(() => {
         const year =
@@ -134,29 +120,6 @@ const Turnos = function ({ overlay }: ComponentProps) {
         [loadDays]
     );
 
-    const loadTurnos = useCallback(() => {
-        feathersClient
-            .service("turnos")
-            .find({
-                query: {
-                    fecha: {
-                        $gt: new Date().getTime() - 24 * 60 * 60 * 1000,
-                    },
-                    $limit: 50,
-                    $sort: {
-                        fecha: 1,
-                    },
-                },
-            })
-            .then((data: Turnos) => {
-                setTurnos(data);
-                setActiveCard("");
-            })
-            .catch((error: FeathersErrorJSON) => {
-                console.error(error.message);
-            });
-    }, [setActiveCard]);
-
     useEffect(() => {
         const option = {
             root: null,
@@ -170,18 +133,16 @@ const Turnos = function ({ overlay }: ComponentProps) {
     }, [handleObserver]);
 
     useEffect(() => {
-        loadTurnos();
-        feathersClient.service("turnos").on("created", () => loadTurnos());
-        feathersClient.service("turnos").on("removed", () => loadTurnos());
-    }, [loadTurnos]);
-
-    useEffect(() => {
         selected !== "" ? setActiveCard("Turno") : setActiveCard("");
     }, [selected, setActiveCard]);
 
     useEffect(() => {
         activeCard !== "Turno" && setSelected("");
     }, [activeCard]);
+
+    useEffect(() => {
+        setActiveCard("");
+    }, [turnos, setActiveCard]);
 
     return (
         <Section

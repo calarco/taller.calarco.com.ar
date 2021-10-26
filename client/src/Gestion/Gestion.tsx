@@ -4,15 +4,17 @@ import styled, { css } from "styled-components";
 import { Device } from "components/globalStyle";
 import { useGestion } from "Gestion/gestionContext";
 import { CarNameProvider } from "Gestion/carNameContext";
-import { Busqueda } from "./Busqueda";
-import { Cliente } from "./Cliente";
-import ClienteForm from "./Cliente/Form";
-import { Vehiculos } from "./Vehiculos";
-import { Reparaciones } from "./Reparaciones";
-import { Turnos } from "./Turnos";
-import { Presupuesto } from "./Presupuesto";
-import PresupuestoForm from "./Presupuesto/Form";
 import Bar from "./Bar";
+
+import { Busqueda } from "Gestion/sections/Busqueda";
+import { Cliente } from "Gestion/sections/Cliente";
+import { Vehiculos } from "Gestion/sections/Vehiculos";
+import { Reparaciones } from "Gestion/sections/Reparaciones";
+import { Turnos } from "Gestion/sections/Turnos";
+import { Presupuesto } from "Gestion/sections/Presupuesto";
+
+import ClienteForm from "Gestion/forms/ClienteForm";
+import PresupuestoForm from "Gestion/forms/PresupuestoForm";
 
 const Container = styled.main`
     width: 100vw;
