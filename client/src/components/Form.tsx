@@ -1,4 +1,4 @@
-import React from "react";
+import React, { MouseEvent, FormEvent, ReactNode } from "react";
 import styled from "styled-components";
 import transition from "styled-transition-group";
 
@@ -13,12 +13,12 @@ const Container = transition.form.attrs({
     content-visibility: auto;
     position: absolute;
     z-index: 1500;
-    top: -1px;
-    left: -1px;
-    right: -1px;
+    top: 0;
+    left: 0;
+    right: 0;
     overflow: hidden;
     border-radius: 4px;
-    border: 1px solid var(--primary);
+    outline: 1px solid var(--primary);
     background: var(--primary);
     box-shadow: var(--shadow);
     display: grid;
@@ -73,7 +73,6 @@ const Buttons = styled.div`
         padding: 0 1.5rem;
         border-radius: 0px;
         background: none;
-        border: none;
 
         &:not(:first-child)::after {
             content: "";
@@ -88,9 +87,9 @@ const Buttons = styled.div`
 
 type ComponentProps = {
     edit: boolean;
-    unEdit: (e: React.MouseEvent<HTMLButtonElement>) => void;
-    onSubmit: (e: React.FormEvent) => void;
-    children: React.ReactNode;
+    unEdit: (e: MouseEvent<HTMLButtonElement>) => void;
+    onSubmit: (e: FormEvent) => void;
+    children: ReactNode;
     className?: string;
     noButtons?: boolean;
 };

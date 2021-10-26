@@ -1,11 +1,32 @@
-import React, { useEffect, useState } from "react";
+import React, {
+    MouseEvent,
+    FormEvent,
+    ChangeEvent,
+    useEffect,
+    useState,
+} from "react";
 import feathersClient from "feathersClient";
 
 import FormComponent from "components/Form";
 import Modelo from "components/Modelo";
 
-const Form = function ({ turno, edit, unEdit }) {
-    const [inputs, setInputs] = useState({
+type Inputs = {
+    fecha: string;
+    motivo: string;
+    fabricanteId: number;
+    fabricante: string;
+    modeloId: number;
+    modelo: string;
+};
+
+type ComponentProps = {
+    turno: Turno;
+    edit: boolean;
+    unEdit: (e: MouseEvent<HTMLButtonElement>) => void;
+};
+
+const Form = function ({ turno, edit, unEdit }: ComponentProps) {
+    const [inputs, setInputs] = useState<Inputs>({
         fecha: "",
         motivo: "",
         fabricanteId: 0,
@@ -14,15 +35,14 @@ const Form = function ({ turno, edit, unEdit }) {
         modelo: "",
     });
 
-    const capitalize = (text) => {
-        if (typeof text !== "string") return "";
+    const capitalize = (text: string) => {
         return text
             .split(" ")
             .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
             .join(" ");
     };
 
-    function validate(inputs) {
+    function validate(inputs: Inputs) {
         let error = "";
         inputs.modeloId === 0
             ? (error = "Seleccione un modelo")
@@ -32,7 +52,7 @@ const Form = function ({ turno, edit, unEdit }) {
         return error;
     }
 
-    const handleCreate = (event) => {
+    const handleCreate = (event: FormEvent) => {
         event.preventDefault();
         validate(inputs) === "" &&
             feathersClient
@@ -43,12 +63,12 @@ const Form = function ({ turno, edit, unEdit }) {
                     modeloId: inputs.modeloId,
                 })
                 .then(() => {})
-                .catch((error) => {
-                    console.error(error);
+                .catch((error: FeathersErrorJSON) => {
+                    console.error(error.message);
                 });
     };
 
-    const handleEdit = (event) => {
+    const handleEdit = (event: FormEvent) => {
         event.preventDefault();
         validate(inputs) === "" &&
             feathersClient
@@ -59,12 +79,12 @@ const Form = function ({ turno, edit, unEdit }) {
                     modeloId: inputs.modeloId,
                 })
                 .then(() => {})
-                .catch((error) => {
-                    console.error(error);
+                .catch((error: FeathersErrorJSON) => {
+                    console.error(error.message);
                 });
     };
 
-    const handleInputChange = (event) => {
+    const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
         event.persist();
         setInputs((inputs) => ({
             ...inputs,

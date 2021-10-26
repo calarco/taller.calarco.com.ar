@@ -54,6 +54,10 @@ const Container = transition.div.attrs({
     }
 `;
 
+type Props = {
+    readonly edit?: boolean;
+};
+
 const Section = transition(SectionComponent).attrs({
     unmountOnExit: true,
     timeout: {
@@ -79,7 +83,7 @@ const Section = transition(SectionComponent).attrs({
         transition: 0.15s ease-in;
     }
 
-    ${(props) =>
+    ${(props: Props) =>
         props.edit &&
         css`
             bottom: 6rem;
@@ -121,18 +125,17 @@ const Empty = styled.h5`
 const Reparaciones = function () {
     const { vehiculoId, activeCard, setActiveCard } = useGestion();
 
-    const [count, setCount] = useState(0);
     const [selected, setSelected] = useState(0);
     const [create, setCreate] = useState(false);
     const [remove, setRemove] = useState(false);
-    const [reparaciones, setReparaciones] = useState({
+    const [reparaciones, setReparaciones] = useState<Reparaciones>({
         total: 0,
         limit: 0,
         skip: 0,
         data: [
             {
                 id: 0,
-                vehiculoId: "",
+                vehiculoId: 0,
                 reparacion: "",
                 repuestos: "",
                 labor: "",
@@ -157,14 +160,13 @@ const Reparaciones = function () {
                         },
                     },
                 })
-                .then((found) => {
-                    setCount((count) => count + 1);
+                .then((found: Reparaciones) => {
                     setReparaciones(found);
                     setActiveCard("");
                     setId && setSelected(found.data[0].id);
                 })
-                .catch((error) => {
-                    console.log("error", error);
+                .catch((error: FeathersErrorJSON) => {
+                    console.error(error.message);
                 });
         },
         [vehiculoId, setActiveCard]
@@ -193,7 +195,7 @@ const Reparaciones = function () {
                   data: [
                       {
                           id: 0,
-                          vehiculoId: "",
+                          vehiculoId: 0,
                           reparacion: "",
                           repuestos: "",
                           labor: "",
@@ -220,10 +222,10 @@ const Reparaciones = function () {
     }, [create, setActiveCard]);
 
     return (
-        <Container in={!reparaciones.data[0] || reparaciones.data[0].id !== 0}>
+        <Container in={reparaciones.data[0].vehiculoId !== 0}>
             <SwitchTransition>
                 <Section
-                    key={count}
+                    key={reparaciones.data[0].vehiculoId}
                     overlay={activeCard !== "" ? true : false}
                     onClick={() => {
                         setActiveCard("");

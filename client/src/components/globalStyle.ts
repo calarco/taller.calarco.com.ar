@@ -17,6 +17,7 @@ const GlobalStyle = createGlobalStyle`
 
     ::-webkit-scrollbar-track {
         background: var(--overlay);
+        border-radius: 4px;
     }
 
     ::-webkit-scrollbar-thumb {
@@ -277,9 +278,9 @@ const GlobalStyle = createGlobalStyle`
         width: 100%;
         padding: 0.25rem 0.5rem;
         border-radius: 4px;
-        outline: none;
         background: none;
-        border: var(--border-variant);
+        border: none;
+        outline: var(--border-variant);
         font: var(--subhead1);
         color: var(--on-background);
         transition: 0.1s ease-in;
@@ -289,11 +290,11 @@ const GlobalStyle = createGlobalStyle`
         height: 3rem;
         padding: 0 1.5rem;
         border-radius: 4px 4px 0 0;
+        outline: none;
         text-transform: uppercase;
     }
 
     input[type="number"] {
-        width: auto;
         width: 100%;
         text-align: inherit;
     }
@@ -310,7 +311,7 @@ const GlobalStyle = createGlobalStyle`
         appearance: none;
         padding: 0.25rem 0.5rem;
         background: rgba(236, 239, 241, 0.7);
-        border: 1px solid rgba(0, 0, 0, 0);
+        outline: none;
     }
 
     input[type="checkbox"] {
@@ -327,14 +328,14 @@ const GlobalStyle = createGlobalStyle`
     input[type="password"]:hover,
     textarea:hover,
     select:hover {
-        border: 1px solid var(--primary-variant);
+        outline: 1px solid var(--primary-variant);
         transition: 0.15s ease-out;
     }
 
     select:not(:disabled):hover {
         cursor: pointer;
         background: var(--primary-variant);
-        border: 1px solid rgba(0, 0, 0, 0);
+        outline: none;
     }
     
     input[type="search"]:focus,
@@ -347,7 +348,7 @@ const GlobalStyle = createGlobalStyle`
     input[type="password"]:focus,
     textarea:focus,
     select:focus {
-        outline: none;
+        outline: 1px solid rgba(0, 0, 0, 0);
         background: var(--primary-variant);
         box-shadow: var(--shadow-variant);
         color: var(--on-background);
@@ -355,12 +356,12 @@ const GlobalStyle = createGlobalStyle`
     }
 
     select:focus {
-        border: 1px solid var(--primary-variant);
+        outline: 1px solid var(--primary-variant);
     }
 
     input[type="search"]:hover,
     input[type="search"]:focus {
-        border: none;
+        outline: none;
         background: none;
     }
 
@@ -400,9 +401,8 @@ const GlobalStyle = createGlobalStyle`
         position: relative;
         padding: 0.5rem 1.5rem;
         border-radius: 4px;
-        background: none;
         border: none;
-        border: 1px solid rgba(0, 0, 0, 0.3);
+        background: none;
         text-transform: uppercase;
         font: var(--body2);
         color: var(--primary);

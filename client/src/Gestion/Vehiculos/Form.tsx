@@ -1,4 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, {
+    MouseEvent,
+    FormEvent,
+    ChangeEvent,
+    useEffect,
+    useState,
+} from "react";
 import feathersClient from "feathersClient";
 import styled from "styled-components";
 
@@ -19,8 +25,27 @@ const Wide = styled.label`
     grid-column-end: span 2;
 `;
 
-const Form = function ({ vehiculo, edit, unEdit }) {
-    const [inputs, setInputs] = useState({
+type Inputs = {
+    patente: string;
+    year: string;
+    combustible: string;
+    cilindrada: string;
+    vin: string;
+    clienteId: number;
+    fabricanteId: number;
+    fabricante: string;
+    modeloId: number;
+    modelo: string;
+};
+
+type ComponentProps = {
+    vehiculo: Vehiculo;
+    edit: boolean;
+    unEdit: (e: MouseEvent<HTMLButtonElement>) => void;
+};
+
+const Form = function ({ vehiculo, edit, unEdit }: ComponentProps) {
+    const [inputs, setInputs] = useState<Inputs>({
         patente: "",
         year: "",
         combustible: "Nafta",
@@ -34,15 +59,14 @@ const Form = function ({ vehiculo, edit, unEdit }) {
     });
     const [error, setError] = useState("");
 
-    const capitalize = (text) => {
-        if (typeof text !== "string") return "";
+    const capitalize = (text: string) => {
         return text
             .split(" ")
             .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
             .join(" ");
     };
 
-    function validate(inputs) {
+    function validate(inputs: Inputs) {
         let error = "";
         inputs.modeloId === 0
             ? (error = "Seleccione un modelo")
@@ -65,7 +89,7 @@ const Form = function ({ vehiculo, edit, unEdit }) {
         return error;
     }
 
-    const handleCreate = (event) => {
+    const handleCreate = (event: FormEvent) => {
         event.preventDefault();
         validate(inputs) === "" &&
             feathersClient
@@ -82,12 +106,12 @@ const Form = function ({ vehiculo, edit, unEdit }) {
                     updatedAt: Date(),
                 })
                 .then(() => {})
-                .catch((error) => {
-                    console.error(error);
+                .catch((error: FeathersErrorJSON) => {
+                    console.error(error.message);
                 });
     };
 
-    const handleEdit = (event) => {
+    const handleEdit = (event: FormEvent) => {
         event.preventDefault();
         validate(inputs) === "" &&
             feathersClient
@@ -102,12 +126,20 @@ const Form = function ({ vehiculo, edit, unEdit }) {
                     modeloId: inputs.modeloId,
                 })
                 .then(() => {})
-                .catch((error) => {
-                    console.error(error);
+                .catch((error: FeathersErrorJSON) => {
+                    console.error(error.message);
                 });
     };
 
-    const handleInputChange = (event) => {
+    const handleSelectChange = (event: ChangeEvent<HTMLSelectElement>) => {
+        event.persist();
+        setInputs((inputs) => ({
+            ...inputs,
+            [event.target.name]: event.target.value,
+        }));
+    };
+
+    const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
         event.persist();
         setInputs((inputs) => ({
             ...inputs,
@@ -152,7 +184,7 @@ const Form = function ({ vehiculo, edit, unEdit }) {
                 <select
                     name="combustible"
                     value={inputs.combustible}
-                    onChange={handleInputChange}
+                    onChange={handleSelectChange}
                 >
                     <option value="Nafta">Nafta</option>
                     <option value="Diesel">Diesel</option>
@@ -215,7 +247,7 @@ const Form = function ({ vehiculo, edit, unEdit }) {
                     disabled
                     name="clienteId"
                     value={inputs.clienteId}
-                    onChange={handleInputChange}
+                    onChange={handleSelectChange}
                 >
                     <option value="">{inputs.clienteId}</option>
                 </select>

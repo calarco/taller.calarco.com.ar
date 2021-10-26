@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { ChangeEvent, useState, useEffect, useCallback } from "react";
 import feathersClient from "feathersClient";
 import styled from "styled-components";
 import transition from "styled-transition-group";
@@ -61,9 +61,9 @@ const Buttons = styled.div`
     height: 3rem;
     overflow: hidden;
     border-radius: 4px;
-    background: var(--primary-variant);
+    background: var(--overlay);
     backdrop-filter: blur(0.4rem);
-    border: 1px solid var(--primary);
+    outline: 1px solid var(--primary-variant);
     box-shadow: var(--shadow);
     display: grid;
     grid-template-columns: 2fr 3fr 2fr;
@@ -78,7 +78,6 @@ const Buttons = styled.div`
         padding: 0 1.5rem;
         border-radius: 0px;
         background: none;
-        border: none;
 
         &:first-child::after {
             content: "";
@@ -110,7 +109,7 @@ const Presupuesto = function () {
         email: "",
     });
 
-    const handleInputChange = (event) => {
+    const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
         event.persist();
         setInputs((inputs) => ({
             ...inputs,
@@ -131,21 +130,21 @@ const Presupuesto = function () {
                               },
                           },
                       })
-                      .then((found) => {
+                      .then((found: Presupuestos) => {
                           setPresupuesto(found.data[0]);
                           setPresupuestoId(found.data[0].id);
                           setActiveCard("");
                       })
-                      .catch((error) => {
+                      .catch((error: FeathersErrorJSON) => {
                           console.error(error);
                       })
                 : feathersClient
                       .service("presupuestos")
                       .get(presupuestoId)
-                      .then((found) => {
+                      .then((found: Presupuesto) => {
                           setPresupuesto(found);
                       })
-                      .catch((error) => {
+                      .catch((error: FeathersErrorJSON) => {
                           console.log("error", error);
                       });
         },

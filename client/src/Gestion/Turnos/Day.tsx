@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { MouseEvent, useState, useEffect } from "react";
 import feathersClient from "feathersClient";
 import styled, { css } from "styled-components";
 import transition from "styled-transition-group";
@@ -105,6 +105,7 @@ const Create = styled(CreateComponent)`
     backdrop-filter: none;
     background: none;
     border: none;
+    outline: none;
     box-shadow: none;
 `;
 
@@ -158,18 +159,34 @@ const Turno = transition.div`
     }
 `;
 
-const Day = function ({ date, turnos, current, active, setActive, unActive }) {
+type ComponentProps = {
+    date: number[];
+    turnos: Turno[];
+    current: boolean;
+    active: boolean;
+    setActive: (e: MouseEvent<HTMLButtonElement>) => void;
+    unActive: (e: MouseEvent<HTMLButtonElement>) => void;
+};
+
+const Day = function ({
+    date,
+    turnos,
+    current,
+    active,
+    setActive,
+    unActive,
+}: ComponentProps) {
     const { getCarName } = useCarName();
 
     const [remove, setRemove] = useState(0);
 
-    const handleDelete = (id) => {
+    const handleDelete = (id: number) => {
         feathersClient
             .service("turnos")
             .remove(id)
             .then(() => {})
-            .catch((error) => {
-                console.error(error);
+            .catch((error: FeathersErrorJSON) => {
+                console.error(error.message);
             });
     };
 

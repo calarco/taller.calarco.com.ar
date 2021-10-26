@@ -1,4 +1,4 @@
-import React from "react";
+import React, { MouseEvent, FormEvent, ReactNode } from "react";
 import styled, { css } from "styled-components";
 import transition from "styled-transition-group";
 
@@ -9,23 +9,22 @@ type Props = {
 const Container = transition.div<Props>`
     position: absolute;
     z-index: 1001;
-    top: -1px;
-    right: -1px;
-    bottom: -1px;
-    left: -1px;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
     min-height: 3rem;
     border-radius: 4px;
     overflow: hidden;
-    background: var(--surface-t);
+    background: var(--overlay);
     backdrop-filter: blur(0.5rem) saturate(0);
-    border: 1px solid var(--error);
     display: grid;
     align-items: center;
     text-align: center;
     grid-template-rows: 1fr auto;
     transition: 0.25s ease-in;
 
-    ${(props) =>
+    ${(props: Props) =>
         props.inline &&
         css`
             top: 0;
@@ -33,7 +32,7 @@ const Container = transition.div<Props>`
             bottom: 0;
             left: 0;
             border-radius: 0;
-            border: none;
+            outline: none;
             background: var(--primary-variant);
             box-shadow: var(--shadow-variant);
             grid-template-rows: 1fr;
@@ -94,7 +93,6 @@ const Buttons = styled.div<Props>`
         padding: 0 1.5rem;
         border-radius: 0px;
         background: none;
-        border: none;
 
         &:not(:first-child)::after {
             content: "";
@@ -110,9 +108,9 @@ const Buttons = styled.div<Props>`
 type ComponentProps = {
     inline?: boolean;
     remove: boolean;
-    unRemove: (e: React.MouseEvent<HTMLButtonElement>) => void;
-    handleDelete: (e: React.FormEvent) => void;
-    children: React.ReactNode;
+    unRemove: (e: MouseEvent<HTMLButtonElement>) => void;
+    handleDelete: (e: FormEvent) => void;
+    children: ReactNode;
     className?: string;
 };
 

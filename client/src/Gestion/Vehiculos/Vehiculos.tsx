@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useCallback } from "react";
-import feathersClient from "feathersClient";
+import React, { useState, useEffect } from "react";
 import styled, { css } from "styled-components";
 import transition from "styled-transition-group";
 import { SwitchTransition, TransitionGroup } from "react-transition-group";
 
 import { useGestion } from "Gestion/gestionContext";
+import useFeathers from "./useFeathers";
 import SectionComponent from "components/Section";
 import Create from "components/Create";
 import CardComponent from "components/Card";
@@ -74,6 +74,10 @@ const Section = transition(SectionComponent).attrs({
     }
 `;
 
+type Props = {
+    edit?: boolean;
+};
+
 const Card = transition(CardComponent).attrs({
     unmountOnExit: true,
     timeout: {
@@ -99,7 +103,7 @@ const Card = transition(CardComponent).attrs({
         transition: 0.15s ease-in;
     }
 
-    ${(props) =>
+    ${(props: Props) =>
         props.edit &&
         css`
             bottom: 15rem;
@@ -115,89 +119,10 @@ const Empty = styled.h5`
 const Vehiculos = function () {
     const { clienteId, vehiculoId, setVehiculoId, activeCard, setActiveCard } =
         useGestion();
+    const { vehiculos } = useFeathers({ clienteId: clienteId });
 
     const [create, setCreate] = useState(false);
     const [remove, setRemove] = useState(false);
-
-    const [vehiculos, setVehiculos] = useState({
-        total: 0,
-        limit: 0,
-        skip: 0,
-        data: [
-            {
-                id: 0,
-                patente: "",
-                year: "",
-                combustible: "",
-                cilindrada: "",
-                createdAt: "",
-                updatedAt: "",
-                clienteId: 0,
-                modeloId: 0,
-            },
-        ],
-    });
-
-    const loadVehiculos = useCallback(
-        (setId?: boolean) => {
-            feathersClient
-                .service("vehiculos")
-                .find({
-                    query: {
-                        $limit: 100,
-                        clienteId: clienteId,
-                        $sort: {
-                            updatedAt: -1,
-                        },
-                    },
-                })
-                .then((found) => {
-                    found && setVehiculos(found);
-                    setActiveCard("");
-                    setId && setVehiculoId(found.data[0].id);
-                })
-                .catch((error) => {
-                    console.error(error);
-                });
-        },
-        [clienteId, setActiveCard, setVehiculoId]
-    );
-
-    useEffect(() => {
-        feathersClient
-            .service("vehiculos")
-            .on("created", () => loadVehiculos(true));
-        feathersClient
-            .service("vehiculos")
-            .on("patched", () => loadVehiculos());
-        feathersClient.service("vehiculos").on("removed", () => {
-            loadVehiculos();
-            setVehiculoId(0);
-        });
-    }, [loadVehiculos, setVehiculoId]);
-
-    useEffect(() => {
-        clienteId !== 0
-            ? loadVehiculos()
-            : setVehiculos({
-                  total: 0,
-                  limit: 0,
-                  skip: 0,
-                  data: [
-                      {
-                          id: 0,
-                          patente: "",
-                          year: "",
-                          combustible: "",
-                          cilindrada: "",
-                          createdAt: "",
-                          updatedAt: "",
-                          clienteId: 0,
-                          modeloId: 0,
-                      },
-                  ],
-              });
-    }, [clienteId, loadVehiculos]);
 
     useEffect(() => {
         setRemove(false);
@@ -241,6 +166,7 @@ const Vehiculos = function () {
                                 year: "",
                                 combustible: "Nafta",
                                 cilindrada: "",
+                                vin: "",
                                 createdAt: "",
                                 updatedAt: "",
                                 clienteId: clienteId,
@@ -267,9 +193,9 @@ const Vehiculos = function () {
                                             : false
                                     }
                                     edit={
-                                        !create &&
                                         vehiculoId === aVehiculo.id &&
-                                        activeCard === "Vehículo"
+                                        activeCard === "Vehículo" &&
+                                        !create
                                             ? true
                                             : false
                                     }
@@ -287,12 +213,11 @@ const Vehiculos = function () {
                                                 : setVehiculoId(aVehiculo.id)
                                         }
                                     />
-                                    {vehiculoId === aVehiculo.id && (
+                                    {vehiculoId === aVehiculo.id && !create && (
                                         <>
                                             <Form
                                                 vehiculo={aVehiculo}
                                                 edit={
-                                                    !create &&
                                                     activeCard === "Vehículo"
                                                         ? true
                                                         : false

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import { Device } from "components/globalStyle";
 import { useGestion } from "Gestion/gestionContext";
@@ -44,23 +44,43 @@ const Panel = styled.div`
     border-radius: 4px;
     background: var(--surface-variant);
     outline: var(--border-variant);
-    outline-offset: 0px;
     box-shadow: var(--shadow-variant);
     display: grid;
     grid-template-rows: auto 1fr;
 `;
 
-const Side = styled.div`
+type Props = {
+    readonly active?: boolean;
+};
+
+const Side = styled.div<Props>`
     position: absolute;
     top: 0;
     right: 0;
     bottom: 0;
     left: 0;
+    border-radius: 4px;
     display: grid;
     grid-template-rows: auto 1fr;
+
+    ${(props) =>
+        !props.active &&
+        css`
+            pointer-events: none;
+        `};
 `;
 
-const Gestion = function ({ setUser, darkTheme, setDarkTheme }) {
+type ComponentProps = {
+    setUser: (user: any) => void;
+    darkTheme: boolean;
+    setDarkTheme: (darkTheme: boolean) => void;
+};
+
+const Gestion = function ({
+    setUser,
+    darkTheme,
+    setDarkTheme,
+}: ComponentProps) {
     const { clienteId, activeCard, setActiveCard } = useGestion();
 
     const [createCliente, setCreateCliente] = useState(false);
@@ -100,12 +120,10 @@ const Gestion = function ({ setUser, darkTheme, setDarkTheme }) {
                     </Panel>
                     <Panel>
                         <Turnos overlay={clienteId !== 0} />
-                        {clienteId !== 0 && (
-                            <Side>
-                                <Vehiculos />
-                                <Cliente createCliente={createCliente} />
-                            </Side>
-                        )}
+                        <Side active={clienteId !== 0}>
+                            <Vehiculos />
+                            <Cliente createCliente={createCliente} />
+                        </Side>
                         <ClienteForm
                             cliente={{
                                 id: 0,

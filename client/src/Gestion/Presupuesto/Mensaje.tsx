@@ -3,7 +3,13 @@ import { Box, Item, Span, A } from "react-html-email";
 
 import { useCarName } from "Gestion/carNameContext";
 
-function Mensaje({ user, factura, presupuesto }) {
+type ComponentProps = {
+    user: string;
+    factura: string;
+    presupuesto: Presupuesto;
+};
+
+function Mensaje({ user, factura, presupuesto }: ComponentProps) {
     const { getCarName } = useCarName();
 
     return (
@@ -190,11 +196,13 @@ function Mensaje({ user, factura, presupuesto }) {
                     <tr>
                         <td colSpan={2}>Facturar a: {factura}</td>
                         <td align="right">
-                            {parseInt(presupuesto.labor, 10) +
-                                presupuesto.repuestos.reduce(
-                                    (a, { precio }) => a + precio,
-                                    0
-                                )}
+                            {
+                                //parseInt(presupuesto.labor, 10) +
+                                //   presupuesto.repuestos.reduce(
+                                //       (a, { precio }) => a + precio,
+                                //       0
+                                //   )
+                            }
                             $
                         </td>
                     </tr>

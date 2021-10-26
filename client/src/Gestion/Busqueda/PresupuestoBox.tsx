@@ -1,4 +1,4 @@
-import React from "react";
+import React, { MouseEvent } from "react";
 import styled from "styled-components";
 
 import { useCarName } from "Gestion/carNameContext";
@@ -63,7 +63,12 @@ const Container = styled.div`
     }
 `;
 
-const PresupuestoBox = function ({ presupuesto, onClick }) {
+type ComponentProps = {
+    presupuesto: Presupuesto;
+    onClick: (e: MouseEvent<HTMLDivElement>) => void;
+};
+
+const PresupuestoBox = function ({ presupuesto, onClick }: ComponentProps) {
     const { getCarName } = useCarName();
 
     return (

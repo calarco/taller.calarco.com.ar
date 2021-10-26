@@ -1,4 +1,4 @@
-import React from "react";
+import React, { MouseEvent } from "react";
 import styled from "styled-components";
 
 const Container = styled.article`
@@ -12,7 +12,12 @@ const Numbers = styled.div`
     text-align: right;
 `;
 
-const ReparacionBox = function ({ reparacion, onClick }) {
+type ComponentProps = {
+    reparacion: Reparacion;
+    onClick: (e: MouseEvent<HTMLDivElement>) => void;
+};
+
+const ReparacionBox = function ({ reparacion, onClick }: ComponentProps) {
     return (
         <Container onClick={onClick}>
             <h5>

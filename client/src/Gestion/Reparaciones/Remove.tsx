@@ -1,17 +1,22 @@
-import React from "react";
+import React, { MouseEvent } from "react";
 import feathersClient from "feathersClient";
 
 import RemoveComponent from "components/Remove";
 
-const Remove = function ({ id, remove, unRemove }) {
-    const handleDelete = (event) => {
-        event.preventDefault();
+type ComponentProps = {
+    id: number;
+    remove: boolean;
+    unRemove: (e: MouseEvent<HTMLButtonElement>) => void;
+};
+
+const Remove = function ({ id, remove, unRemove }: ComponentProps) {
+    const handleDelete = () => {
         feathersClient
             .service("reparaciones")
             .remove(id)
             .then(() => {})
-            .catch((error) => {
-                console.error(error);
+            .catch((error: FeathersErrorJSON) => {
+                console.error(error.message);
             });
     };
 

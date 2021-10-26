@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, {
+    ReactNode,
+    createContext,
+    useContext,
+    useState,
+    useEffect,
+} from "react";
 import feathersClient from "feathersClient";
 
 type ContextType = {
@@ -9,7 +15,11 @@ const CarNameContext = createContext<ContextType>({
     getCarName: () => "",
 });
 
-function CarNameProvider({ children }) {
+type ComponentProps = {
+    children: ReactNode;
+};
+
+function CarNameProvider({ children }: ComponentProps) {
     const [fabricantes, setFabricantes] = useState({
         total: 0,
         limit: 0,
@@ -49,10 +59,10 @@ function CarNameProvider({ children }) {
                     },
                 },
             })
-            .then((found) => {
+            .then((found: Fabricantes) => {
                 found.data[0] && setFabricantes(found);
             })
-            .catch((error) => {
+            .catch((error: FeathersErrorJSON) => {
                 console.error(error);
             });
         feathersClient
@@ -65,10 +75,10 @@ function CarNameProvider({ children }) {
                     },
                 },
             })
-            .then((found) => {
+            .then((found: Modelos) => {
                 found.data[0] && setModelos(found);
             })
-            .catch((error) => {
+            .catch((error: FeathersErrorJSON) => {
                 console.error(error);
             });
     }

@@ -48,6 +48,7 @@ const Buttons = styled.div`
     position: relative;
     width: 100%;
     height: 3rem;
+    border-radius: 4px 4px 0 0;
     overflow: hidden;
     border-bottom: 1px solid var(--primary-variant);
     display: flex;
@@ -71,7 +72,11 @@ const Buttons = styled.div`
     }
 `;
 
-const Cliente = function ({ createCliente }) {
+type ComponentProps = {
+    createCliente: boolean;
+};
+
+const Cliente = function ({ createCliente }: ComponentProps) {
     const {
         clienteId,
         setClienteId,
@@ -81,12 +86,13 @@ const Cliente = function ({ createCliente }) {
     } = useGestion();
 
     const [remove, setRemove] = useState(false);
-    const [cliente, setCliente] = useState({
+    const [cliente, setCliente] = useState<Cliente>({
         id: 0,
         nombre: "",
         apellido: "",
+        email: "",
+        dni: "",
         telefono: " ",
-        direccion: "",
         empresa: "",
         createdAt: "",
         updatedAt: "",
@@ -105,23 +111,23 @@ const Cliente = function ({ createCliente }) {
                               },
                           },
                       })
-                      .then((found) => {
+                      .then((found: Clientes) => {
                           setCliente(found.data[0]);
                           setClienteId(found.data[0].id);
                           setVehiculoId(0);
                           setActiveCard("");
                       })
-                      .catch((error) => {
+                      .catch((error: FeathersErrorJSON) => {
                           console.error(error);
                       })
                 : feathersClient
                       .service("clientes")
                       .get(clienteId)
-                      .then((found) => {
+                      .then((found: Cliente) => {
                           setCliente(found);
                           setActiveCard("");
                       })
-                      .catch((error) => {
+                      .catch((error: FeathersErrorJSON) => {
                           console.log("error", error);
                       });
         },
@@ -144,8 +150,9 @@ const Cliente = function ({ createCliente }) {
                   id: 0,
                   nombre: "",
                   apellido: "",
+                  email: "",
+                  dni: "",
                   telefono: " ",
-                  direccion: "",
                   empresa: "",
                   createdAt: "",
                   updatedAt: "",

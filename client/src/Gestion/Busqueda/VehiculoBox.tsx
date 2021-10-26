@@ -9,12 +9,24 @@ type Props = {
     readonly active?: boolean;
 };
 
-const Container = styled.div`
+const Container = styled.div<Props>`
     position: relative;
     width: 100%;
+    padding: 0 1rem 0 0;
     display: grid;
     grid-template-columns: 1fr auto;
+    gap: 1rem;
+    align-items: center;
     transition: 0.15s ease-in;
+
+    ${(props) =>
+        !props.active &&
+        css`
+            &:hover {
+                background: var(--primary-variant);
+                transition: 0.15s ease-out;
+            }
+        `};
 
     &:not(:first-child)::after {
         content: "";
@@ -26,7 +38,7 @@ const Container = styled.div`
     }
 `;
 
-const Box = styled.div`
+const Box = styled.div<Props>`
     display: grid;
     grid-template-columns: auto 1fr;
     align-items: center;
@@ -34,9 +46,17 @@ const Box = styled.div`
 
     &:hover {
         cursor: pointer;
-        background: var(--primary-variant);
         transition: 0.15s ease-out;
     }
+
+    ${(props) =>
+        props.active &&
+        css`
+            &:hover {
+                background: var(--primary-variant);
+                transition: 0.15s ease-out;
+            }
+        `};
 
     > p {
         position: relative;
@@ -72,8 +92,9 @@ const Box = styled.div`
 
 const Cliente = styled.h5<Props>`
     position: relative;
-    padding: 1.5rem 2.5rem;
-    border: 1px solid rgba(0, 0, 0, 0);
+    padding: 0.5rem 1.5rem;
+    outline: 1px solid rgba(0, 0, 0, 0);
+    border-radius: 4px;
     display: grid;
     transition: 0.15s ease-in;
 
@@ -82,7 +103,7 @@ const Cliente = styled.h5<Props>`
         css`
             &:hover {
                 cursor: pointer;
-                background: var(--primary-variant);
+                outline: 1px solid var(--primary-variant);
                 transition: 0.15s ease-out;
             }
         `};
@@ -95,16 +116,22 @@ const Cliente = styled.h5<Props>`
         `};
 `;
 
-const VehiculoBox = function ({ vehiculo, active }) {
+type ComponentProps = {
+    vehiculo: Vehiculo;
+    active: boolean;
+};
+
+const VehiculoBox = function ({ vehiculo, active }: ComponentProps) {
     const { setClienteId, setVehiculoId } = useGestion();
     const { getCarName } = useCarName();
 
-    const [cliente, setCliente] = useState({
+    const [cliente, setCliente] = useState<Cliente>({
         id: 0,
         nombre: "",
         apellido: "",
+        email: "",
+        dni: "",
         telefono: " ",
-        direccion: "",
         empresa: "",
         createdAt: "",
         updatedAt: "",
@@ -114,17 +141,18 @@ const VehiculoBox = function ({ vehiculo, active }) {
         feathersClient
             .service("clientes")
             .get(vehiculo.clienteId)
-            .then((found) => {
+            .then((found: Cliente) => {
                 setCliente(found);
             })
-            .catch((error) => {
+            .catch((error: FeathersErrorJSON) => {
                 console.log("error", error);
             });
     }, [vehiculo]);
 
     return (
-        <Container>
+        <Container active={active}>
             <Box
+                active={active}
                 onClick={() => {
                     setVehiculoId(vehiculo.id);
                     setClienteId(vehiculo.clienteId);

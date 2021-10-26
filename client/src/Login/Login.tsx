@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { FormEvent, ChangeEvent, useState } from "react";
 import styled from "styled-components";
 import feathersClient from "feathersClient";
 
@@ -87,7 +87,11 @@ const Error = styled.div`
     background: var(--surface-variant);
 `;
 
-const Login = function ({ setUser }) {
+type ComponentProps = {
+    setUser: (user: any) => void;
+};
+
+const Login = function ({ setUser }: ComponentProps) {
     const [inputs, setInputs] = useState({
         user: "",
         password: "",
@@ -95,7 +99,7 @@ const Login = function ({ setUser }) {
         error: "",
     });
 
-    const handleSubmit = (event) => {
+    const handleSubmit = (event: FormEvent) => {
         event.preventDefault();
         setInputs({ ...inputs, loading: true });
         feathersClient
@@ -105,8 +109,8 @@ const Login = function ({ setUser }) {
                 password: inputs.password,
             })
             .then(({ user }) => setUser(user))
-            .catch((error) => {
-                console.error(error);
+            .catch((error: FeathersErrorJSON) => {
+                console.error(error.message);
                 setInputs({
                     ...inputs,
                     password: "",
@@ -116,7 +120,7 @@ const Login = function ({ setUser }) {
             });
     };
 
-    const handleInputChange = (event) => {
+    const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
         event.persist();
         setInputs((inputs) => ({
             ...inputs,

@@ -11,7 +11,6 @@ type Props = {
 const Container = styled.div<Props>`
     position: relative;
     border-radius: 4px;
-    border: 1px solid rgba(0, 0, 0, 0);
     transition: 0.2s ease-in;
 
     ${(props) =>
@@ -34,7 +33,7 @@ const Container = styled.div<Props>`
             z-index: 1000;
             background: var(--primary-variant);
             backdrop-filter: blur(0.4rem);
-            border: 1px solid var(--primary);
+            outline: 1px solid var(--primary);
             box-shadow: var(--shadow-variant);
             transition: 0.2s ease-in;
 
@@ -50,7 +49,6 @@ const Container = styled.div<Props>`
             top: 0;
             z-index: 1500;
             backdrop-filter: none;
-            border: 1px solid rgba(0, 0, 0, 0);
             box-shadow: var(--shadow-variant);
         `};
 

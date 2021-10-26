@@ -15,20 +15,20 @@ const themeLight: DefaultTheme = {
     },
 
     colors: {
-        background: "#CFD8DC",
-        surface: "rgba(255, 255, 255, 1)",
+        background: "hsla(202, 15%, 80%, 1)",
+        surface: "hsla(202, 15%, 100%, 1)",
         surfaceT: "rgba(255, 255, 255, 0.7)",
-        surfaceVariant: "#e3e8eb",
-        primary: "rgba(66, 121, 152, 1)",
-        primaryVariant: "rgba(66, 121, 152, 0.2)",
-        secondary: "rgba(192, 128, 102, 1)",
-        secondaryVariant: "rgba(192, 128, 102, 0.2)",
-        onBackground: "rgba(0, 0, 0, 0.9)",
-        onBackgroundVariant: "rgba(0, 0, 0, 0.5)",
-        onBackgroundDisabled: "rgba(0, 0, 0, 0.3)",
+        surfaceVariant: "hsla(202, 15%, 90%, 1)",
+        primary: "hsla(202, 39%, 43%, 1)",
+        primaryVariant: "hsla(202, 39%, 43%, 0.2)",
+        secondary: "hsla(17, 42%, 58%, 1)",
+        secondaryVariant: "hsla(17, 42%, 58%, 0.2)",
+        onBackground: "hsla(17, 0%, 0%, 0.9)",
+        onBackgroundVariant: "hsla(17, 0%, 0%, 0.5)",
+        onBackgroundDisabled: "hsla(17, 0%, 0%, 0.3)",
         error: "rgba(236, 71, 88, 1)",
         errorVariant: "#ef948f",
-        overlay: "rgba(236, 239, 241, 0.7)",
+        overlay: "hsla(202, 15%, 90%, 0.6)",
     },
 };
 
@@ -47,7 +47,7 @@ const themeDark: DefaultTheme = {
     },
 
     colors: {
-        background: "#010101",
+        background: "hsla(202, 10%, 5%, 1)",
         surface: "hsla(202, 10%, 12%, 1)",
         surfaceT: "hsla(202, 10%, 14%, 0.7)",
         surfaceVariant: "hsla(202, 10%, 8%, 1)",
@@ -60,7 +60,7 @@ const themeDark: DefaultTheme = {
         onBackgroundDisabled: "rgba(255, 255, 255, 0.038)",
         error: "rgba(236, 71, 88, 1)",
         errorVariant: "#f45104",
-        overlay: "hsla(202, 10%, 6%, 0.7)",
+        overlay: "hsla(202, 10%, 8%, 0.7)",
     },
 };
 

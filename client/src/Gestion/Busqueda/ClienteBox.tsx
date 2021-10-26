@@ -1,4 +1,4 @@
-import React from "react";
+import React, { MouseEvent } from "react";
 import styled from "styled-components";
 
 const Container = styled.div`
@@ -48,7 +48,12 @@ const Container = styled.div`
     }
 `;
 
-const ClienteBox = function ({ cliente, onClick }) {
+type ComponentProps = {
+    cliente: Cliente;
+    onClick: (e: MouseEvent<HTMLDivElement>) => void;
+};
+
+const ClienteBox = function ({ cliente, onClick }: ComponentProps) {
     return (
         <Container onClick={onClick}>
             <p>

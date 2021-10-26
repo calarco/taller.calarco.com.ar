@@ -1,4 +1,4 @@
-import React from "react";
+import React, { MouseEvent, ReactNode } from "react";
 import styled, { css } from "styled-components";
 
 type Props = {
@@ -15,7 +15,7 @@ const Container = styled.div<Props>`
     border-radius: 4px;
     background: var(--secondary-variant);
     backdrop-filter: blur(0.4rem);
-    border: 1px solid var(--secondary);
+    outline: 1px solid var(--secondary);
     box-shadow: var(--shadow);
     color: var(--secondary);
     transition: 0.25s ease-in;
@@ -44,7 +44,6 @@ const Button = styled.button`
     width: 100%;
     height: 3rem;
     overflow: hidden;
-    border: none;
     color: inherit;
     transition: 0.25s ease-out;
 `;
@@ -53,8 +52,8 @@ type ComponentProps = {
     type: string;
     active: boolean;
     variant?: boolean;
-    onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
-    children: React.ReactNode;
+    onClick: (e: MouseEvent<HTMLButtonElement>) => void;
+    children: ReactNode;
     className?: string;
 };
 

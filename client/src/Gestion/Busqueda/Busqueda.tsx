@@ -159,11 +159,17 @@ const CreateButton = transition.button.attrs({
     }
 `;
 
+type ComponentProps = {
+    createCliente: boolean;
+    setCreateCliente: (createCliente: boolean) => void;
+    setCreatePresupuesto: (createPresupuesto: boolean) => void;
+};
+
 const Busqueda = function ({
     createCliente,
     setCreateCliente,
     setCreatePresupuesto,
-}) {
+}: ComponentProps) {
     const {
         clienteId,
         setClienteId,
@@ -177,7 +183,7 @@ const Busqueda = function ({
 
     const [count, setCount] = useState(0);
     const [busqueda, setBusqueda] = useState("");
-    const [clientes, setClientes] = useState({
+    const [clientes, setClientes] = useState<Clientes>({
         total: 0,
         limit: 0,
         skip: 0,
@@ -186,15 +192,16 @@ const Busqueda = function ({
                 id: 0,
                 nombre: "",
                 apellido: "",
-                telefono: " ",
-                direccion: "",
+                email: "",
+                dni: "",
+                telefono: "",
                 empresa: "",
                 createdAt: "",
                 updatedAt: "",
             },
         ],
     });
-    const [vehiculos, setVehiculos] = useState({
+    const [vehiculos, setVehiculos] = useState<Vehiculos>({
         total: 0,
         limit: 0,
         skip: 0,
@@ -205,6 +212,7 @@ const Busqueda = function ({
                 year: "",
                 combustible: "",
                 cilindrada: "",
+                vin: "",
                 createdAt: "",
                 updatedAt: "",
                 clienteId: 0,
@@ -212,7 +220,7 @@ const Busqueda = function ({
             },
         ],
     });
-    const [presupuestos, setPresupuestos] = useState({
+    const [presupuestos, setPresupuestos] = useState<Presupuestos>({
         total: 0,
         limit: 0,
         skip: 0,
@@ -247,12 +255,12 @@ const Busqueda = function ({
                         },
                     },
                 })
-                .then((clientes) => {
+                .then((clientes: Clientes) => {
                     setCount((count) => count + 1);
                     setClientes(clientes);
                 })
-                .catch((error) => {
-                    console.log("error", error);
+                .catch((error: FeathersErrorJSON) => {
+                    console.error(error.message);
                 }) &&
             feathersClient
                 .service("vehiculos")
@@ -265,12 +273,12 @@ const Busqueda = function ({
                         },
                     },
                 })
-                .then((vehiculos) => {
+                .then((vehiculos: Vehiculos) => {
                     setCount((count) => count + 1);
                     setVehiculos(vehiculos);
                 })
-                .catch((error) => {
-                    console.log("error", error);
+                .catch((error: FeathersErrorJSON) => {
+                    console.error(error.message);
                 }) &&
             feathersClient
                 .service("presupuestos")
@@ -283,12 +291,12 @@ const Busqueda = function ({
                         },
                     },
                 })
-                .then((presupuestos) => {
+                .then((presupuestos: Presupuestos) => {
                     setCount((count) => count + 1);
                     setPresupuestos(presupuestos);
                 })
-                .catch((error) => {
-                    console.log("error", error);
+                .catch((error: FeathersErrorJSON) => {
+                    console.error(error.message);
                 });
     }, [busqueda]);
 

@@ -1,4 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, {
+    MouseEvent,
+    FormEvent,
+    ChangeEvent,
+    useEffect,
+    useState,
+} from "react";
 import feathersClient from "feathersClient";
 import styled, { css } from "styled-components";
 
@@ -21,26 +27,40 @@ const Label = styled.label<Props>`
         `};
 `;
 
-const Form = function ({ cliente, edit, unEdit }) {
+type Inputs = {
+    nombre: string;
+    apellido: string;
+    email: string;
+    dni: string;
+    telefono: string;
+    empresa: string;
+};
+
+type ComponentProps = {
+    cliente: Cliente;
+    edit: boolean;
+    unEdit: (e: MouseEvent<HTMLButtonElement>) => void;
+};
+
+const Form = function ({ cliente, edit, unEdit }: ComponentProps) {
     const [inputs, setInputs] = useState({
         nombre: "",
         apellido: "",
+        email: "",
         dni: "",
         telefono: "",
-        email: "",
         empresa: "",
     });
     const [error, setError] = useState("");
 
-    const capitalize = (text) => {
-        if (typeof text !== "string") return "";
+    const capitalize = (text: string) => {
         return text
             .split(" ")
             .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
             .join(" ");
     };
 
-    function validate(inputs) {
+    function validate(inputs: Inputs) {
         let error = "";
         inputs.nombre === ""
             ? (error = "Ingrese un nombre")
@@ -50,7 +70,7 @@ const Form = function ({ cliente, edit, unEdit }) {
         return error;
     }
 
-    const handleCreate = (event) => {
+    const handleCreate = (event: FormEvent) => {
         event.preventDefault();
         setError(validate(inputs));
         validate(inputs) === "" &&
@@ -67,12 +87,12 @@ const Form = function ({ cliente, edit, unEdit }) {
                     updatedAt: Date(),
                 })
                 .then(() => {})
-                .catch((error) => {
+                .catch((error: FeathersErrorJSON) => {
                     console.error(error);
                 });
     };
 
-    const handleEdit = (event) => {
+    const handleEdit = (event: FormEvent) => {
         event.preventDefault();
         setError(validate(inputs));
         validate(inputs) === "" &&
@@ -87,12 +107,12 @@ const Form = function ({ cliente, edit, unEdit }) {
                     email: inputs.email,
                 })
                 .then(() => {})
-                .catch((error) => {
+                .catch((error: FeathersErrorJSON) => {
                     console.error(error);
                 });
     };
 
-    const handleInputChange = (event) => {
+    const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
         event.persist();
         setInputs((inputs) => ({
             ...inputs,

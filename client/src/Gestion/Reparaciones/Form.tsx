@@ -1,4 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, {
+    MouseEvent,
+    ChangeEvent,
+    FormEvent,
+    useState,
+    useEffect,
+} from "react";
 import feathersClient from "feathersClient";
 import styled, { css } from "styled-components";
 
@@ -37,8 +43,24 @@ const Number = styled.label`
     text-align: right;
 `;
 
-const Form = function ({ reparacion, edit, unEdit }) {
-    const [inputs, setInputs] = useState({
+type Inputs = {
+    fecha: string;
+    km: string;
+    reparacion: string;
+    repuestos: string;
+    labor: string;
+    costo: string;
+    vehiculoId: number;
+};
+
+type ComponentProps = {
+    reparacion: Reparacion;
+    edit: boolean;
+    unEdit: (e: MouseEvent<HTMLButtonElement>) => void;
+};
+
+const Form = function ({ reparacion, edit, unEdit }: ComponentProps) {
+    const [inputs, setInputs] = useState<Inputs>({
         fecha: "",
         km: "",
         reparacion: "",
@@ -49,11 +71,11 @@ const Form = function ({ reparacion, edit, unEdit }) {
     });
     const [errors, setErrors] = useState({ km: "", reparacion: "" });
 
-    const capitalize = (text) => {
+    const capitalize = (text: string) => {
         return text.charAt(0).toUpperCase() + text.substring(1);
     };
 
-    const validate = (inputs) => {
+    const validate = (inputs: Inputs) => {
         inputs.km === ""
             ? setErrors((errors) => ({
                   ...errors,
@@ -74,7 +96,7 @@ const Form = function ({ reparacion, edit, unEdit }) {
               }));
     };
 
-    const handleCreate = (event) => {
+    const handleCreate = (event: FormEvent) => {
         event.preventDefault();
         validate(inputs);
         errors.km === "" &&
@@ -92,12 +114,12 @@ const Form = function ({ reparacion, edit, unEdit }) {
                     vehiculoId: inputs.vehiculoId,
                 })
                 .then(() => {})
-                .catch((error) => {
-                    console.error(error);
+                .catch((error: FeathersErrorJSON) => {
+                    console.error(error.message);
                 });
     };
 
-    const handleEdit = (event) => {
+    const handleEdit = (event: FormEvent) => {
         event.preventDefault();
         validate(inputs);
         errors.km === "" &&
@@ -113,12 +135,12 @@ const Form = function ({ reparacion, edit, unEdit }) {
                     createdAt: new Date(inputs.fecha).toISOString(),
                 })
                 .then(() => {})
-                .catch((error) => {
-                    console.error(error);
+                .catch((error: FeathersErrorJSON) => {
+                    console.error(error.message);
                 });
     };
 
-    const handleInputChange = (event) => {
+    const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
         event.persist();
         setInputs((inputs) => ({
             ...inputs,

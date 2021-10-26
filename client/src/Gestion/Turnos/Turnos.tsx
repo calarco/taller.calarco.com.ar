@@ -52,7 +52,11 @@ const Loading = styled.div`
     animation-iteration-count: infinite;
 `;
 
-const Turnos = function ({ overlay }) {
+type ComponentProps = {
+    overlay: boolean;
+};
+
+const Turnos = function ({ overlay }: ComponentProps) {
     const { activeCard, setActiveCard } = useGestion();
 
     const loader = useRef<HTMLDivElement | null>(null);
@@ -71,7 +75,7 @@ const Turnos = function ({ overlay }) {
     const [calendar, setCalendar] = useState([
         { year: year, month: month, days: days },
     ]);
-    const [turnos, setTurnos] = useState({
+    const [turnos, setTurnos] = useState<Turnos>({
         total: 0,
         limit: 0,
         skip: 0,
@@ -144,12 +148,12 @@ const Turnos = function ({ overlay }) {
                     },
                 },
             })
-            .then((data) => {
+            .then((data: Turnos) => {
                 setTurnos(data);
                 setActiveCard("");
             })
-            .catch((error) => {
-                console.error(error);
+            .catch((error: FeathersErrorJSON) => {
+                console.error(error.message);
             });
     }, [setActiveCard]);
 

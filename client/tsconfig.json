@@ -25,7 +25,7 @@
     "experimentalDecorators": true,
     "incremental": true,
     "noFallthroughCasesInSwitch": true,
-    "noImplicitAny": false,
+    "noImplicitAny": true,
     "isolatedModules": true,
     "types": [
         "react/next",

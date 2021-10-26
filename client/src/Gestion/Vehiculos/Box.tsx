@@ -1,4 +1,4 @@
-import React from "react";
+import React, { MouseEvent } from "react";
 import styled from "styled-components";
 
 import { useCarName } from "Gestion/carNameContext";
@@ -22,7 +22,12 @@ const Container = styled.article`
     }
 `;
 
-const VehiculoBox = function ({ vehiculo, onClick }) {
+type ComponentProps = {
+    vehiculo: Vehiculo;
+    onClick: (e: MouseEvent<HTMLDivElement>) => void;
+};
+
+const VehiculoBox = function ({ vehiculo, onClick }: ComponentProps) {
     const { getCarName } = useCarName();
 
     return (

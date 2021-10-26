@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { ChangeEvent, useEffect, useState, useCallback } from "react";
 import styled from "styled-components";
 import feathersClient from "feathersClient";
 
@@ -57,15 +57,17 @@ const Container = styled.fieldset`
     }
 `;
 
+type Inputs = {
+    fabricanteId: number;
+    fabricante: string;
+    modeloId: number;
+    modelo: string;
+};
+
 type ComponentProps = {
-    inputs: {
-        fabricanteId: number;
-        fabricante: string;
-        modeloId: number;
-        modelo: string;
-    };
+    inputs: Inputs;
     setInputs: (inputs: any) => void;
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onChange: (e: ChangeEvent<HTMLInputElement>) => void;
     className?: string;
 };
 
@@ -116,11 +118,11 @@ const Modelo = function ({
                     },
                 },
             })
-            .then((found) => {
+            .then((found: Fabricantes) => {
                 setFabricantes(found);
             })
-            .catch((error) => {
-                console.error(error);
+            .catch((error: FeathersErrorJSON) => {
+                console.error(error.message);
             });
     }, []);
 
@@ -130,15 +132,15 @@ const Modelo = function ({
             .create({
                 nombre: inputs.fabricante,
             })
-            .then((data) => {
-                setInputs((inputs) => ({
+            .then((data: Fabricante) => {
+                setInputs((inputs: Inputs) => ({
                     ...inputs,
                     fabricanteId: data.id,
                 }));
                 setFabricante(data.nombre);
             })
-            .catch((error) => {
-                console.error(error);
+            .catch((error: FeathersErrorJSON) => {
+                console.error(error.message);
             });
     };
 
@@ -149,15 +151,15 @@ const Modelo = function ({
                 nombre: inputs.modelo,
                 fabricanteId: inputs.fabricanteId,
             })
-            .then((data) => {
-                setInputs((inputs) => ({
+            .then((data: Modelo) => {
+                setInputs((inputs: Inputs) => ({
                     ...inputs,
                     modeloId: data.id,
                 }));
                 setModelo(data.nombre);
             })
-            .catch((error) => {
-                console.error(error);
+            .catch((error: FeathersErrorJSON) => {
+                console.error(error.message);
             });
     };
 
@@ -180,8 +182,8 @@ const Modelo = function ({
             feathersClient
                 .service("modelos")
                 .get(inputs.modeloId)
-                .then((modelo) => {
-                    setInputs((inputs) => ({
+                .then((modelo: Modelo) => {
+                    setInputs((inputs: Inputs) => ({
                         ...inputs,
                         fabricanteId: modelo.fabricanteId,
                     }));
@@ -189,14 +191,14 @@ const Modelo = function ({
                     feathersClient
                         .service("fabricantes")
                         .get(modelo.fabricanteId)
-                        .then((fabricante) => {
+                        .then((fabricante: Fabricante) => {
                             setFabricante(fabricante.nombre);
                         })
-                        .catch((error) => {
-                            console.error(error);
+                        .catch((error: FeathersErrorJSON) => {
+                            console.error(error.message);
                         });
                 })
-                .catch((error) => {
+                .catch((error: FeathersErrorJSON) => {
                     console.error(error);
                 });
     }, [inputs.fabricanteId, inputs.modeloId, setInputs]);
@@ -214,16 +216,16 @@ const Modelo = function ({
                         },
                     },
                 })
-                .then((found) => {
+                .then((found: Modelos) => {
                     setModelos(found);
                 })
-                .catch((error) => {
-                    console.error(error);
+                .catch((error: FeathersErrorJSON) => {
+                    console.error(error.message);
                 });
     }, [inputs.fabricanteId, setInputs]);
 
     useEffect(() => {
-        setInputs((inputs) => ({
+        setInputs((inputs: Inputs) => ({
             ...inputs,
             modeloId: 0,
             modelo: "",
@@ -236,17 +238,17 @@ const Modelo = function ({
                     $limit: 1,
                 },
             })
-            .then((found) => {
+            .then((found: Fabricantes) => {
                 found.data[0] &&
-                    setInputs((inputs) => ({
+                    setInputs((inputs: Inputs) => ({
                         ...inputs,
                         fabricanteId: found.data[0].id,
                     }));
                 found.data[0] && setFabricante(found.data[0].nombre);
                 setModelo("");
             })
-            .catch((error) => {
-                console.error(error);
+            .catch((error: FeathersErrorJSON) => {
+                console.error(error.message);
             });
     }, [inputs.fabricante, setInputs]);
 
@@ -259,15 +261,15 @@ const Modelo = function ({
                     $limit: 1,
                 },
             })
-            .then((found) => {
+            .then((found: Modelos) => {
                 found.data[0] &&
-                    setInputs((inputs) => ({
+                    setInputs((inputs: Inputs) => ({
                         ...inputs,
                         modeloId: found.data[0].id,
                     }));
                 found.data[0] && setModelo(found.data[0].nombre);
             })
-            .catch((error) => {
+            .catch((error: FeathersErrorJSON) => {
                 console.error(error);
             });
     }, [inputs.modelo, setInputs]);
@@ -284,7 +286,7 @@ const Modelo = function ({
                     onChange={onChange}
                     onBlur={() =>
                         inputs.fabricante === fabricante &&
-                        setInputs((inputs) => ({
+                        setInputs((inputs: Inputs) => ({
                             ...inputs,
                             fabricante: "",
                         }))
@@ -314,7 +316,7 @@ const Modelo = function ({
                     onChange={onChange}
                     onBlur={() =>
                         inputs.modelo === modelo &&
-                        setInputs((inputs) => ({
+                        setInputs((inputs: Inputs) => ({
                             ...inputs,
                             modelo: "",
                         }))

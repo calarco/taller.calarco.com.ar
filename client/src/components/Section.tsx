@@ -1,4 +1,4 @@
-import React from "react";
+import React, { MouseEvent, ReactNode } from "react";
 import styled, { css } from "styled-components";
 
 type Props = {
@@ -13,6 +13,7 @@ const Container = styled.section<Props>`
     min-height: 25rem;
     max-height: 100%;
     padding: 1.5rem;
+    border-radius: 4px;
     overflow-y: overlay;
     display: flex;
     flex-direction: column;
@@ -34,8 +35,8 @@ const Overlay = styled.div<Props>`
     position: absolute;
     z-index: 1001;
     top: 0;
+    right: 0;
     left: 0;
-    width: 100%;
     height: 100%;
     border-radius: 4px;
     background: var(--overlay);
@@ -55,8 +56,8 @@ const Overlay = styled.div<Props>`
 
 type ComponentProps = {
     overlay: boolean;
-    onClick: (e: React.MouseEvent<HTMLDivElement>) => void;
-    children: React.ReactNode;
+    onClick: (e: MouseEvent<HTMLDivElement>) => void;
+    children: ReactNode;
     className?: string;
 };
 

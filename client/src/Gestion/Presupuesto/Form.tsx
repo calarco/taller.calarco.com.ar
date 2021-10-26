@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { MouseEvent, ChangeEvent, FormEvent, useState } from "react";
 import feathersClient from "feathersClient";
 import styled from "styled-components";
 import transition from "styled-transition-group";
@@ -42,7 +42,7 @@ const Repuestos = styled.div`
         margin: 0;
         padding: 0;
         border-radius: 4px;
-        border: var(--border-variant);
+        outline: var(--border-variant);
 
         li {
             height: 2.5rem;
@@ -63,7 +63,7 @@ const Repuestos = styled.div`
                 position: relative;
                 height: 100%;
                 border-radius: 0;
-                border: 1px solid rgba(0, 0, 0, 0);
+                outline: 1px solid rgba(0, 0, 0, 0);
 
                 &:first-child {
                     border-radius: 4px 0 0 4px;
@@ -83,7 +83,6 @@ const Repuestos = styled.div`
                 height: 100%;
                 padding: 0;
                 border-radius: 0 4px 4px 0;
-                border: 1px solid rgba(0, 0, 0, 0);
 
                 &::after {
                     content: "";
@@ -119,7 +118,6 @@ const Repuesto = transition.li`
         height: 100%;
         padding: 0;
         border-radius: 0 4px 4px 0;
-        border: 1px solid rgba(0, 0, 0, 0);
 
         &::after {
             content: "";
@@ -187,7 +185,28 @@ const Buttons = styled.div`
     }
 `;
 
-const Form = function ({ edit, unEdit }) {
+type Inputs = {
+    patente: string;
+    km: string;
+    motivo: string;
+    labor: string;
+    fabricanteId: number;
+    fabricante: string;
+    modeloId: number;
+    modelo: string;
+    cantidad: string;
+    repuesto: string;
+    precio: string;
+    email: string;
+    factura: string;
+};
+
+type ComponentProps = {
+    edit: boolean;
+    unEdit: (e: MouseEvent<HTMLButtonElement>) => void;
+};
+
+const Form = function ({ edit, unEdit }: ComponentProps) {
     const [inputs, setInputs] = useState({
         patente: "",
         km: "",
@@ -218,7 +237,7 @@ const Form = function ({ edit, unEdit }) {
             .join(" ");
     };
 
-    function validate(inputs) {
+    function validate(inputs: Inputs) {
         let error = "";
         inputs.modeloId === 0
             ? (error = "Seleccione un modelo")
@@ -228,7 +247,7 @@ const Form = function ({ edit, unEdit }) {
         return error;
     }
 
-    const handleCreate = (event) => {
+    const handleCreate = (event: FormEvent) => {
         event.preventDefault();
         validate(inputs) === "" &&
             feathersClient
@@ -241,7 +260,7 @@ const Form = function ({ edit, unEdit }) {
                     repuestos: repuestos,
                     modeloId: inputs.modeloId,
                 })
-                .then((created) => {
+                .then((created: Presupuesto) => {
                     inputs.email !== "" &&
                         feathersClient
                             .service("mailer")
@@ -261,16 +280,16 @@ const Form = function ({ edit, unEdit }) {
                                 ),
                             })
                             .then(() => {})
-                            .catch((error) => {
-                                console.error(error);
+                            .catch((error: FeathersErrorJSON) => {
+                                console.error(error.message);
                             });
                 })
-                .catch((error) => {
+                .catch((error: FeathersErrorJSON) => {
                     console.error(error);
                 });
     };
 
-    const handleInputChange = (event) => {
+    const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
         event.persist();
         setInputs((inputs) => ({
             ...inputs,
@@ -281,7 +300,7 @@ const Form = function ({ edit, unEdit }) {
         }));
     };
 
-    const removeRepuesto = (index) => {
+    const removeRepuesto = (index: number) => {
         const newRepuestos = [...repuestos];
         newRepuestos.splice(index, 1);
         setRepuestos(newRepuestos);

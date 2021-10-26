@@ -3,11 +3,14 @@ import styled from "styled-components";
 
 const Container = styled.main`
     width: 100%;
+    padding: 0 0 0 0.5rem;
     border-radius: 4px 4px 0 0;
     background: var(--surface-variant);
     border-top: var(--border-variant);
     box-shadow: var(--shadow-variant);
-    text-align: right;
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
 
     button {
         height: 100%;
@@ -28,9 +31,16 @@ const Container = styled.main`
     }
 `;
 
-const Bar = function ({ setUser, darkTheme, setDarkTheme }) {
+type ComponentProps = {
+    setUser: (user: any) => void;
+    darkTheme: boolean;
+    setDarkTheme: (darkTheme: boolean) => void;
+};
+
+const Bar = function ({ setUser, darkTheme, setDarkTheme }: ComponentProps) {
     return (
         <Container>
+            <label>© Calarco WEB</label>
             {darkTheme ? (
                 <button
                     type="button"

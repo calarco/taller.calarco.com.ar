@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, {
+    ReactNode,
+    createContext,
+    useContext,
+    useState,
+    useEffect,
+} from "react";
 
 type ContextType = {
     clienteId: number;
@@ -22,7 +28,11 @@ const GestionContext = createContext<ContextType>({
     setActiveCard: () => {},
 });
 
-function GestionProvider({ children }) {
+type ComponentProps = {
+    children: ReactNode;
+};
+
+function GestionProvider({ children }: ComponentProps) {
     const [clienteId, setClienteId] = useState(0);
     const [vehiculoId, setVehiculoId] = useState(0);
     const [presupuestoId, setPresupuestoId] = useState(0);

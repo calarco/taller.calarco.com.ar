@@ -21,7 +21,11 @@ const Container = styled.article`
     }
 `;
 
-const ClienteBox = function ({ cliente }) {
+type ComponentProps = {
+    cliente: Cliente;
+};
+
+const ClienteBox = function ({ cliente }: ComponentProps) {
     return (
         <Container>
             <div>
