@@ -3,7 +3,7 @@ import styled from "styled-components";
 import transition from "styled-transition-group";
 import { SwitchTransition } from "react-transition-group";
 
-import { useGestion } from "Gestion/gestionContext";
+import { useActive } from "Gestion/context/activeContext";
 import useCliente from "Gestion/hooks/useCliente";
 import Box from "./Box";
 import ClienteForm from "Gestion/forms/ClienteForm";
@@ -83,7 +83,7 @@ const Cliente = function ({ createCliente }: ComponentProps) {
         setVehiculoId,
         activeCard,
         setActiveCard,
-    } = useGestion();
+    } = useActive();
     const { cliente } = useCliente();
 
     const [remove, setRemove] = useState(false);

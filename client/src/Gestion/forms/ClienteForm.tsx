@@ -1,30 +1,13 @@
-import React, {
-    MouseEvent,
-    FormEvent,
-    ChangeEvent,
-    useEffect,
-    useState,
-} from "react";
+import React, { MouseEvent } from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
 import feathersClient from "feathersClient";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 
 import FormComponent from "components/Form";
-
-type Props = {
-    readonly error?: boolean;
-};
+import Label from "components/Label";
 
 const Container = styled(FormComponent)`
     grid-template-columns: 1fr 1fr [end];
-`;
-
-const Label = styled.label<Props>`
-    ${(props) =>
-        props.error &&
-        css`
-            font-weight: 500;
-            color: var(--error);
-        `};
 `;
 
 type Inputs = {
@@ -37,21 +20,17 @@ type Inputs = {
 };
 
 type ComponentProps = {
-    cliente: Cliente;
+    cliente?: Cliente;
     edit: boolean;
     unEdit: (e: MouseEvent<HTMLButtonElement>) => void;
 };
 
 const Form = function ({ cliente, edit, unEdit }: ComponentProps) {
-    const [inputs, setInputs] = useState({
-        nombre: "",
-        apellido: "",
-        email: "",
-        dni: "",
-        telefono: "",
-        empresa: "",
-    });
-    const [error, setError] = useState("");
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<Inputs>();
 
     const capitalize = (text: string) => {
         return text
@@ -60,158 +39,101 @@ const Form = function ({ cliente, edit, unEdit }: ComponentProps) {
             .join(" ");
     };
 
-    function validate(inputs: Inputs) {
-        let error = "";
-        inputs.nombre === ""
-            ? (error = "Ingrese un nombre")
-            : inputs.apellido === ""
-            ? (error = "Ingrese un apellido")
-            : (error = "");
-        return error;
-    }
-
-    const handleCreate = (event: FormEvent) => {
-        event.preventDefault();
-        setError(validate(inputs));
-        validate(inputs) === "" &&
-            feathersClient
-                .service("clientes")
-                .create({
-                    nombre: inputs.nombre,
-                    apellido: inputs.apellido,
-                    dni: inputs.dni,
-                    empresa: inputs.empresa,
-                    telefono: inputs.telefono,
-                    email: inputs.email,
-                    createdAt: Date(),
-                    updatedAt: Date(),
-                })
-                .then(() => {})
-                .catch((error: FeathersErrorJSON) => {
-                    console.error(error);
-                });
-    };
-
-    const handleEdit = (event: FormEvent) => {
-        event.preventDefault();
-        setError(validate(inputs));
-        validate(inputs) === "" &&
-            feathersClient
-                .service("clientes")
-                .patch(cliente.id, {
-                    nombre: inputs.nombre,
-                    apellido: inputs.apellido,
-                    dni: inputs.dni,
-                    empresa: inputs.empresa,
-                    telefono: inputs.telefono,
-                    email: inputs.email,
-                })
-                .then(() => {})
-                .catch((error: FeathersErrorJSON) => {
-                    console.error(error);
-                });
-    };
-
-    const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-        event.persist();
-        setInputs((inputs) => ({
-            ...inputs,
-            [event.target.name]:
-                event.target.name === "nombre" ||
-                event.target.name === "apellido"
-                    ? capitalize(event.target.value)
-                    : event.target.name === "email"
-                    ? event.target.value.toLowerCase()
-                    : event.target.value,
-        }));
-    };
-
-    useEffect(() => {
-        setInputs({
-            nombre: cliente.nombre,
-            apellido: cliente.apellido,
-            dni: cliente.dni || "",
-            empresa: cliente.empresa || "",
-            telefono: cliente.telefono || "",
-            email: cliente.email || "",
-        });
-    }, [cliente]);
+    const onSubmit: SubmitHandler<Inputs> = (data) =>
+        cliente
+            ? feathersClient
+                  .service("clientes")
+                  .patch(cliente.id, {
+                      nombre: capitalize(data.nombre),
+                      apellido: capitalize(data.apellido),
+                      dni: data.dni,
+                      empresa: data.empresa,
+                      telefono: data.telefono,
+                      email: data.email.toLowerCase(),
+                  })
+                  .then(() => {})
+                  .catch((error: FeathersErrorJSON) => {
+                      console.error(error);
+                  })
+            : feathersClient
+                  .service("clientes")
+                  .create({
+                      nombre: capitalize(data.nombre),
+                      apellido: capitalize(data.apellido),
+                      dni: data.dni,
+                      empresa: data.empresa,
+                      telefono: data.telefono,
+                      email: data.email.toLowerCase(),
+                  })
+                  .then(() => {})
+                  .catch((error: FeathersErrorJSON) => {
+                      console.error(error.message);
+                  });
 
     return (
         <Container
             edit={edit}
             unEdit={unEdit}
-            onSubmit={cliente.id === 0 ? handleCreate : handleEdit}
+            onSubmit={handleSubmit(onSubmit)}
         >
-            <Label error={error === "" ? false : true}>
-                {error === "" ? "Nombre" : error}
+            <Label title="Nombre" error={errors.nombre && "Ingrese el nombre"}>
                 <input
                     type="text"
-                    name="nombre"
                     placeholder="-"
                     autoComplete="off"
-                    value={inputs.nombre}
-                    onChange={handleInputChange}
-                    required
+                    {...register("nombre", { required: true })}
+                    defaultValue={cliente?.nombre}
                 />
             </Label>
-            <Label error={error === "" ? false : true}>
-                {error === "" ? "Apellido" : error}
+            <Label
+                title="Apellido"
+                error={errors.apellido && "Ingrese el apellido"}
+            >
                 <input
                     type="text"
-                    name="apellido"
                     placeholder="-"
                     autoComplete="off"
-                    value={inputs.apellido}
-                    onChange={handleInputChange}
-                    required
+                    {...register("apellido", { required: true })}
+                    defaultValue={cliente?.apellido}
                 />
             </Label>
-            <label>
-                DNI / CUIT / CUIL
+            <Label title="DNI / CUIT / CUIL">
                 <input
                     type="text"
-                    name="dni"
                     placeholder="-"
                     autoComplete="off"
-                    value={inputs.dni}
-                    onChange={handleInputChange}
+                    {...register("dni")}
+                    defaultValue={cliente?.dni}
                 />
-            </label>
-            <label>
-                Empresa
+            </Label>
+            <Label title="Empresa">
                 <input
                     type="text"
-                    name="empresa"
                     placeholder="-"
                     autoComplete="off"
-                    value={inputs.empresa}
-                    onChange={handleInputChange}
+                    {...register("empresa")}
+                    defaultValue={cliente?.empresa}
                 />
-            </label>
-            <label>
-                Telefono
+            </Label>
+            <Label title="Telefono">
                 <input
                     type="tel"
                     pattern="\d*"
-                    name="telefono"
                     placeholder="-"
                     autoComplete="off"
-                    value={inputs.telefono}
-                    onChange={handleInputChange}
+                    {...register("telefono")}
+                    defaultValue={cliente?.telefono}
                 />
-            </label>
-            <label>
-                Correo electrónico
+            </Label>
+            <Label title="Correo electrónico">
                 <input
                     type="email"
-                    name="email"
                     placeholder="-"
                     autoComplete="off"
-                    value={inputs.email}
-                    onChange={handleInputChange}
+                    {...register("email")}
+                    defaultValue={cliente?.email}
                 />
-            </label>
+            </Label>
         </Container>
     );
 };

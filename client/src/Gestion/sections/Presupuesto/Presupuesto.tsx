@@ -2,7 +2,7 @@ import React, { ChangeEvent, useState } from "react";
 import styled from "styled-components";
 import transition from "styled-transition-group";
 
-import { useGestion } from "Gestion/gestionContext";
+import { useActive } from "Gestion/context/activeContext";
 import usePresupuesto from "Gestion/hooks/usePresupuesto";
 import SectionComponent from "components/Section";
 import Mensaje from "./Mensaje";
@@ -91,7 +91,7 @@ const Buttons = styled.div`
 `;
 
 const Presupuesto = function () {
-    const { activeCard, setActiveCard } = useGestion();
+    const { activeCard, setActiveCard } = useActive();
     const { presupuesto } = usePresupuesto();
 
     const [inputs, setInputs] = useState({

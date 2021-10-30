@@ -3,7 +3,7 @@ import styled, { css } from "styled-components";
 import transition from "styled-transition-group";
 import { SwitchTransition, TransitionGroup } from "react-transition-group";
 
-import { useGestion } from "Gestion/gestionContext";
+import { useActive } from "Gestion/context/activeContext";
 import useVehiculos from "Gestion/hooks/useVehiculos";
 import SectionComponent from "components/Section";
 import Create from "components/Create";
@@ -118,7 +118,7 @@ const Empty = styled.h5`
 
 const Vehiculos = function () {
     const { clienteId, vehiculoId, setVehiculoId, activeCard, setActiveCard } =
-        useGestion();
+        useActive();
     const { vehiculos } = useVehiculos();
 
     const [create, setCreate] = useState(false);
@@ -137,10 +137,18 @@ const Vehiculos = function () {
     }, [activeCard]);
 
     return (
-        <Container in={vehiculos.data[0].clienteId !== 0}>
+        <Container
+            in={
+                !vehiculos.data[0] ||
+                (vehiculos.data[0] && vehiculos.data[0].clienteId !== 0)
+            }
+        >
             <SwitchTransition>
                 <Section
-                    key={vehiculos.data[0].clienteId}
+                    key={
+                        !vehiculos.data[0] ||
+                        (vehiculos.data[0] && vehiculos.data[0].clienteId)
+                    }
                     overlay={
                         activeCard === "Vehículo" || activeCard === "Cliente"
                             ? true

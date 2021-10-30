@@ -17,7 +17,7 @@ type ContextType = {
     setActiveCard: (activeCard: string) => void;
 };
 
-const GestionContext = createContext<ContextType>({
+const ActiveContext = createContext<ContextType>({
     clienteId: 0,
     vehiculoId: 0,
     presupuestoId: 0,
@@ -32,7 +32,7 @@ type ComponentProps = {
     children: ReactNode;
 };
 
-function GestionProvider({ children }: ComponentProps) {
+function ActiveProvider({ children }: ComponentProps) {
     const [clienteId, setClienteId] = useState(0);
     const [vehiculoId, setVehiculoId] = useState(0);
     const [presupuestoId, setPresupuestoId] = useState(0);
@@ -47,7 +47,7 @@ function GestionProvider({ children }: ComponentProps) {
     }, [presupuestoId]);
 
     return (
-        <GestionContext.Provider
+        <ActiveContext.Provider
             value={{
                 clienteId,
                 vehiculoId,
@@ -60,16 +60,16 @@ function GestionProvider({ children }: ComponentProps) {
             }}
         >
             {children}
-        </GestionContext.Provider>
+        </ActiveContext.Provider>
     );
 }
 
-function useGestion() {
-    const context = useContext(GestionContext);
+function useActive() {
+    const context = useContext(ActiveContext);
     if (context === undefined) {
-        throw new Error("useGestion must be used within a GestionProvider");
+        throw new Error("useActive must be used within a ActiveProvider");
     }
     return context;
 }
 
-export { GestionProvider, useGestion };
+export { ActiveProvider, useActive };

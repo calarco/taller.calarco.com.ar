@@ -7,7 +7,7 @@ import { SwitchTransition } from "react-transition-group";
 import { themeDark, themeLight } from "themes";
 import GlobalStyle from "components/globalStyle";
 import Login from "Login/Login";
-import { GestionProvider } from "Gestion/gestionContext";
+import { ActiveProvider } from "Gestion/context/activeContext";
 import { Gestion } from "Gestion";
 
 const Main = transition.div.attrs({
@@ -68,13 +68,13 @@ const App = function () {
             <SwitchTransition>
                 <Main key={user ? "0" : "1"}>
                     {user ? (
-                        <GestionProvider>
+                        <ActiveProvider>
                             <Gestion
                                 setUser={setUser}
                                 darkTheme={darkTheme}
                                 setDarkTheme={setDarkTheme}
                             />
-                        </GestionProvider>
+                        </ActiveProvider>
                     ) : (
                         <Login setUser={setUser} />
                     )}

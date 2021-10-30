@@ -98,19 +98,19 @@ type Fabricante = {
     updatedAt: string;
 };
 
+type Fabricantes = {
+    total: number;
+    limit: number;
+    skip: number;
+    data: Fabricante[];
+};
+
 type Modelo = {
     id: number;
     nombre: string;
     createdAt: string;
     updatedAt: string;
     fabricanteId: number;
-};
-
-type Fabricantes = {
-    total: number;
-    limit: number;
-    skip: number;
-    data: Fabricante[];
 };
 
 type Modelos = {

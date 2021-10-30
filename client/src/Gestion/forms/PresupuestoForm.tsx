@@ -192,7 +192,6 @@ type Inputs = {
     labor: string;
     fabricanteId: number;
     fabricante: string;
-    modeloId: number;
     modelo: string;
     cantidad: string;
     repuesto: string;
@@ -214,7 +213,6 @@ const Form = function ({ edit, unEdit }: ComponentProps) {
         labor: "",
         fabricanteId: 0,
         fabricante: "",
-        modeloId: 0,
         modelo: "",
         cantidad: "1",
         repuesto: "",
@@ -222,6 +220,7 @@ const Form = function ({ edit, unEdit }: ComponentProps) {
         email: "",
         factura: "",
     });
+    const [modeloId, setModeloId] = useState(0);
     const [repuestos, setRepuestos] = useState([
         {
             cantidad: "1",
@@ -239,7 +238,7 @@ const Form = function ({ edit, unEdit }: ComponentProps) {
 
     function validate(inputs: Inputs) {
         let error = "";
-        inputs.modeloId === 0
+        modeloId === 0
             ? (error = "Seleccione un modelo")
             : inputs.motivo === ""
             ? (error = "Ingrese el motivo")
@@ -258,7 +257,7 @@ const Form = function ({ edit, unEdit }: ComponentProps) {
                     motivo: capitalize(inputs.motivo),
                     labor: inputs.labor,
                     repuestos: repuestos,
-                    modeloId: inputs.modeloId,
+                    modeloId: modeloId,
                 })
                 .then((created: Presupuesto) => {
                     inputs.email !== "" &&
@@ -313,11 +312,7 @@ const Form = function ({ edit, unEdit }: ComponentProps) {
             onSubmit={handleCreate}
             noButtons
         >
-            <Modelo
-                inputs={inputs}
-                setInputs={setInputs}
-                onChange={handleInputChange}
-            />
+            <Modelo modeloId={modeloId} setModeloId={setModeloId} />
             <label>
                 Patente
                 <input

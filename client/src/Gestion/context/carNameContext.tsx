@@ -9,10 +9,39 @@ import feathersClient from "feathersClient";
 
 type ContextType = {
     getCarName: (modeloId: number) => string;
+    fabricantes: Fabricantes;
+    modelos: Modelos;
 };
 
 const CarNameContext = createContext<ContextType>({
     getCarName: () => "",
+    fabricantes: {
+        total: 0,
+        limit: 0,
+        skip: 0,
+        data: [
+            {
+                id: 0,
+                nombre: "",
+                createdAt: "",
+                updatedAt: "",
+            },
+        ],
+    },
+    modelos: {
+        total: 0,
+        limit: 0,
+        skip: 0,
+        data: [
+            {
+                id: 0,
+                nombre: "",
+                createdAt: "",
+                updatedAt: "",
+                fabricanteId: 0,
+            },
+        ],
+    },
 });
 
 type ComponentProps = {
@@ -20,7 +49,7 @@ type ComponentProps = {
 };
 
 function CarNameProvider({ children }: ComponentProps) {
-    const [fabricantes, setFabricantes] = useState({
+    const [fabricantes, setFabricantes] = useState<Fabricantes>({
         total: 0,
         limit: 0,
         skip: 0,
@@ -33,7 +62,7 @@ function CarNameProvider({ children }: ComponentProps) {
             },
         ],
     });
-    const [modelos, setModelos] = useState({
+    const [modelos, setModelos] = useState<Modelos>({
         total: 0,
         limit: 0,
         skip: 0,
@@ -110,6 +139,8 @@ function CarNameProvider({ children }: ComponentProps) {
         <CarNameContext.Provider
             value={{
                 getCarName,
+                fabricantes,
+                modelos,
             }}
         >
             {children}

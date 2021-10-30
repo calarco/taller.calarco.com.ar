@@ -34,7 +34,6 @@ type Inputs = {
     clienteId: number;
     fabricanteId: number;
     fabricante: string;
-    modeloId: number;
     modelo: string;
 };
 
@@ -54,10 +53,11 @@ const Form = function ({ vehiculo, edit, unEdit }: ComponentProps) {
         clienteId: 0,
         fabricanteId: 0,
         fabricante: "",
-        modeloId: 0,
         modelo: "",
     });
     const [error, setError] = useState("");
+
+    const [modeloId, setModeloId] = useState(0);
 
     const capitalize = (text: string) => {
         return text
@@ -68,7 +68,7 @@ const Form = function ({ vehiculo, edit, unEdit }: ComponentProps) {
 
     function validate(inputs: Inputs) {
         let error = "";
-        inputs.modeloId === 0
+        modeloId === 0
             ? (error = "Seleccione un modelo")
             : inputs.patente === ""
             ? (error = "Ingrese la patente")
@@ -101,7 +101,7 @@ const Form = function ({ vehiculo, edit, unEdit }: ComponentProps) {
                     cilindrada: inputs.cilindrada,
                     vin: inputs.vin,
                     clienteId: inputs.clienteId,
-                    modeloId: inputs.modeloId,
+                    modeloId: modeloId,
                     createdAt: Date(),
                     updatedAt: Date(),
                 })
@@ -123,7 +123,7 @@ const Form = function ({ vehiculo, edit, unEdit }: ComponentProps) {
                     cilindrada: inputs.cilindrada,
                     vin: inputs.vin,
                     clienteId: inputs.clienteId,
-                    modeloId: inputs.modeloId,
+                    modeloId: modeloId,
                 })
                 .then(() => {})
                 .catch((error: FeathersErrorJSON) => {
@@ -163,9 +163,9 @@ const Form = function ({ vehiculo, edit, unEdit }: ComponentProps) {
             clienteId: vehiculo.clienteId,
             fabricanteId: 0,
             fabricante: "",
-            modeloId: vehiculo.modeloId,
             modelo: "",
         });
+        setModeloId(vehiculo.modeloId);
     }, [vehiculo]);
 
     return (
@@ -174,11 +174,7 @@ const Form = function ({ vehiculo, edit, unEdit }: ComponentProps) {
             unEdit={unEdit}
             onSubmit={vehiculo.id === 0 ? handleCreate : handleEdit}
         >
-            <Modelo
-                inputs={inputs}
-                setInputs={setInputs}
-                onChange={handleInputChange}
-            />
+            <Modelo modeloId={modeloId} setModeloId={setModeloId} />
             <label>
                 Combustible
                 <select

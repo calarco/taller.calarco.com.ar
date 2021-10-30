@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import styled from "styled-components";
 
-import { useGestion } from "Gestion/gestionContext";
+import { useActive } from "Gestion/context/activeContext";
 import useTurnos from "Gestion/hooks/useTurnos";
 import SectionComponent from "components/Section";
 import Day from "./Day";
@@ -57,10 +57,11 @@ type ComponentProps = {
 };
 
 const Turnos = function ({ overlay }: ComponentProps) {
-    const { activeCard, setActiveCard } = useGestion();
+    const { activeCard, setActiveCard } = useActive();
     const { turnos } = useTurnos();
 
     const loader = useRef<HTMLDivElement | null>(null);
+    const [loading, setLoading] = useState(false);
     const [selected, setSelected] = useState("");
 
     const year = new Date().getFullYear();
@@ -78,47 +79,33 @@ const Turnos = function ({ overlay }: ComponentProps) {
     ]);
 
     const loadDays = useCallback(() => {
-        const year =
-            calendar[calendar.length - 1].month === 11
-                ? calendar[calendar.length - 1].year + 1
-                : calendar[calendar.length - 1].year;
-        const month =
-            calendar[calendar.length - 1].month === 11
-                ? 0
-                : calendar[calendar.length - 1].month + 1;
+        const previousMonth = calendar[calendar.length - 1].month;
+        const previousYear = calendar[calendar.length - 1].year;
+        const month = previousMonth === 11 ? 0 : previousMonth + 1;
+        const year = previousMonth === 11 ? previousYear + 1 : previousYear;
         const days: number[] = [];
+
         for (var i = 1; i <= 32 - new Date(year, month, 32).getDate(); i++) {
             days.push(i);
         }
+
         setCalendar((calendar) => [
-            ...calendar.filter(
-                (item: { year: number; month: number }, index: number) => {
-                    return (
-                        calendar.findIndex(
-                            (test: { year: number; month: number }) =>
-                                test.year === item.year &&
-                                test.month === item.month
-                        ) === index
-                    );
-                }
-            ),
+            ...calendar,
             {
                 year: year,
                 month: month,
                 days: days,
             },
         ]);
+        setLoading(false);
     }, [calendar]);
 
-    const handleObserver = useCallback(
-        (entries) => {
-            const target = entries[0];
-            if (target.isIntersecting) {
-                loadDays();
-            }
-        },
-        [loadDays]
-    );
+    const handleObserver = useCallback((entries) => {
+        const target = entries[0];
+        if (target.isIntersecting) {
+            setLoading(true);
+        }
+    }, []);
 
     useEffect(() => {
         const option = {
@@ -131,6 +118,10 @@ const Turnos = function ({ overlay }: ComponentProps) {
                 loader.current
             );
     }, [handleObserver]);
+
+    useEffect(() => {
+        loading && loadDays();
+    }, [loading, loadDays]);
 
     useEffect(() => {
         selected !== "" ? setActiveCard("Turno") : setActiveCard("");

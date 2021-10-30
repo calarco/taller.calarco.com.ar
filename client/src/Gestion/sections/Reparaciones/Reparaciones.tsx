@@ -3,7 +3,7 @@ import styled, { css } from "styled-components";
 import transition from "styled-transition-group";
 import { SwitchTransition, TransitionGroup } from "react-transition-group";
 
-import { useGestion } from "Gestion/gestionContext";
+import { useActive } from "Gestion/context/activeContext";
 import useReparaciones from "Gestion/hooks/useReparaciones";
 import SectionComponent from "components/Section";
 import Create from "components/Create";
@@ -123,7 +123,7 @@ const Empty = styled.h5`
 `;
 
 const Reparaciones = function () {
-    const { vehiculoId, activeCard, setActiveCard } = useGestion();
+    const { activeCard, setActiveCard } = useActive();
 
     const [selected, setSelected] = useState(0);
     const { reparaciones } = useReparaciones({
@@ -145,10 +145,19 @@ const Reparaciones = function () {
     }, [create, setActiveCard]);
 
     return (
-        <Container in={reparaciones.data[0].vehiculoId !== 0}>
+        <Container
+            in={
+                !reparaciones.data[0] ||
+                (reparaciones.data[0] && reparaciones.data[0].vehiculoId !== 0)
+            }
+        >
             <SwitchTransition>
                 <Section
-                    key={reparaciones.data[0].vehiculoId}
+                    key={
+                        !reparaciones.data[0] ||
+                        (reparaciones.data[0] &&
+                            reparaciones.data[0].vehiculoId)
+                    }
                     overlay={activeCard !== "" ? true : false}
                     onClick={() => {
                         setActiveCard("");
@@ -162,19 +171,6 @@ const Reparaciones = function () {
                         onClick={() => setCreate(true)}
                     >
                         <ReparacionForm
-                            reparacion={{
-                                id: 0,
-                                vehiculoId: vehiculoId,
-                                reparacion: "",
-                                repuestos: "",
-                                labor: "0",
-                                costo: "0",
-                                km: reparaciones.data[0]
-                                    ? reparaciones.data[0].km
-                                    : "0",
-                                createdAt: new Date().toISOString(),
-                                updatedAt: "",
-                            }}
                             edit={
                                 activeCard === "Reparación" && create
                                     ? true

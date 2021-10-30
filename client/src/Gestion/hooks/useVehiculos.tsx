@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import feathersClient from "feathersClient";
 
-import { useGestion } from "Gestion/gestionContext";
+import { useActive } from "Gestion/context/activeContext";
 
 const useVehiculos = () => {
-    const { clienteId, setVehiculoId, setActiveCard } = useGestion();
+    const { clienteId, setVehiculoId, setActiveCard } = useActive();
 
     const [vehiculos, setVehiculos] = useState<Vehiculos>({
         total: 0,

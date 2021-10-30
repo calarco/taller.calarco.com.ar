@@ -1,14 +1,14 @@
 import { useState, useEffect, useCallback } from "react";
 import feathersClient from "feathersClient";
 
-import { useGestion } from "Gestion/gestionContext";
+import { useActive } from "Gestion/context/activeContext";
 
 type HookProps = {
     setSelected: (selected: number) => void;
 };
 
 const useReparaciones = ({ setSelected }: HookProps) => {
-    const { vehiculoId, setActiveCard } = useGestion();
+    const { vehiculoId, setActiveCard } = useActive();
 
     const [reparaciones, setReparaciones] = useState<Reparaciones>({
         total: 0,

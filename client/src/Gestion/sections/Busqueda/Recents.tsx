@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import feathersClient from "feathersClient";
 
-import { useGestion } from "Gestion/gestionContext";
+import { useActive } from "Gestion/context/activeContext";
 import Vehiculo from "./VehiculoBox";
 import Presupuesto from "./PresupuestoBox";
 
@@ -23,7 +23,7 @@ type List = {
 }[];
 
 const Recents = function () {
-    const { clienteId, setPresupuestoId } = useGestion();
+    const { clienteId, setPresupuestoId } = useActive();
 
     const [result, setResult] = useState<List>([
         {

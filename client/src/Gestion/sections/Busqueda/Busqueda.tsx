@@ -4,7 +4,7 @@ import styled, { css } from "styled-components";
 import transition from "styled-transition-group";
 import { SwitchTransition } from "react-transition-group";
 
-import { useGestion } from "Gestion/gestionContext";
+import { useActive } from "Gestion/context/activeContext";
 import SectionComponent from "components/Section";
 import ClienteBox from "./ClienteBox";
 import VehiculoBox from "./VehiculoBox";
@@ -179,7 +179,7 @@ const Busqueda = function ({
         setPresupuestoId,
         activeCard,
         setActiveCard,
-    } = useGestion();
+    } = useActive();
 
     const [count, setCount] = useState(0);
     const [busqueda, setBusqueda] = useState("");

@@ -1,45 +1,17 @@
-import React, {
-    MouseEvent,
-    ChangeEvent,
-    FormEvent,
-    useState,
-    useEffect,
-} from "react";
+import React, { MouseEvent } from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
 import feathersClient from "feathersClient";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 
+import { useActive } from "Gestion/context/activeContext";
 import FormComponent from "components/Form";
-
-type Props = {
-    readonly error?: boolean;
-};
+import Label from "components/Label";
 
 const Container = styled(FormComponent)`
     grid-template-columns: auto 1fr auto [end];
 `;
 
-const Label = styled.label<Props>`
-    ${(props) =>
-        props.error &&
-        css`
-            font-weight: 500;
-            color: var(--error-variant);
-        `};
-`;
-
-const Text = styled.label<Props>`
-    grid-column-end: span 2;
-
-    ${(props) =>
-        props.error &&
-        css`
-            font-weight: 500;
-            color: var(--error-variant);
-        `};
-`;
-
-const Number = styled.label`
-    grid-column-start: 3;
+const Number = styled(Label)`
     text-align: right;
 `;
 
@@ -50,202 +22,136 @@ type Inputs = {
     repuestos: string;
     labor: string;
     costo: string;
-    vehiculoId: number;
 };
 
 type ComponentProps = {
-    reparacion: Reparacion;
+    reparacion?: Reparacion;
     edit: boolean;
     unEdit: (e: MouseEvent<HTMLButtonElement>) => void;
 };
 
 const Form = function ({ reparacion, edit, unEdit }: ComponentProps) {
-    const [inputs, setInputs] = useState<Inputs>({
-        fecha: "",
-        km: "",
-        reparacion: "",
-        repuestos: "",
-        labor: "",
-        costo: "",
-        vehiculoId: 0,
-    });
-    const [errors, setErrors] = useState({ km: "", reparacion: "" });
+    const { vehiculoId } = useActive();
+    const {
+        register,
+        handleSubmit,
+        watch,
+        formState: { errors },
+    } = useForm<Inputs>();
 
     const capitalize = (text: string) => {
         return text.charAt(0).toUpperCase() + text.substring(1);
     };
 
-    const validate = (inputs: Inputs) => {
-        inputs.km === ""
-            ? setErrors((errors) => ({
-                  ...errors,
-                  km: "Ingrese el kilometraje",
-              }))
-            : setErrors((errors) => ({
-                  ...errors,
-                  km: "",
-              }));
-        inputs.reparacion === ""
-            ? setErrors((errors) => ({
-                  ...errors,
-                  reparacion: "Ingrese la reparación",
-              }))
-            : setErrors((errors) => ({
-                  ...errors,
-                  reparacion: "",
-              }));
-    };
-
-    const handleCreate = (event: FormEvent) => {
-        event.preventDefault();
-        validate(inputs);
-        errors.km === "" &&
-            errors.reparacion === "" &&
-            feathersClient
-                .service("reparaciones")
-                .create({
-                    km: parseInt(inputs.km),
-                    reparacion: inputs.reparacion,
-                    repuestos: inputs.repuestos,
-                    costo: inputs.costo,
-                    labor: inputs.labor,
-                    createdAt: new Date(inputs.fecha).toISOString(),
-                    updatedAt: new Date().toISOString(),
-                    vehiculoId: inputs.vehiculoId,
-                })
-                .then(() => {})
-                .catch((error: FeathersErrorJSON) => {
-                    console.error(error.message);
-                });
-    };
-
-    const handleEdit = (event: FormEvent) => {
-        event.preventDefault();
-        validate(inputs);
-        errors.km === "" &&
-            errors.reparacion === "" &&
-            feathersClient
-                .service("reparaciones")
-                .patch(reparacion.id, {
-                    km: parseInt(inputs.km),
-                    reparacion: inputs.reparacion,
-                    repuestos: inputs.repuestos,
-                    costo: inputs.costo,
-                    labor: inputs.labor,
-                    createdAt: new Date(inputs.fecha).toISOString(),
-                })
-                .then(() => {})
-                .catch((error: FeathersErrorJSON) => {
-                    console.error(error.message);
-                });
-    };
-
-    const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-        event.persist();
-        setInputs((inputs) => ({
-            ...inputs,
-            [event.target.name]:
-                event.target.name === "reparacion" || "repuestos"
-                    ? capitalize(event.target.value)
-                    : event.target.value,
-        }));
-    };
-
-    useEffect(() => {
-        setInputs({
-            fecha: reparacion.createdAt.substring(0, 10),
-            km: reparacion.km,
-            reparacion: reparacion.reparacion,
-            repuestos: reparacion.repuestos,
-            labor: reparacion.labor,
-            costo: reparacion.costo,
-            vehiculoId: reparacion.vehiculoId,
-        });
-        setErrors({ km: "", reparacion: "" });
-    }, [reparacion]);
+    const onSubmit: SubmitHandler<Inputs> = (data) =>
+        reparacion
+            ? feathersClient
+                  .service("reparaciones")
+                  .patch(reparacion.id, {
+                      km: parseInt(data.km),
+                      reparacion: capitalize(data.reparacion),
+                      repuestos: capitalize(data.repuestos),
+                      costo: data.costo,
+                      labor: data.labor,
+                  })
+                  .then(() => {})
+                  .catch((error: FeathersErrorJSON) => {
+                      console.error(error.message);
+                  })
+            : feathersClient
+                  .service("reparaciones")
+                  .create({
+                      km: parseInt(data.km),
+                      reparacion: capitalize(data.reparacion),
+                      repuestos: capitalize(data.repuestos),
+                      costo: data.costo,
+                      labor: data.labor,
+                      vehiculoId: vehiculoId,
+                  })
+                  .then(() => {})
+                  .catch((error: FeathersErrorJSON) => {
+                      console.error(error.message);
+                  });
 
     return (
         <Container
             edit={edit}
             unEdit={unEdit}
-            onSubmit={reparacion.id === 0 ? handleCreate : handleEdit}
+            onSubmit={handleSubmit(onSubmit)}
         >
-            <label>
-                Fecha
+            <Label title="Fecha" error={errors.fecha && "Ingrese la fecha"}>
                 <input
                     type="date"
-                    name="fecha"
                     placeholder="-"
-                    value={inputs.fecha}
-                    onChange={handleInputChange}
-                    required
-                />
-            </label>
-            <Label error={errors.km === "" ? false : true}>
-                {errors.km === "" ? "KM" : errors.km}
-                <input
-                    type="number"
-                    min="0000000"
-                    max="9999999"
-                    name="km"
-                    placeholder={reparacion.km}
-                    value={inputs.km}
-                    onChange={handleInputChange}
+                    autoComplete="off"
+                    {...register("fecha", { required: true })}
+                    defaultValue={
+                        reparacion
+                            ? reparacion.createdAt.substring(0, 10)
+                            : new Date().toISOString().substring(0, 10)
+                    }
                 />
             </Label>
-            <Number>
-                Total
+            <Label title="KM" error={errors.km && "Ingrese los km"}>
+                <input
+                    type="number"
+                    min="0000000"
+                    max="9999999"
+                    placeholder="-"
+                    autoComplete="off"
+                    {...register("km", { required: true })}
+                    defaultValue={reparacion?.km}
+                />
+            </Label>
+            <Number title="Total">
                 <h4>
                     $
-                    {(parseInt(inputs.costo, 10) || 0) +
-                        (parseInt(inputs.labor, 10) || 0)}
+                    {(parseInt(watch("costo"), 10) || 0) +
+                        (parseInt(watch("labor"), 10) || 0)}
                 </h4>
             </Number>
-            <Text error={errors.reparacion === "" ? false : true}>
-                {errors.reparacion === "" ? "Reparación" : errors.reparacion}
+            <Label
+                title="Reparación"
+                error={errors.reparacion && "Ingrese la reparacion"}
+                length={2}
+            >
                 <input
                     type="text"
-                    name="reparacion"
                     placeholder="-"
-                    value={inputs.reparacion}
-                    onChange={handleInputChange}
                     autoComplete="off"
-                    required
+                    {...register("reparacion", { required: true })}
+                    defaultValue={reparacion?.reparacion}
                 />
-            </Text>
-            <Number>
-                Mano de obra
+            </Label>
+            <Number title="Mano de obra">
                 <input
                     type="number"
                     min="0000000"
                     max="9999999"
-                    name="labor"
-                    placeholder="$0"
-                    value={inputs.labor}
-                    onChange={handleInputChange}
+                    placeholder="-"
+                    autoComplete="off"
+                    {...register("labor", { required: true })}
+                    defaultValue={reparacion?.labor}
                 />
             </Number>
-            <Text>
-                Repuestos
+            <Label title="Repuestos" length={2}>
                 <input
                     type="text"
-                    name="repuestos"
                     placeholder="-"
-                    value={inputs.repuestos}
-                    onChange={handleInputChange}
                     autoComplete="off"
+                    {...register("repuestos")}
+                    defaultValue={reparacion?.repuestos}
                 />
-            </Text>
-            <Number>
-                Repuestos
+            </Label>
+            <Number title="Repuestos">
                 <input
                     type="number"
                     min="0000000"
                     max="9999999"
-                    name="costo"
-                    placeholder="$0"
-                    value={inputs.costo}
-                    onChange={handleInputChange}
+                    placeholder="-"
+                    autoComplete="off"
+                    {...register("costo", { required: true })}
+                    defaultValue={reparacion?.costo}
                 />
             </Number>
         </Container>

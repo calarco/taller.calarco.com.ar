@@ -120,7 +120,7 @@ type ComponentProps = {
     className?: string;
 };
 
-const VehiculoForm = function ({
+const Remove = function ({
     id,
     service,
     remove,
@@ -153,4 +153,4 @@ const VehiculoForm = function ({
     );
 };
 
-export default VehiculoForm;
+export default Remove;

@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import styled, { css } from "styled-components";
 
 import { Device } from "components/globalStyle";
-import { useGestion } from "Gestion/gestionContext";
-import { CarNameProvider } from "Gestion/carNameContext";
+import { useActive } from "Gestion/context/activeContext";
+import { CarNameProvider } from "Gestion/context/carNameContext";
 import Bar from "./Bar";
 
 import { Busqueda } from "Gestion/sections/Busqueda";
@@ -83,7 +83,7 @@ const Gestion = function ({
     darkTheme,
     setDarkTheme,
 }: ComponentProps) {
-    const { clienteId, activeCard, setActiveCard } = useGestion();
+    const { clienteId, activeCard, setActiveCard } = useActive();
 
     const [createCliente, setCreateCliente] = useState(false);
     const [createPresupuesto, setCreatePresupuesto] = useState(false);
@@ -127,17 +127,6 @@ const Gestion = function ({
                             <Cliente createCliente={createCliente} />
                         </Side>
                         <ClienteForm
-                            cliente={{
-                                id: 0,
-                                nombre: "",
-                                apellido: "",
-                                dni: "",
-                                empresa: "",
-                                telefono: "",
-                                email: "",
-                                createdAt: "",
-                                updatedAt: "",
-                            }}
                             edit={createCliente}
                             unEdit={() => {
                                 setActiveCard("");

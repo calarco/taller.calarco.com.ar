@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import feathersClient from "feathersClient";
 
-import { useGestion } from "Gestion/gestionContext";
+import { useActive } from "Gestion/context/activeContext";
 
 const usePresupuesto = () => {
-    const { presupuestoId, setPresupuestoId, setActiveCard } = useGestion();
+    const { presupuestoId, setPresupuestoId, setActiveCard } = useActive();
 
     const [error, setError] = useState("");
 

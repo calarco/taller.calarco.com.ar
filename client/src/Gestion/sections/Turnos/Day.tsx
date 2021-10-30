@@ -3,7 +3,7 @@ import styled, { css } from "styled-components";
 import transition from "styled-transition-group";
 import { TransitionGroup } from "react-transition-group";
 
-import { useCarName } from "Gestion/carNameContext";
+import { useCarName } from "Gestion/context/carNameContext";
 import CreateComponent from "components/Create";
 import TurnoForm from "Gestion/forms/TurnoForm";
 import Remove from "components/Remove";
@@ -216,18 +216,11 @@ const Day = function ({
                     onClick={setActive}
                 >
                     <TurnoForm
-                        turno={{
-                            id: 0,
-                            fecha: `${date[0]}-${(date[1] + 1)
-                                .toString()
-                                .padStart(2, "0")}-${date[2]
-                                .toString()
-                                .padStart(2, "0")}`,
-                            motivo: "",
-                            createdAt: "",
-                            updatedAt: "",
-                            modeloId: 0,
-                        }}
+                        fecha={`${date[0]}-${(date[1] + 1)
+                            .toString()
+                            .padStart(2, "0")}-${date[2]
+                            .toString()
+                            .padStart(2, "0")}`}
                         edit={active}
                         unEdit={unActive}
                     />

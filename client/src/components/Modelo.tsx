@@ -1,6 +1,9 @@
-import React, { ChangeEvent, useEffect, useState, useCallback } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import styled from "styled-components";
 import feathersClient from "feathersClient";
+
+import { useCarName } from "Gestion/context/carNameContext";
+import Label from "components/Label";
 
 const Container = styled.fieldset`
     height: 100%;
@@ -60,71 +63,33 @@ const Container = styled.fieldset`
 type Inputs = {
     fabricanteId: number;
     fabricante: string;
-    modeloId: number;
     modelo: string;
 };
 
 type ComponentProps = {
-    inputs: Inputs;
-    setInputs: (inputs: any) => void;
-    onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+    modeloId: number;
+    setModeloId: (modeloId: number) => void;
     className?: string;
 };
 
-const Modelo = function ({
-    inputs,
-    setInputs,
-    onChange,
-    className,
-}: ComponentProps) {
-    const [fabricantes, setFabricantes] = useState({
-        total: 0,
-        limit: 0,
-        skip: 0,
-        data: [
-            {
-                id: 0,
-                nombre: "",
-                createdAt: "",
-                updatedAt: "",
-            },
-        ],
-    });
-    const [modelos, setModelos] = useState({
-        total: 0,
-        limit: 0,
-        skip: 0,
-        data: [
-            {
-                id: 0,
-                nombre: "",
-                createdAt: "",
-                updatedAt: "",
-                fabricanteId: 0,
-            },
-        ],
+const Modelo = function ({ modeloId, setModeloId, className }: ComponentProps) {
+    const { fabricantes, modelos } = useCarName();
+
+    const [inputs, setInputs] = useState<Inputs>({
+        fabricanteId: 0,
+        fabricante: "",
+        modelo: "",
     });
     const [fabricante, setFabricante] = useState("");
     const [modelo, setModelo] = useState("");
 
-    const loadFabricantes = useCallback(() => {
-        feathersClient
-            .service("fabricantes")
-            .find({
-                query: {
-                    $limit: 100,
-                    $sort: {
-                        nombre: 1,
-                    },
-                },
-            })
-            .then((found: Fabricantes) => {
-                setFabricantes(found);
-            })
-            .catch((error: FeathersErrorJSON) => {
-                console.error(error.message);
-            });
-    }, []);
+    const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+        event.persist();
+        setInputs((inputs) => ({
+            ...inputs,
+            [event.target.name]: event.target.value,
+        }));
+    };
 
     const createFabricante = () => {
         feathersClient
@@ -152,10 +117,7 @@ const Modelo = function ({
                 fabricanteId: inputs.fabricanteId,
             })
             .then((data: Modelo) => {
-                setInputs((inputs: Inputs) => ({
-                    ...inputs,
-                    modeloId: data.id,
-                }));
+                setModeloId(data.id);
                 setModelo(data.nombre);
             })
             .catch((error: FeathersErrorJSON) => {
@@ -164,24 +126,11 @@ const Modelo = function ({
     };
 
     useEffect(() => {
-        loadFabricantes();
-        feathersClient
-            .service("fabricantes")
-            .on("created", () => loadFabricantes());
-        feathersClient
-            .service("fabricantes")
-            .on("patched", () => loadFabricantes());
-        feathersClient
-            .service("fabricantes")
-            .on("removed", () => loadFabricantes());
-    }, [loadFabricantes]);
-
-    useEffect(() => {
         inputs.fabricanteId === 0 &&
-            inputs.modeloId !== 0 &&
+            modeloId !== 0 &&
             feathersClient
                 .service("modelos")
-                .get(inputs.modeloId)
+                .get(modeloId)
                 .then((modelo: Modelo) => {
                     setInputs((inputs: Inputs) => ({
                         ...inputs,
@@ -201,35 +150,14 @@ const Modelo = function ({
                 .catch((error: FeathersErrorJSON) => {
                     console.error(error);
                 });
-    }, [inputs.fabricanteId, inputs.modeloId, setInputs]);
-
-    useEffect(() => {
-        inputs.fabricanteId !== 0 &&
-            feathersClient
-                .service("modelos")
-                .find({
-                    query: {
-                        fabricanteId: inputs.fabricanteId,
-                        $limit: 200,
-                        $sort: {
-                            nombre: 1,
-                        },
-                    },
-                })
-                .then((found: Modelos) => {
-                    setModelos(found);
-                })
-                .catch((error: FeathersErrorJSON) => {
-                    console.error(error.message);
-                });
-    }, [inputs.fabricanteId, setInputs]);
+    }, [inputs.fabricanteId, modeloId, setInputs]);
 
     useEffect(() => {
         setInputs((inputs: Inputs) => ({
             ...inputs,
-            modeloId: 0,
             modelo: "",
         }));
+        setModeloId(0);
         feathersClient
             .service("fabricantes")
             .find({
@@ -262,11 +190,7 @@ const Modelo = function ({
                 },
             })
             .then((found: Modelos) => {
-                found.data[0] &&
-                    setInputs((inputs: Inputs) => ({
-                        ...inputs,
-                        modeloId: found.data[0].id,
-                    }));
+                found.data[0] && setModeloId(found.data[0].id);
                 found.data[0] && setModelo(found.data[0].nombre);
             })
             .catch((error: FeathersErrorJSON) => {
@@ -276,14 +200,13 @@ const Modelo = function ({
 
     return (
         <Container className={className}>
-            <label>
-                Marca
+            <Label title="Marca">
                 <input
                     name="fabricante"
                     list="fabricantes"
                     placeholder={fabricante}
                     value={inputs.fabricante}
-                    onChange={onChange}
+                    onChange={handleInputChange}
                     onBlur={() =>
                         inputs.fabricante === fabricante &&
                         setInputs((inputs: Inputs) => ({
@@ -305,15 +228,14 @@ const Modelo = function ({
                         Crear
                     </button>
                 )}
-            </label>
-            <label>
-                Modelo
+            </Label>
+            <Label title="Modelo">
                 <input
                     name="modelo"
                     list="modelos"
                     placeholder={modelo}
                     value={inputs.modelo}
-                    onChange={onChange}
+                    onChange={handleInputChange}
                     onBlur={() =>
                         inputs.modelo === modelo &&
                         setInputs((inputs: Inputs) => ({
@@ -325,18 +247,21 @@ const Modelo = function ({
                     disabled={inputs.fabricanteId === 0 ? true : false}
                 />
                 <datalist id="modelos">
-                    {modelos.data.map((aModelo) => (
-                        <option key={aModelo.id} value={aModelo.nombre}>
-                            {aModelo.nombre}
-                        </option>
-                    ))}
+                    {modelos.data.map(
+                        (aModelo) =>
+                            aModelo.fabricanteId === inputs.fabricanteId && (
+                                <option key={aModelo.id} value={aModelo.nombre}>
+                                    {aModelo.nombre}
+                                </option>
+                            )
+                    )}
                 </datalist>
                 {inputs.modelo !== "" && inputs.modelo !== modelo && (
                     <button type="button" onClick={() => createModelo()}>
                         Crear
                     </button>
                 )}
-            </label>
+            </Label>
         </Container>
     );
 };

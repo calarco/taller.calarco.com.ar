@@ -1,133 +1,58 @@
-import React, {
-    MouseEvent,
-    FormEvent,
-    ChangeEvent,
-    useEffect,
-    useState,
-} from "react";
+import React, { MouseEvent, useState } from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
 import feathersClient from "feathersClient";
 
 import FormComponent from "components/Form";
+import Label from "components/Label";
 import Modelo from "components/Modelo";
 
 type Inputs = {
-    fecha: string;
     motivo: string;
-    fabricanteId: number;
-    fabricante: string;
-    modeloId: number;
-    modelo: string;
 };
 
 type ComponentProps = {
-    turno: Turno;
+    fecha: string;
     edit: boolean;
-    unEdit: (e: MouseEvent<HTMLButtonElement>) => void;
+    unEdit: (event: MouseEvent<HTMLButtonElement>) => void;
 };
 
-const Form = function ({ turno, edit, unEdit }: ComponentProps) {
-    const [inputs, setInputs] = useState<Inputs>({
-        fecha: "",
-        motivo: "",
-        fabricanteId: 0,
-        fabricante: "",
-        modeloId: 0,
-        modelo: "",
-    });
+const Form = function ({ fecha, edit, unEdit }: ComponentProps) {
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<Inputs>();
 
-    const capitalize = (text: string) => {
-        return text
-            .split(" ")
-            .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
-            .join(" ");
-    };
+    const [modeloId, setModeloId] = useState(0);
 
-    function validate(inputs: Inputs) {
-        let error = "";
-        inputs.modeloId === 0
-            ? (error = "Seleccione un modelo")
-            : inputs.motivo === ""
-            ? (error = "Ingrese el motivo")
-            : (error = "");
-        return error;
-    }
-
-    const handleCreate = (event: FormEvent) => {
-        event.preventDefault();
-        validate(inputs) === "" &&
-            feathersClient
-                .service("turnos")
-                .create({
-                    fecha: inputs.fecha,
-                    motivo: inputs.motivo,
-                    modeloId: inputs.modeloId,
-                })
-                .then(() => {})
-                .catch((error: FeathersErrorJSON) => {
-                    console.error(error.message);
-                });
-    };
-
-    const handleEdit = (event: FormEvent) => {
-        event.preventDefault();
-        validate(inputs) === "" &&
-            feathersClient
-                .service("turnos")
-                .patch(turno.id, {
-                    fecha: inputs.fecha,
-                    motivo: inputs.motivo,
-                    modeloId: inputs.modeloId,
-                })
-                .then(() => {})
-                .catch((error: FeathersErrorJSON) => {
-                    console.error(error.message);
-                });
-    };
-
-    const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-        event.persist();
-        setInputs((inputs) => ({
-            ...inputs,
-            [event.target.name]:
-                event.target.name === "motivo"
-                    ? capitalize(event.target.value)
-                    : event.target.value,
-        }));
-    };
-
-    useEffect(() => {
-        setInputs({
-            fecha: turno.fecha,
-            motivo: turno.motivo,
-            fabricanteId: 0,
-            fabricante: "",
-            modeloId: turno.modeloId,
-            modelo: "",
-        });
-    }, [turno]);
+    const onSubmit: SubmitHandler<Inputs> = (data) =>
+        feathersClient
+            .service("turnos")
+            .create({
+                fecha: fecha,
+                motivo: data.motivo,
+                modeloId: modeloId,
+            })
+            .then(() => {})
+            .catch((error: FeathersErrorJSON) => {
+                console.error(error.message);
+            });
 
     return (
         <FormComponent
             edit={edit}
             unEdit={unEdit}
-            onSubmit={turno.id === 0 ? handleCreate : handleEdit}
+            onSubmit={handleSubmit(onSubmit)}
         >
-            <label>
-                Motivo
+            <Label title="Motivo" error={errors.motivo && "Ingrese el motivo"}>
                 <input
                     type="text"
-                    name="motivo"
                     placeholder="-"
                     autoComplete="off"
-                    value={inputs.motivo}
-                    onChange={handleInputChange}
+                    {...register("motivo", { required: true })}
                 />
-            </label>
-            <Modelo
-                inputs={inputs}
-                setInputs={setInputs}
-                onChange={handleInputChange}
-            />
+            </Label>
+            <Modelo modeloId={modeloId} setModeloId={setModeloId} />
         </FormComponent>
     );
 };
