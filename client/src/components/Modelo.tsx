@@ -1,5 +1,10 @@
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import {
+    UseFormRegister,
+    UseFormWatch,
+    UseFormSetValue,
+} from "react-hook-form";
 import feathersClient from "feathersClient";
 
 import { useCarName } from "Gestion/context/carNameContext";
@@ -49,6 +54,10 @@ const Container = styled.fieldset`
         &:focus:hover {
             cursor: text;
         }
+
+        &::-webkit-calendar-picker-indicator {
+            display: none !important;
+        }
     }
 
     input::placeholder {
@@ -61,47 +70,53 @@ const Container = styled.fieldset`
 `;
 
 type Inputs = {
+    motivo?: string;
+    patente?: string;
+    year?: string;
+    combustible?: string;
+    cilindrada?: string;
+    vin?: string;
+    clienteId?: number;
+    km?: string;
+    labor?: string;
+    email?: string;
+    factura?: string;
     fabricanteId: number;
     fabricante: string;
+    modeloId: number;
     modelo: string;
 };
 
 type ComponentProps = {
-    modeloId: number;
-    setModeloId: (modeloId: number) => void;
+    register: UseFormRegister<Inputs>;
+    watch: UseFormWatch<Inputs>;
+    setValue: UseFormSetValue<Inputs>;
     className?: string;
 };
 
-const Modelo = function ({ modeloId, setModeloId, className }: ComponentProps) {
+const Modelo = function ({
+    register,
+    watch,
+    setValue,
+    className,
+}: ComponentProps) {
     const { fabricantes, modelos } = useCarName();
 
-    const [inputs, setInputs] = useState<Inputs>({
-        fabricanteId: 0,
-        fabricante: "",
-        modelo: "",
-    });
+    const watchFabricanteId = watch("fabricanteId");
+    const watchFabricante = watch("fabricante");
+    const watchModeloId = watch("modeloId");
+    const watchModelo = watch("modelo");
     const [fabricante, setFabricante] = useState("");
     const [modelo, setModelo] = useState("");
-
-    const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-        event.persist();
-        setInputs((inputs) => ({
-            ...inputs,
-            [event.target.name]: event.target.value,
-        }));
-    };
 
     const createFabricante = () => {
         feathersClient
             .service("fabricantes")
             .create({
-                nombre: inputs.fabricante,
+                nombre: watchFabricante,
             })
             .then((data: Fabricante) => {
-                setInputs((inputs: Inputs) => ({
-                    ...inputs,
-                    fabricanteId: data.id,
-                }));
+                setValue("fabricanteId", data.id);
                 setFabricante(data.nombre);
             })
             .catch((error: FeathersErrorJSON) => {
@@ -113,11 +128,11 @@ const Modelo = function ({ modeloId, setModeloId, className }: ComponentProps) {
         feathersClient
             .service("modelos")
             .create({
-                nombre: inputs.modelo,
-                fabricanteId: inputs.fabricanteId,
+                nombre: watchModelo,
+                fabricanteId: watchFabricanteId,
             })
             .then((data: Modelo) => {
-                setModeloId(data.id);
+                setValue("modeloId", data.id);
                 setModelo(data.nombre);
             })
             .catch((error: FeathersErrorJSON) => {
@@ -126,16 +141,13 @@ const Modelo = function ({ modeloId, setModeloId, className }: ComponentProps) {
     };
 
     useEffect(() => {
-        inputs.fabricanteId === 0 &&
-            modeloId !== 0 &&
+        watchFabricanteId === 0 &&
+            watchModeloId !== 0 &&
             feathersClient
                 .service("modelos")
-                .get(modeloId)
+                .get(watchModeloId)
                 .then((modelo: Modelo) => {
-                    setInputs((inputs: Inputs) => ({
-                        ...inputs,
-                        fabricanteId: modelo.fabricanteId,
-                    }));
+                    setValue("fabricanteId", modelo.fabricanteId);
                     setModelo(modelo.nombre);
                     feathersClient
                         .service("fabricantes")
@@ -150,71 +162,60 @@ const Modelo = function ({ modeloId, setModeloId, className }: ComponentProps) {
                 .catch((error: FeathersErrorJSON) => {
                     console.error(error);
                 });
-    }, [inputs.fabricanteId, modeloId, setInputs]);
+    }, [watchFabricanteId, watchModeloId]);
 
     useEffect(() => {
-        setInputs((inputs: Inputs) => ({
-            ...inputs,
-            modelo: "",
-        }));
-        setModeloId(0);
+        setValue("modelo", "");
+        setValue("modeloId", 0);
         feathersClient
             .service("fabricantes")
             .find({
                 query: {
-                    nombre: inputs.fabricante,
+                    nombre: watchFabricante,
                     $limit: 1,
                 },
             })
             .then((found: Fabricantes) => {
-                found.data[0] &&
-                    setInputs((inputs: Inputs) => ({
-                        ...inputs,
-                        fabricanteId: found.data[0].id,
-                    }));
+                found.data[0] && setValue("fabricanteId", found.data[0].id);
                 found.data[0] && setFabricante(found.data[0].nombre);
                 setModelo("");
             })
             .catch((error: FeathersErrorJSON) => {
                 console.error(error.message);
             });
-    }, [inputs.fabricante, setInputs]);
+    }, [watchFabricante]);
 
     useEffect(() => {
         feathersClient
             .service("modelos")
             .find({
                 query: {
-                    nombre: inputs.modelo,
+                    nombre: watchModelo,
                     $limit: 1,
                 },
             })
             .then((found: Modelos) => {
-                found.data[0] && setModeloId(found.data[0].id);
+                found.data[0] && setValue("modeloId", found.data[0].id);
                 found.data[0] && setModelo(found.data[0].nombre);
             })
             .catch((error: FeathersErrorJSON) => {
                 console.error(error);
             });
-    }, [inputs.modelo, setInputs]);
+    }, [watchModelo]);
 
     return (
         <Container className={className}>
-            <Label title="Marca">
+            <Label
+                title="Marca"
+                onBlur={() =>
+                    watchFabricante === fabricante && setValue("fabricante", "")
+                }
+            >
                 <input
-                    name="fabricante"
                     list="fabricantes"
                     placeholder={fabricante}
-                    value={inputs.fabricante}
-                    onChange={handleInputChange}
-                    onBlur={() =>
-                        inputs.fabricante === fabricante &&
-                        setInputs((inputs: Inputs) => ({
-                            ...inputs,
-                            fabricante: "",
-                        }))
-                    }
                     autoComplete="off"
+                    {...register("fabricante", { required: true })}
                 />
                 <datalist id="fabricantes">
                     {fabricantes.data.map((aFabricante) => (
@@ -223,40 +224,34 @@ const Modelo = function ({ modeloId, setModeloId, className }: ComponentProps) {
                         </option>
                     ))}
                 </datalist>
-                {inputs.fabricante !== "" && inputs.fabricante !== fabricante && (
+                {watchFabricante !== "" && watchFabricante !== fabricante && (
                     <button type="button" onClick={() => createFabricante()}>
                         Crear
                     </button>
                 )}
             </Label>
-            <Label title="Modelo">
+            <Label
+                title="Modelo"
+                onBlur={() => watchModelo === modelo && setValue("modelo", "")}
+            >
                 <input
-                    name="modelo"
                     list="modelos"
                     placeholder={modelo}
-                    value={inputs.modelo}
-                    onChange={handleInputChange}
-                    onBlur={() =>
-                        inputs.modelo === modelo &&
-                        setInputs((inputs: Inputs) => ({
-                            ...inputs,
-                            modelo: "",
-                        }))
-                    }
                     autoComplete="off"
-                    disabled={inputs.fabricanteId === 0 ? true : false}
+                    disabled={watchFabricanteId === 0 ? true : false}
+                    {...register("modelo", { required: true })}
                 />
                 <datalist id="modelos">
                     {modelos.data.map(
                         (aModelo) =>
-                            aModelo.fabricanteId === inputs.fabricanteId && (
+                            aModelo.fabricanteId === watchFabricanteId && (
                                 <option key={aModelo.id} value={aModelo.nombre}>
                                     {aModelo.nombre}
                                 </option>
                             )
                     )}
                 </datalist>
-                {inputs.modelo !== "" && inputs.modelo !== modelo && (
+                {watchModelo !== "" && watchModelo !== modelo && (
                     <button type="button" onClick={() => createModelo()}>
                         Crear
                     </button>

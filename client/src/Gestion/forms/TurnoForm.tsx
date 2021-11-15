@@ -1,4 +1,4 @@
-import React, { MouseEvent, useState } from "react";
+import React, { MouseEvent } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import feathersClient from "feathersClient";
 
@@ -8,6 +8,10 @@ import Modelo from "components/Modelo";
 
 type Inputs = {
     motivo: string;
+    fabricanteId: number;
+    fabricante: string;
+    modeloId: number;
+    modelo: string;
 };
 
 type ComponentProps = {
@@ -19,11 +23,11 @@ type ComponentProps = {
 const Form = function ({ fecha, edit, unEdit }: ComponentProps) {
     const {
         register,
+        watch,
         handleSubmit,
+        setValue,
         formState: { errors },
     } = useForm<Inputs>();
-
-    const [modeloId, setModeloId] = useState(0);
 
     const onSubmit: SubmitHandler<Inputs> = (data) =>
         feathersClient
@@ -31,7 +35,7 @@ const Form = function ({ fecha, edit, unEdit }: ComponentProps) {
             .create({
                 fecha: fecha,
                 motivo: data.motivo,
-                modeloId: modeloId,
+                modeloId: data.modeloId,
             })
             .then(() => {})
             .catch((error: FeathersErrorJSON) => {
@@ -52,7 +56,7 @@ const Form = function ({ fecha, edit, unEdit }: ComponentProps) {
                     {...register("motivo", { required: true })}
                 />
             </Label>
-            <Modelo modeloId={modeloId} setModeloId={setModeloId} />
+            <Modelo register={register} watch={watch} setValue={setValue} />
         </FormComponent>
     );
 };

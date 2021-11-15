@@ -232,10 +232,6 @@ const GlobalStyle = createGlobalStyle`
         font: var(--label);
         color: var(--on-background-variant);
 
-        &:focus-within {
-            color: var(--primary)
-        }
-
         span {
             font: var(--subhead1);
             color: var(--on-background);

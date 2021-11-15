@@ -18,6 +18,14 @@ const Container = styled.label<Props>`
     transition: 0.15s ease-in;
 
     ${(props) =>
+        !props.error &&
+        css`
+            &:focus-within {
+                color: var(--primary);
+            }
+        `};
+
+    ${(props) =>
         props.length &&
         css`
             grid-column-end: span ${props.length};
@@ -30,9 +38,30 @@ const Container = styled.label<Props>`
             color: var(--error);
             transition: 0.2s ease-out;
 
+            input[type="search"],
             input[type="text"],
-            input[type="number"] {
+            input[type="number"],
+            input[type="email"],
+            input[type="tel"],
+            input[type="date"],
+            input[type="time"],
+            input[type="password"],
+            textarea,
+            select {
                 outline: 1px solid var(--error-variant);
+            }
+
+            input[type="search"]:focus,
+            input[type="text"]:focus,
+            input[type="number"]:focus,
+            input[type="email"]:focus,
+            input[type="tel"]:focus,
+            input[type="date"]:focus,
+            input[type="time"]:focus,
+            input[type="password"]:focus,
+            textarea:focus,
+            select:focus {
+                outline: 1px solid rgba(0, 0, 0, 0);
             }
         `};
 `;
@@ -73,6 +102,7 @@ type ComponentProps = {
     title: string;
     length?: number;
     error?: string;
+    onBlur?: any;
     className?: string;
     children: ReactNode;
 };
@@ -81,6 +111,7 @@ const Label = function ({
     title,
     length,
     error,
+    onBlur,
     className,
     children,
 }: ComponentProps) {
@@ -88,6 +119,7 @@ const Label = function ({
         <Container
             error={error ? true : false}
             length={length}
+            onBlur={onBlur}
             className={className}
         >
             <SwitchTransition>

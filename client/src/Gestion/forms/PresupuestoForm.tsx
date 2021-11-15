@@ -1,4 +1,5 @@
-import React, { MouseEvent, ChangeEvent, FormEvent, useState } from "react";
+import React, { MouseEvent, ChangeEvent, useState } from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
 import feathersClient from "feathersClient";
 import styled from "styled-components";
 import transition from "styled-transition-group";
@@ -6,6 +7,7 @@ import { TransitionGroup } from "react-transition-group";
 import { renderEmail, Email } from "react-html-email";
 
 import FormComponent from "components/Form";
+import Label from "components/Label";
 import ModeloComponent from "components/Modelo";
 import Mensaje from "Gestion/sections/Presupuesto/Mensaje";
 
@@ -190,14 +192,12 @@ type Inputs = {
     km: string;
     motivo: string;
     labor: string;
-    fabricanteId: number;
-    fabricante: string;
-    modelo: string;
-    cantidad: string;
-    repuesto: string;
-    precio: string;
     email: string;
     factura: string;
+    fabricanteId: number;
+    fabricante: string;
+    modeloId: number;
+    modelo: string;
 };
 
 type ComponentProps = {
@@ -206,21 +206,19 @@ type ComponentProps = {
 };
 
 const Form = function ({ edit, unEdit }: ComponentProps) {
+    const {
+        register,
+        watch,
+        handleSubmit,
+        setValue,
+        formState: { errors },
+    } = useForm<Inputs>();
+
     const [inputs, setInputs] = useState({
-        patente: "",
-        km: "",
-        motivo: "",
-        labor: "",
-        fabricanteId: 0,
-        fabricante: "",
-        modelo: "",
         cantidad: "1",
         repuesto: "",
         precio: "",
-        email: "",
-        factura: "",
     });
-    const [modeloId, setModeloId] = useState(0);
     const [repuestos, setRepuestos] = useState([
         {
             cantidad: "1",
@@ -229,6 +227,14 @@ const Form = function ({ edit, unEdit }: ComponentProps) {
         },
     ]);
 
+    const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+        event.persist();
+        setInputs((inputs) => ({
+            ...inputs,
+            [event.target.name]: event.target.value,
+        }));
+    };
+
     const capitalize = (text: string) => {
         return text
             .split(" ")
@@ -236,68 +242,44 @@ const Form = function ({ edit, unEdit }: ComponentProps) {
             .join(" ");
     };
 
-    function validate(inputs: Inputs) {
-        let error = "";
-        modeloId === 0
-            ? (error = "Seleccione un modelo")
-            : inputs.motivo === ""
-            ? (error = "Ingrese el motivo")
-            : (error = "");
-        return error;
-    }
-
-    const handleCreate = (event: FormEvent) => {
-        event.preventDefault();
-        validate(inputs) === "" &&
-            feathersClient
-                .service("presupuestos")
-                .create({
-                    patente: inputs.patente.toUpperCase(),
-                    km: inputs.km,
-                    motivo: capitalize(inputs.motivo),
-                    labor: inputs.labor,
-                    repuestos: repuestos,
-                    modeloId: modeloId,
-                })
-                .then((created: Presupuesto) => {
-                    inputs.email !== "" &&
-                        feathersClient
-                            .service("mailer")
-                            .create({
-                                to: inputs.email,
-                                subject:
-                                    "Servicio Especializado Gabriel Mezzanotte | Facturar a: " +
-                                    inputs.factura,
-                                html: renderEmail(
-                                    <Email title="Presupuesto">
-                                        <Mensaje
-                                            user={"montiel"}
-                                            factura={"mezannotte"}
-                                            presupuesto={created}
-                                        />
-                                    </Email>
-                                ),
-                            })
-                            .then(() => {})
-                            .catch((error: FeathersErrorJSON) => {
-                                console.error(error.message);
-                            });
-                })
-                .catch((error: FeathersErrorJSON) => {
-                    console.error(error);
-                });
-    };
-
-    const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-        event.persist();
-        setInputs((inputs) => ({
-            ...inputs,
-            [event.target.name]:
-                event.target.name === "motivo"
-                    ? capitalize(event.target.value)
-                    : event.target.value,
-        }));
-    };
+    const onSubmit: SubmitHandler<Inputs> = (data) =>
+        feathersClient
+            .service("presupuestos")
+            .create({
+                patente: data.patente.toUpperCase(),
+                km: data.km,
+                motivo: capitalize(data.motivo),
+                labor: data.labor,
+                repuestos: repuestos,
+                modeloId: data.modeloId,
+            })
+            .then((created: Presupuesto) => {
+                data.email !== "" &&
+                    feathersClient
+                        .service("mailer")
+                        .create({
+                            to: data.email,
+                            subject:
+                                "Servicio Especializado Gabriel Mezzanotte | Facturar a: " +
+                                data.factura,
+                            html: renderEmail(
+                                <Email title="Presupuesto">
+                                    <Mensaje
+                                        user={"montiel"}
+                                        factura={"mezannotte"}
+                                        presupuesto={created}
+                                    />
+                                </Email>
+                            ),
+                        })
+                        .then(() => {})
+                        .catch((error: FeathersErrorJSON) => {
+                            console.error(error.message);
+                        });
+            })
+            .catch((error: FeathersErrorJSON) => {
+                console.error(error);
+            });
 
     const removeRepuesto = (index: number) => {
         const newRepuestos = [...repuestos];
@@ -309,65 +291,55 @@ const Form = function ({ edit, unEdit }: ComponentProps) {
         <Container
             edit={edit}
             unEdit={unEdit}
-            onSubmit={handleCreate}
+            onSubmit={handleSubmit(onSubmit)}
             noButtons
         >
-            <Modelo modeloId={modeloId} setModeloId={setModeloId} />
-            <label>
-                Patente
+            <Modelo register={register} watch={watch} setValue={setValue} />
+            <Label
+                title="Patente"
+                error={errors.patente && "Ingrese la patente"}
+            >
                 <input
                     type="text"
-                    name="patente"
                     placeholder="-"
                     autoComplete="off"
-                    value={inputs.patente}
-                    onChange={handleInputChange}
-                    required
+                    {...register("patente", { required: true, maxLength: 9 })}
                 />
-            </label>
+            </Label>
             <label>
                 KM
                 <input
                     type="number"
-                    min="0000000"
-                    max="9999999"
-                    name="km"
-                    placeholder={"-"}
-                    value={inputs.km}
-                    onChange={handleInputChange}
+                    placeholder="-"
+                    autoComplete="off"
+                    {...(register("km"), { max: 9999999 })}
                 />
             </label>
             <label>
                 Reparacion
                 <input
                     type="text"
-                    name="motivo"
                     placeholder="-"
                     autoComplete="off"
-                    value={inputs.motivo}
-                    onChange={handleInputChange}
+                    {...register("motivo", { required: true })}
                 />
             </label>
             <label>
                 Mano de obra
                 <input
                     type="number"
-                    min="0000000"
-                    max="9999999"
-                    name="labor"
-                    placeholder="$0"
-                    value={inputs.labor}
-                    onChange={handleInputChange}
+                    placeholder="0"
+                    autoComplete="off"
+                    {...(register("labor"), { max: 9999999 })}
                 />
             </label>
             <label>
                 Facturar a
                 <input
                     type="text"
-                    name="factura"
                     placeholder="-"
-                    value={inputs.factura}
-                    onChange={handleInputChange}
+                    autoComplete="off"
+                    {...register("factura")}
                 />
             </label>
             <Repuestos>
@@ -458,10 +430,8 @@ const Form = function ({ edit, unEdit }: ComponentProps) {
                 </button>
                 <input
                     type="email"
-                    name="email"
                     placeholder="Direccion de correo"
-                    value={inputs.email}
-                    onChange={handleInputChange}
+                    {...register("email")}
                 />
                 <button type="submit">Enviar</button>
             </Buttons>

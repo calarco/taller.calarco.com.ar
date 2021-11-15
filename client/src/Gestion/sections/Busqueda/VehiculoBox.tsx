@@ -147,7 +147,7 @@ const VehiculoBox = function ({ vehiculo, active }: ComponentProps) {
             .catch((error: FeathersErrorJSON) => {
                 console.log("error", error);
             });
-    }, [vehiculo]);
+    }, [vehiculo.clienteId]);
 
     return (
         <Container active={active}>

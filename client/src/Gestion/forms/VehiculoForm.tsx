@@ -1,14 +1,10 @@
-import React, {
-    MouseEvent,
-    FormEvent,
-    ChangeEvent,
-    useEffect,
-    useState,
-} from "react";
+import React, { MouseEvent, useEffect } from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
 import feathersClient from "feathersClient";
 import styled from "styled-components";
 
 import FormComponent from "components/Form";
+import Label from "components/Label";
 import ModeloComponent from "components/Modelo";
 
 const Container = styled(FormComponent)`
@@ -21,11 +17,8 @@ const Modelo = styled(ModeloComponent)`
     grid-auto-flow: row;
 `;
 
-const Wide = styled.label`
-    grid-column-end: span 2;
-`;
-
 type Inputs = {
+    motivo?: string;
     patente: string;
     year: string;
     combustible: string;
@@ -34,6 +27,7 @@ type Inputs = {
     clienteId: number;
     fabricanteId: number;
     fabricante: string;
+    modeloId: number;
     modelo: string;
 };
 
@@ -44,210 +38,116 @@ type ComponentProps = {
 };
 
 const Form = function ({ vehiculo, edit, unEdit }: ComponentProps) {
-    const [inputs, setInputs] = useState<Inputs>({
-        patente: "",
-        year: "",
-        combustible: "Nafta",
-        cilindrada: "",
-        vin: "",
-        clienteId: 0,
-        fabricanteId: 0,
-        fabricante: "",
-        modelo: "",
-    });
-    const [error, setError] = useState("");
+    const {
+        register,
+        watch,
+        handleSubmit,
+        setValue,
+        reset,
+        formState: { errors },
+    } = useForm<Inputs>();
 
-    const [modeloId, setModeloId] = useState(0);
-
-    const capitalize = (text: string) => {
-        return text
-            .split(" ")
-            .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
-            .join(" ");
-    };
-
-    function validate(inputs: Inputs) {
-        let error = "";
-        modeloId === 0
-            ? (error = "Seleccione un modelo")
-            : inputs.patente === ""
-            ? (error = "Ingrese la patente")
-            : inputs.year === ""
-            ? (error = "")
-            : /\s/.test(inputs.vin)
-            ? (error = "El vin no puede contener espacios")
-            : inputs.vin && inputs.vin.includes("O")
-            ? (error = "El vin no puede contener la letra O")
-            : inputs.vin && inputs.vin.includes("I")
-            ? (error = "El vin no puede contener la letra I")
-            : inputs.vin && inputs.vin.includes("Q")
-            ? (error = "El vin no puede contener la letra Q")
-            : inputs.vin && inputs.vin.length !== 17
-            ? (error = "El VIN debe contener 17 caracteres")
-            : (error = "");
-        setError(error);
-        return error;
-    }
-
-    const handleCreate = (event: FormEvent) => {
-        event.preventDefault();
-        validate(inputs) === "" &&
-            feathersClient
-                .service("vehiculos")
-                .create({
-                    patente: inputs.patente,
-                    year: inputs.year,
-                    combustible: inputs.combustible,
-                    cilindrada: inputs.cilindrada,
-                    vin: inputs.vin,
-                    clienteId: inputs.clienteId,
-                    modeloId: modeloId,
-                    createdAt: Date(),
-                    updatedAt: Date(),
-                })
-                .then(() => {})
-                .catch((error: FeathersErrorJSON) => {
-                    console.error(error.message);
-                });
-    };
-
-    const handleEdit = (event: FormEvent) => {
-        event.preventDefault();
-        validate(inputs) === "" &&
-            feathersClient
-                .service("vehiculos")
-                .patch(vehiculo.id, {
-                    patente: inputs.patente,
-                    year: inputs.year,
-                    combustible: inputs.combustible,
-                    cilindrada: inputs.cilindrada,
-                    vin: inputs.vin,
-                    clienteId: inputs.clienteId,
-                    modeloId: modeloId,
-                })
-                .then(() => {})
-                .catch((error: FeathersErrorJSON) => {
-                    console.error(error.message);
-                });
-    };
-
-    const handleSelectChange = (event: ChangeEvent<HTMLSelectElement>) => {
-        event.persist();
-        setInputs((inputs) => ({
-            ...inputs,
-            [event.target.name]: event.target.value,
-        }));
-    };
-
-    const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-        event.persist();
-        setInputs((inputs) => ({
-            ...inputs,
-            [event.target.name]:
-                event.target.name === "patente" || event.target.name === "vin"
-                    ? event.target.value.toUpperCase()
-                    : event.target.name === "fabricante" ||
-                      event.target.name === "modelo"
-                    ? capitalize(event.target.value)
-                    : event.target.value,
-        }));
-    };
+    const onSubmit: SubmitHandler<Inputs> = (data) =>
+        vehiculo.id === 0
+            ? feathersClient
+                  .service("vehiculos")
+                  .create({
+                      patente: data.patente.toUpperCase(),
+                      year: data.year,
+                      combustible: data.combustible,
+                      cilindrada: data.cilindrada,
+                      vin: data.vin.toUpperCase(),
+                      clienteId: data.clienteId,
+                      modeloId: data.modeloId,
+                      createdAt: Date(),
+                      updatedAt: Date(),
+                  })
+                  .then(() => {})
+                  .catch((error: FeathersErrorJSON) => {
+                      console.error(error.message);
+                  })
+            : feathersClient
+                  .service("vehiculos")
+                  .patch(vehiculo.id, {
+                      patente: data.patente,
+                      year: data.year,
+                      combustible: data.combustible,
+                      cilindrada: data.cilindrada,
+                      vin: data.vin,
+                      clienteId: data.clienteId,
+                      modeloId: data.modeloId,
+                  })
+                  .then(() => {})
+                  .catch((error: FeathersErrorJSON) => {
+                      console.error(error.message);
+                  });
 
     useEffect(() => {
-        setInputs({
-            patente: vehiculo.patente,
-            year: vehiculo.year || "",
-            combustible: vehiculo.combustible,
-            cilindrada: vehiculo.cilindrada || "",
-            vin: vehiculo.vin || "",
-            clienteId: vehiculo.clienteId,
-            fabricanteId: 0,
-            fabricante: "",
-            modelo: "",
-        });
-        setModeloId(vehiculo.modeloId);
+        reset();
     }, [vehiculo]);
 
     return (
         <Container
             edit={edit}
             unEdit={unEdit}
-            onSubmit={vehiculo.id === 0 ? handleCreate : handleEdit}
+            onSubmit={handleSubmit(onSubmit)}
         >
-            <Modelo modeloId={modeloId} setModeloId={setModeloId} />
-            <label>
-                Combustible
-                <select
-                    name="combustible"
-                    value={inputs.combustible}
-                    onChange={handleSelectChange}
-                >
+            <Modelo register={register} watch={watch} setValue={setValue} />
+            <Label title="Combustible">
+                <select {...register("combustible")}>
                     <option value="Nafta">Nafta</option>
                     <option value="Diesel">Diesel</option>
                     <option value="GNC">GNC</option>
                 </select>
-            </label>
-            <label>
-                Cilindrada
+            </Label>
+            <Label
+                title="Cilindrada"
+                error={errors.cilindrada && "Ingrese una cilindrada correcta"}
+            >
                 <input
                     type="number"
-                    min="0.1"
-                    max="20"
                     step="0.1"
-                    name="cilindrada"
                     placeholder="litros"
-                    value={inputs.cilindrada}
-                    onChange={handleInputChange}
+                    autoComplete="off"
+                    {...(register("cilindrada"), { min: 0.1, max: 20 })}
                 />
-            </label>
-            <label>
-                Año
+            </Label>
+            <Label title="Año" error={errors.year && "Ingrese un año correcto"}>
                 <input
                     type="number"
-                    min="1900"
-                    max="9999"
-                    name="year"
                     placeholder="-"
-                    value={inputs.year}
-                    onChange={handleInputChange}
                     autoComplete="off"
+                    {...(register("year"), { min: 1900, max: 9999 })}
                 />
-            </label>
-            <Wide>
-                {error === "" ? "VIN" : error}
+            </Label>
+            <Label
+                title="VIN"
+                length={2}
+                error={errors.vin && "Ingrese un VIN correcto"}
+            >
                 <input
                     type="text"
-                    minLength={17}
-                    name="vin"
                     placeholder="-"
                     autoComplete="off"
-                    value={inputs.vin}
-                    onChange={handleInputChange}
+                    {...register("vin", { minLength: 17 })}
                 />
-            </Wide>
-            <label>
-                {error === "" ? "Patente" : error}
+            </Label>
+            <Label
+                title="Patente"
+                error={errors.patente && "Ingrese la patente"}
+            >
                 <input
                     type="text"
-                    name="patente"
                     placeholder="-"
                     autoComplete="off"
-                    value={inputs.patente}
-                    onChange={handleInputChange}
-                    required
+                    {...register("patente", { required: true, maxLength: 9 })}
                 />
-            </label>
-            <Wide>
-                Propietario
-                <select
-                    disabled
-                    name="clienteId"
-                    value={inputs.clienteId}
-                    onChange={handleSelectChange}
-                >
-                    <option value="">{inputs.clienteId}</option>
+            </Label>
+            <Label title="Propietario" length={2}>
+                <select disabled name="clienteId">
+                    <option value="">0</option>
                 </select>
-            </Wide>
+            </Label>
         </Container>
     );
 };
