@@ -51,12 +51,18 @@ const Form = function ({ fecha, edit, unEdit }: ComponentProps) {
             <Label title="Motivo" error={errors.motivo && "Ingrese el motivo"}>
                 <input
                     type="text"
+                    defaultValue=""
                     placeholder="-"
                     autoComplete="off"
                     {...register("motivo", { required: true })}
                 />
             </Label>
-            <Modelo register={register} watch={watch} setValue={setValue} />
+            <Modelo
+                register={register}
+                watch={watch}
+                setValue={setValue}
+                error={errors.modeloId ? true : false}
+            />
         </FormComponent>
     );
 };

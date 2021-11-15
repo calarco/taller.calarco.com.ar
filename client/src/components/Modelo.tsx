@@ -91,6 +91,7 @@ type ComponentProps = {
     register: UseFormRegister<Inputs>;
     watch: UseFormWatch<Inputs>;
     setValue: UseFormSetValue<Inputs>;
+    error?: boolean;
     className?: string;
 };
 
@@ -98,6 +99,7 @@ const Modelo = function ({
     register,
     watch,
     setValue,
+    error,
     className,
 }: ComponentProps) {
     const { fabricantes, modelos } = useCarName();
@@ -141,70 +143,63 @@ const Modelo = function ({
     };
 
     useEffect(() => {
-        watchFabricanteId === 0 &&
-            watchModeloId !== 0 &&
-            feathersClient
-                .service("modelos")
-                .get(watchModeloId)
-                .then((modelo: Modelo) => {
-                    setValue("fabricanteId", modelo.fabricanteId);
-                    setModelo(modelo.nombre);
-                    feathersClient
-                        .service("fabricantes")
-                        .get(modelo.fabricanteId)
-                        .then((fabricante: Fabricante) => {
-                            setFabricante(fabricante.nombre);
-                        })
-                        .catch((error: FeathersErrorJSON) => {
-                            console.error(error.message);
-                        });
-                })
-                .catch((error: FeathersErrorJSON) => {
-                    console.error(error);
-                });
-    }, [watchFabricanteId, watchModeloId]);
+        try {
+            setFabricante(
+                fabricantes.data.find(({ id }) => id === watchFabricanteId)!
+                    .nombre
+            );
+        } catch {}
+    }, [watchFabricanteId]);
 
     useEffect(() => {
         setValue("modelo", "");
         setValue("modeloId", 0);
-        feathersClient
-            .service("fabricantes")
-            .find({
-                query: {
-                    nombre: watchFabricante,
-                    $limit: 1,
-                },
-            })
-            .then((found: Fabricantes) => {
-                found.data[0] && setValue("fabricanteId", found.data[0].id);
-                found.data[0] && setFabricante(found.data[0].nombre);
-                setModelo("");
-            })
-            .catch((error: FeathersErrorJSON) => {
-                console.error(error.message);
-            });
+        try {
+            setValue(
+                "fabricanteId",
+                fabricantes.data.find(
+                    ({ nombre }) => nombre === watchFabricante
+                )!.id
+            );
+        } catch {}
     }, [watchFabricante]);
 
     useEffect(() => {
-        feathersClient
-            .service("modelos")
-            .find({
-                query: {
-                    nombre: watchModelo,
-                    $limit: 1,
-                },
-            })
-            .then((found: Modelos) => {
-                found.data[0] && setValue("modeloId", found.data[0].id);
-                found.data[0] && setModelo(found.data[0].nombre);
-            })
-            .catch((error: FeathersErrorJSON) => {
-                console.error(error);
-            });
+        try {
+            setValue(
+                "fabricanteId",
+                modelos.data.find(({ id }) => id === watchModeloId)!
+                    .fabricanteId
+            );
+            setModelo(
+                modelos.data.find(({ id }) => id === watchModeloId)!.nombre
+            );
+        } catch {}
+    }, [watchModeloId]);
+
+    useEffect(() => {
+        try {
+            setValue(
+                "modeloId",
+                modelos.data.find(({ nombre }) => nombre === watchModelo)!.id
+            );
+        } catch {}
     }, [watchModelo]);
 
     return (
         <Container className={className}>
+            <input
+                type="hidden"
+                defaultValue={0}
+                {...register("fabricanteId")}
+            />
+            <input
+                type="hidden"
+                defaultValue={0}
+                {...register("modeloId", {
+                    validate: (modeloId) => (modeloId === 0 ? false : true),
+                })}
+            />
             <Label
                 title="Marca"
                 onBlur={() =>
@@ -213,9 +208,10 @@ const Modelo = function ({
             >
                 <input
                     list="fabricantes"
+                    defaultValue=""
                     placeholder={fabricante}
                     autoComplete="off"
-                    {...register("fabricante", { required: true })}
+                    {...register("fabricante")}
                 />
                 <datalist id="fabricantes">
                     {fabricantes.data.map((aFabricante) => (
@@ -232,14 +228,16 @@ const Modelo = function ({
             </Label>
             <Label
                 title="Modelo"
+                error={error ? "Seleccione un modelo" : undefined}
                 onBlur={() => watchModelo === modelo && setValue("modelo", "")}
             >
                 <input
                     list="modelos"
+                    defaultValue=""
                     placeholder={modelo}
                     autoComplete="off"
                     disabled={watchFabricanteId === 0 ? true : false}
-                    {...register("modelo", { required: true })}
+                    {...register("modelo")}
                 />
                 <datalist id="modelos">
                     {modelos.data.map(

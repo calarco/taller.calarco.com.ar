@@ -301,6 +301,7 @@ const Form = function ({ edit, unEdit }: ComponentProps) {
             >
                 <input
                     type="text"
+                    defaultValue=""
                     placeholder="-"
                     autoComplete="off"
                     {...register("patente", { required: true, maxLength: 9 })}
@@ -319,6 +320,7 @@ const Form = function ({ edit, unEdit }: ComponentProps) {
                 Reparacion
                 <input
                     type="text"
+                    defaultValue=""
                     placeholder="-"
                     autoComplete="off"
                     {...register("motivo", { required: true })}
@@ -337,6 +339,7 @@ const Form = function ({ edit, unEdit }: ComponentProps) {
                 Facturar a
                 <input
                     type="text"
+                    defaultValue=""
                     placeholder="-"
                     autoComplete="off"
                     {...register("factura")}

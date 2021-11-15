@@ -127,6 +127,7 @@ const Form = function ({ vehiculo, edit, unEdit }: ComponentProps) {
             >
                 <input
                     type="text"
+                    defaultValue=""
                     placeholder="-"
                     autoComplete="off"
                     {...register("vin", { minLength: 17 })}
@@ -138,6 +139,7 @@ const Form = function ({ vehiculo, edit, unEdit }: ComponentProps) {
             >
                 <input
                     type="text"
+                    defaultValue=""
                     placeholder="-"
                     autoComplete="off"
                     {...register("patente", { required: true, maxLength: 9 })}
