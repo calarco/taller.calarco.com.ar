@@ -76,25 +76,24 @@ const Form = function ({ cliente, edit, unEdit }: ComponentProps) {
             unEdit={unEdit}
             onSubmit={handleSubmit(onSubmit)}
         >
-            <Label title="Nombre" error={errors.nombre && "Ingrese el nombre"}>
+            <Label title="Nombre" error={errors.nombre?.message}>
                 <input
                     type="text"
+                    defaultValue={cliente?.nombre}
                     placeholder="-"
                     autoComplete="off"
-                    {...register("nombre", { required: true })}
-                    defaultValue={cliente?.nombre}
+                    {...register("nombre", { required: "Ingrese el nombre" })}
                 />
             </Label>
-            <Label
-                title="Apellido"
-                error={errors.apellido && "Ingrese el apellido"}
-            >
+            <Label title="Apellido" error={errors.apellido?.message}>
                 <input
                     type="text"
+                    defaultValue={cliente?.apellido}
                     placeholder="-"
                     autoComplete="off"
-                    {...register("apellido", { required: true })}
-                    defaultValue={cliente?.apellido}
+                    {...register("apellido", {
+                        required: "Ingrese el apellido",
+                    })}
                 />
             </Label>
             <Label title="DNI / CUIT / CUIL">
@@ -109,29 +108,29 @@ const Form = function ({ cliente, edit, unEdit }: ComponentProps) {
             <Label title="Empresa">
                 <input
                     type="text"
+                    defaultValue={cliente?.empresa}
                     placeholder="-"
                     autoComplete="off"
                     {...register("empresa")}
-                    defaultValue={cliente?.empresa}
                 />
             </Label>
             <Label title="Telefono">
                 <input
                     type="tel"
+                    defaultValue={cliente?.telefono}
                     pattern="\d*"
                     placeholder="-"
                     autoComplete="off"
                     {...register("telefono")}
-                    defaultValue={cliente?.telefono}
                 />
             </Label>
             <Label title="Correo electrónico">
                 <input
                     type="email"
+                    defaultValue={cliente?.email}
                     placeholder="-"
                     autoComplete="off"
                     {...register("email")}
-                    defaultValue={cliente?.email}
                 />
             </Label>
         </Container>

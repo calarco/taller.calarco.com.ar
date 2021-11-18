@@ -8,7 +8,7 @@ import { renderEmail, Email } from "react-html-email";
 
 import FormComponent from "components/Form";
 import Label from "components/Label";
-import ModeloComponent from "components/Modelo";
+import ModeloComponent from "components/SelectModelo";
 import Mensaje from "Gestion/sections/Presupuesto/Mensaje";
 
 const Container = styled(FormComponent)`
@@ -25,7 +25,7 @@ const Container = styled(FormComponent)`
     }
 `;
 
-const Modelo = styled(ModeloComponent)`
+const SelectModelo = styled(ModeloComponent)`
     grid-column-end: span 2;
 `;
 
@@ -187,17 +187,9 @@ const Buttons = styled.div`
     }
 `;
 
-type Inputs = {
+type CurrentInputs = Inputs & {
     patente: string;
-    km: string;
     motivo: string;
-    labor: string;
-    email: string;
-    factura: string;
-    fabricanteId: number;
-    fabricante: string;
-    modeloId: number;
-    modelo: string;
 };
 
 type ComponentProps = {
@@ -212,7 +204,14 @@ const Form = function ({ edit, unEdit }: ComponentProps) {
         handleSubmit,
         setValue,
         formState: { errors },
-    } = useForm<Inputs>();
+    } = useForm<CurrentInputs>({
+        defaultValues: {
+            fabricanteId: 0,
+            fabricante: "",
+            modeloId: 0,
+            modelo: "",
+        },
+    });
 
     const [inputs, setInputs] = useState({
         cantidad: "1",
@@ -242,7 +241,7 @@ const Form = function ({ edit, unEdit }: ComponentProps) {
             .join(" ");
     };
 
-    const onSubmit: SubmitHandler<Inputs> = (data) =>
+    const onSubmit: SubmitHandler<CurrentInputs> = (data) =>
         feathersClient
             .service("presupuestos")
             .create({
@@ -294,57 +293,63 @@ const Form = function ({ edit, unEdit }: ComponentProps) {
             onSubmit={handleSubmit(onSubmit)}
             noButtons
         >
-            <Modelo register={register} watch={watch} setValue={setValue} />
-            <Label
-                title="Patente"
-                error={errors.patente && "Ingrese la patente"}
-            >
+            <SelectModelo
+                register={register}
+                watch={watch}
+                setValue={setValue}
+                error={errors.modeloId ? true : false}
+            />
+            <Label title="Patente" error={errors.patente?.message}>
                 <input
                     type="text"
                     defaultValue=""
                     placeholder="-"
                     autoComplete="off"
-                    {...register("patente", { required: true, maxLength: 9 })}
+                    {...register("patente", {
+                        required: "Ingrese la patente",
+                        maxLength: {
+                            value: 9,
+                            message:
+                                "La patente no puede contener mas de 9 caracteres",
+                        },
+                    })}
                 />
             </Label>
-            <label>
-                KM
+            <Label title="KM">
                 <input
                     type="number"
                     placeholder="-"
                     autoComplete="off"
                     {...(register("km"), { max: 9999999 })}
                 />
-            </label>
-            <label>
-                Reparacion
+            </Label>
+            <Label title="Reparacion" error={errors.motivo?.message}>
                 <input
                     type="text"
                     defaultValue=""
                     placeholder="-"
                     autoComplete="off"
-                    {...register("motivo", { required: true })}
+                    {...register("motivo", {
+                        required: "Ingrese la reparación",
+                    })}
                 />
-            </label>
-            <label>
-                Mano de obra
+            </Label>
+            <Label title="Mano de obra">
                 <input
                     type="number"
                     placeholder="0"
                     autoComplete="off"
                     {...(register("labor"), { max: 9999999 })}
                 />
-            </label>
-            <label>
-                Facturar a
+            </Label>
+            <Label title="Facturar a">
                 <input
                     type="text"
                     defaultValue=""
                     placeholder="-"
-                    autoComplete="off"
                     {...register("factura")}
                 />
-            </label>
+            </Label>
             <Repuestos>
                 Repuestos
                 <ul>

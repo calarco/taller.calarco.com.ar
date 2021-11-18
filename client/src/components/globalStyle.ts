@@ -268,8 +268,7 @@ const GlobalStyle = createGlobalStyle`
     input[type="date"],
     input[type="time"],
     input[type="password"],
-    textarea,
-    select {
+    textarea {
         display: block;
         width: 100%;
         padding: 0.25rem 0.5rem;
@@ -280,6 +279,19 @@ const GlobalStyle = createGlobalStyle`
         font: var(--subhead1);
         color: var(--on-background);
         transition: 0.1s ease-in;
+        
+        &:hover {
+            outline: 1px solid var(--primary-variant);
+            transition: 0.15s ease-out;
+        }
+        
+        &:focus {
+            outline: 1px solid rgba(0, 0, 0, 0);
+            background: var(--primary-variant);
+            box-shadow: var(--shadow-variant);
+            color: var(--on-background);
+            transition: 0.15s ease-out;
+        }
     }
 
     input[type="search"] {
@@ -303,56 +315,47 @@ const GlobalStyle = createGlobalStyle`
         resize: none;
     }
 
+    input[name="fabricante"],
+    input[name="modelo"],
     select {
+        display: block;
         appearance: none;
+        width: 100%;
         padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        background: var(--overlay);
         background: rgba(236, 239, 241, 0.7);
+        border: 1px solid rgba(0, 0, 0, 0);
         outline: none;
+        font: var(--subhead1);
+        transition: 0.1s ease-in;
+
+        &:not(:disabled):hover {
+            cursor: pointer;
+            background: var(--primary-variant);
+        }
+
+        &:focus {
+            background: var(--primary-variant);
+            border: var(--border-primary);
+            box-shadow: var(--shadow-variant);
+        }
+
+        &:focus:hover {
+            cursor: text;
+        }
+        
+        &:disabled {
+            opacity: 0.8;
+        }
+
+        &::-webkit-calendar-picker-indicator {
+            display: none !important;
+        }
     }
 
     input[type="checkbox"] {
         display: none;
-    }
-    
-    input[type="search"]:hover,
-    input[type="text"]:hover,
-    input[type="number"]:hover,
-    input[type="email"]:hover,
-    input[type="tel"]:hover,
-    input[type="date"]:hover,
-    input[type="time"]:hover,
-    input[type="password"]:hover,
-    textarea:hover,
-    select:hover {
-        outline: 1px solid var(--primary-variant);
-        transition: 0.15s ease-out;
-    }
-
-    select:not(:disabled):hover {
-        cursor: pointer;
-        background: var(--primary-variant);
-        outline: none;
-    }
-    
-    input[type="search"]:focus,
-    input[type="text"]:focus,
-    input[type="number"]:focus,
-    input[type="email"]:focus,
-    input[type="tel"]:focus,
-    input[type="date"]:focus,
-    input[type="time"]:focus,
-    input[type="password"]:focus,
-    textarea:focus,
-    select:focus {
-        outline: 1px solid rgba(0, 0, 0, 0);
-        background: var(--primary-variant);
-        box-shadow: var(--shadow-variant);
-        color: var(--on-background);
-        transition: 0.15s ease-out;
-    }
-
-    select:focus {
-        outline: 1px solid var(--primary-variant);
     }
 
     input[type="search"]:hover,
@@ -370,8 +373,14 @@ const GlobalStyle = createGlobalStyle`
     input[type="time"]:disabled,
     input[type="password"]:disabled,
     textarea:disabled,
+    input[name="fabricante"]:disabled,
+    input[name="modelo"]:disabled,
     select:disabled {
         pointer-events: none;
+        
+        &::placeholder {
+            color: var(--on-background-disabled);
+        }
     }
 
     input:-webkit-autofill,
@@ -403,6 +412,23 @@ const GlobalStyle = createGlobalStyle`
         font: var(--body2);
         color: var(--primary);
         transition: 0.1s ease-in;
+        
+        &:hover {
+            cursor: pointer;
+            background: var(--primary-variant);
+            transition: 0.15s ease-out;
+        }
+        
+        &:focus {
+            outline: none;
+            background: var(--secondary-variant);
+        }
+
+        &:disabled {
+            cursor: default;
+            background: none;
+            color: var(--on-background-disabled);
+        }
     }
 
     button[type="submit"],
@@ -412,26 +438,6 @@ const GlobalStyle = createGlobalStyle`
 
     button[type="reset"] {
         color: var(--error);
-    }
-
-    button:hover,
-    input[type="submit"]:hover {
-        cursor: pointer;
-        background: var(--primary-variant);
-        transition: 0.15s ease-out;
-    }
-
-    button:focus,
-    input[type="submit"]:focus {
-        outline: none;
-        background: var(--secondary-variant);
-    }
-
-    button:disabled,
-    input[type="submit"]:disabled {
-        cursor: default;
-        background: none;
-        color: var(--on-background-disabled);
     }
 `;
 

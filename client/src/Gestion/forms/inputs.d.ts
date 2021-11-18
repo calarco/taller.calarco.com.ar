@@ -1,0 +1,21 @@
+type Inputs = {
+    motivo?: string;
+    patente?: string;
+    year?: string;
+    combustible?: string;
+    cilindrada?: string;
+    vin?: string;
+    clienteId?: number;
+    km?: number;
+    labor?: number;
+    costo?: number;
+    fecha?: string;
+    reparacion?: string;
+    repuestos?: string;
+    email?: string;
+    factura?: string;
+    fabricanteId: number;
+    fabricante: string;
+    modeloId: number;
+    modelo: string;
+};

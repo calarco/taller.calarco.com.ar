@@ -50,19 +50,6 @@ const Container = styled.label<Props>`
             select {
                 outline: 1px solid var(--error-variant);
             }
-
-            input[type="search"]:focus,
-            input[type="text"]:focus,
-            input[type="number"]:focus,
-            input[type="email"]:focus,
-            input[type="tel"]:focus,
-            input[type="date"]:focus,
-            input[type="time"]:focus,
-            input[type="password"]:focus,
-            textarea:focus,
-            select:focus {
-                outline: 1px solid rgba(0, 0, 0, 0);
-            }
         `};
 `;
 

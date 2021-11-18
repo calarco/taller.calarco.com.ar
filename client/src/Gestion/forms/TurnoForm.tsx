@@ -4,15 +4,7 @@ import feathersClient from "feathersClient";
 
 import FormComponent from "components/Form";
 import Label from "components/Label";
-import Modelo from "components/Modelo";
-
-type Inputs = {
-    motivo: string;
-    fabricanteId: number;
-    fabricante: string;
-    modeloId: number;
-    modelo: string;
-};
+import SelectModelo from "components/SelectModelo";
 
 type ComponentProps = {
     fecha: string;
@@ -27,7 +19,14 @@ const Form = function ({ fecha, edit, unEdit }: ComponentProps) {
         handleSubmit,
         setValue,
         formState: { errors },
-    } = useForm<Inputs>();
+    } = useForm<Inputs>({
+        defaultValues: {
+            fabricanteId: 0,
+            fabricante: "",
+            modeloId: 0,
+            modelo: "",
+        },
+    });
 
     const onSubmit: SubmitHandler<Inputs> = (data) =>
         feathersClient
@@ -48,16 +47,16 @@ const Form = function ({ fecha, edit, unEdit }: ComponentProps) {
             unEdit={unEdit}
             onSubmit={handleSubmit(onSubmit)}
         >
-            <Label title="Motivo" error={errors.motivo && "Ingrese el motivo"}>
+            <Label title="Motivo" error={errors.motivo?.message}>
                 <input
                     type="text"
                     defaultValue=""
                     placeholder="-"
                     autoComplete="off"
-                    {...register("motivo", { required: true })}
+                    {...register("motivo", { required: "Ingrese el motivo" })}
                 />
             </Label>
-            <Modelo
+            <SelectModelo
                 register={register}
                 watch={watch}
                 setValue={setValue}

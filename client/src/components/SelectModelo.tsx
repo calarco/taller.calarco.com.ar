@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
+import transition from "styled-transition-group";
 import {
     UseFormRegister,
     UseFormWatch,
@@ -18,74 +19,57 @@ const Container = styled.fieldset`
 
     label {
         position: relative;
-
-        button {
-            position: absolute;
-            bottom: calc(0.75rem + 1px);
-            right: 1rem;
-            padding: 0.25rem 0.5rem;
-            border: none;
-        }
-    }
-
-    input[name="fabricante"],
-    input[name="modelo"] {
-        display: block;
-        appearance: none;
-        width: 100%;
-        padding: 0.25rem 0.5rem;
-        border-radius: 4px;
-        background: rgba(236, 239, 241, 0.7);
-        border: 1px solid rgba(0, 0, 0, 0);
-        outline: none;
-        font: var(--subhead1);
-
-        &:focus {
-            background: var(--primary-variant);
-            border: var(--border-primary);
-            box-shadow: var(--shadow-variant);
-        }
-
-        &:not(:disabled):hover {
-            cursor: pointer;
-            background: var(--primary-variant);
-        }
-
-        &:focus:hover {
-            cursor: text;
-        }
-
-        &::-webkit-calendar-picker-indicator {
-            display: none !important;
-        }
-    }
-
-    input::placeholder {
-        color: var(--on-background);
-    }
-
-    input::-webkit-calendar-picker-indicator {
-        display: none;
     }
 `;
 
-type Inputs = {
-    motivo?: string;
-    patente?: string;
-    year?: string;
-    combustible?: string;
-    cilindrada?: string;
-    vin?: string;
-    clienteId?: number;
-    km?: string;
-    labor?: string;
-    email?: string;
-    factura?: string;
-    fabricanteId: number;
-    fabricante: string;
-    modeloId: number;
-    modelo: string;
+type Props = {
+    selected?: boolean;
 };
+
+const Input = styled.input<Props>`
+    ${(props) =>
+        props.selected &&
+        css`
+            &::placeholder {
+                color: var(--on-background);
+            }
+        `};
+`;
+
+const Button = transition.button.attrs({
+    unmountOnExit: true,
+    timeout: {
+        enter: 200,
+        exit: 150,
+    },
+})`
+    position: absolute;
+    bottom: calc(0.75rem + 1px);
+    right: 1rem;
+    padding: 0.25rem 0.5rem;
+    border: none;
+
+    &:enter {
+        opacity: 0;
+        transform: translateX(1rem);
+    }
+
+    &:enter-active {
+        opacity: 1;
+        transform: initial;
+        transition: 0.2s ease-out;
+    }
+
+    &:exit {
+        opacity: 1;
+    }
+
+    &:exit-active {
+        opacity: 0;
+        transform: translateX(1rem);
+        transition: 0.15s ease-in;
+    }
+`;
 
 type ComponentProps = {
     register: UseFormRegister<Inputs>;
@@ -95,7 +79,7 @@ type ComponentProps = {
     className?: string;
 };
 
-const Modelo = function ({
+const SelectModelo = function ({
     register,
     watch,
     setValue,
@@ -143,39 +127,28 @@ const Modelo = function ({
     };
 
     useEffect(() => {
-        try {
-            setFabricante(
-                fabricantes.data.find(({ id }) => id === watchFabricanteId)!
-                    .nombre
-            );
-        } catch {}
-    }, [watchFabricanteId]);
-
-    useEffect(() => {
-        setValue("modelo", "");
-        setValue("modeloId", 0);
-        try {
-            setValue(
-                "fabricanteId",
-                fabricantes.data.find(
-                    ({ nombre }) => nombre === watchFabricante
-                )!.id
-            );
-        } catch {}
-    }, [watchFabricante]);
+        watchFabricanteId &&
+            watchFabricanteId !== 0 &&
+            watchFabricanteId !==
+                modelos.data.find(({ id }) => id === watchModeloId)
+                    ?.fabricanteId &&
+            setValue("modeloId", 0);
+    }, [watchFabricanteId, watchModeloId, modelos.data, setValue]);
 
     useEffect(() => {
         try {
+            setModelo(
+                modelos.data.find(({ id }) => id === watchModeloId)!.nombre
+            );
             setValue(
                 "fabricanteId",
                 modelos.data.find(({ id }) => id === watchModeloId)!
                     .fabricanteId
             );
-            setModelo(
-                modelos.data.find(({ id }) => id === watchModeloId)!.nombre
-            );
-        } catch {}
-    }, [watchModeloId]);
+        } catch {
+            setModelo("");
+        }
+    }, [watchModeloId, modelos.data, setValue]);
 
     useEffect(() => {
         try {
@@ -184,32 +157,54 @@ const Modelo = function ({
                 modelos.data.find(({ nombre }) => nombre === watchModelo)!.id
             );
         } catch {}
-    }, [watchModelo]);
+    }, [watchModelo, modelos.data, setValue]);
+
+    useEffect(() => {
+        try {
+            setFabricante(
+                fabricantes.data.find(({ id }) => id === watchFabricanteId)!
+                    .nombre
+            );
+        } catch {
+            setFabricante("");
+        }
+    }, [watchFabricanteId, fabricantes.data]);
+
+    useEffect(() => {
+        try {
+            setValue(
+                "fabricanteId",
+                fabricantes.data.find(
+                    ({ nombre }) => nombre === watchFabricante
+                )!.id
+            );
+        } catch {}
+    }, [watchFabricante, fabricantes.data, setValue]);
 
     return (
         <Container className={className}>
+            <input type="hidden" {...register("fabricanteId")} />
             <input
                 type="hidden"
-                defaultValue={0}
-                {...register("fabricanteId")}
-            />
-            <input
-                type="hidden"
-                defaultValue={0}
                 {...register("modeloId", {
                     validate: (modeloId) => (modeloId === 0 ? false : true),
                 })}
             />
             <Label
                 title="Marca"
+                error={
+                    watchFabricanteId === 0 && error
+                        ? "Seleccione una marca"
+                        : undefined
+                }
                 onBlur={() =>
                     watchFabricante === fabricante && setValue("fabricante", "")
                 }
             >
-                <input
+                <Input
                     list="fabricantes"
-                    defaultValue=""
-                    placeholder={fabricante}
+                    selected={fabricante !== "" ? true : false}
+                    placeholder={fabricante || "-"}
                     autoComplete="off"
                     {...register("fabricante")}
                 />
@@ -220,21 +215,25 @@ const Modelo = function ({
                         </option>
                     ))}
                 </datalist>
-                {watchFabricante !== "" && watchFabricante !== fabricante && (
-                    <button type="button" onClick={() => createFabricante()}>
-                        Crear
-                    </button>
-                )}
+                <Button
+                    in={
+                        watchFabricante !== "" && watchFabricante !== fabricante
+                    }
+                    type="button"
+                    onClick={() => createFabricante()}
+                >
+                    Crear
+                </Button>
             </Label>
             <Label
                 title="Modelo"
                 error={error ? "Seleccione un modelo" : undefined}
                 onBlur={() => watchModelo === modelo && setValue("modelo", "")}
             >
-                <input
+                <Input
                     list="modelos"
-                    defaultValue=""
-                    placeholder={modelo}
+                    selected={modelo !== "" ? true : false}
+                    placeholder={modelo || "-"}
                     autoComplete="off"
                     disabled={watchFabricanteId === 0 ? true : false}
                     {...register("modelo")}
@@ -249,14 +248,16 @@ const Modelo = function ({
                             )
                     )}
                 </datalist>
-                {watchModelo !== "" && watchModelo !== modelo && (
-                    <button type="button" onClick={() => createModelo()}>
-                        Crear
-                    </button>
-                )}
+                <Button
+                    in={watchModelo !== "" && watchModelo !== modelo}
+                    type="button"
+                    onClick={() => createModelo()}
+                >
+                    Crear
+                </Button>
             </Label>
         </Container>
     );
 };
 
-export default Modelo;
+export default SelectModelo;

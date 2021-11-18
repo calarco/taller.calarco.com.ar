@@ -5,30 +5,21 @@ import styled from "styled-components";
 
 import FormComponent from "components/Form";
 import Label from "components/Label";
-import ModeloComponent from "components/Modelo";
+import ModeloComponent from "components/SelectModelo";
 
 const Container = styled(FormComponent)`
     grid-template-columns: 1fr 1fr 1fr [end];
 `;
 
-const Modelo = styled(ModeloComponent)`
+const SelectModelo = styled(ModeloComponent)`
     grid-column-end: span 2;
     grid-row-end: span 2;
     grid-auto-flow: row;
 `;
 
-type Inputs = {
-    motivo?: string;
+type CurrentInputs = Inputs & {
     patente: string;
-    year: string;
-    combustible: string;
-    cilindrada: string;
     vin: string;
-    clienteId: number;
-    fabricanteId: number;
-    fabricante: string;
-    modeloId: number;
-    modelo: string;
 };
 
 type ComponentProps = {
@@ -45,9 +36,16 @@ const Form = function ({ vehiculo, edit, unEdit }: ComponentProps) {
         setValue,
         reset,
         formState: { errors },
-    } = useForm<Inputs>();
+    } = useForm<CurrentInputs>({
+        defaultValues: {
+            fabricanteId: 0,
+            fabricante: "",
+            modeloId: vehiculo.modeloId,
+            modelo: "",
+        },
+    });
 
-    const onSubmit: SubmitHandler<Inputs> = (data) =>
+    const onSubmit: SubmitHandler<CurrentInputs> = (data) =>
         vehiculo.id === 0
             ? feathersClient
                   .service("vehiculos")
@@ -84,7 +82,7 @@ const Form = function ({ vehiculo, edit, unEdit }: ComponentProps) {
 
     useEffect(() => {
         reset();
-    }, [vehiculo]);
+    }, [vehiculo, reset]);
 
     return (
         <Container
@@ -92,9 +90,17 @@ const Form = function ({ vehiculo, edit, unEdit }: ComponentProps) {
             unEdit={unEdit}
             onSubmit={handleSubmit(onSubmit)}
         >
-            <Modelo register={register} watch={watch} setValue={setValue} />
+            <SelectModelo
+                register={register}
+                watch={watch}
+                setValue={setValue}
+                error={errors.modeloId ? true : false}
+            />
             <Label title="Combustible">
-                <select {...register("combustible")}>
+                <select
+                    {...register("combustible")}
+                    defaultValue={vehiculo?.combustible}
+                >
                     <option value="Nafta">Nafta</option>
                     <option value="Diesel">Diesel</option>
                     <option value="GNC">GNC</option>
@@ -106,6 +112,7 @@ const Form = function ({ vehiculo, edit, unEdit }: ComponentProps) {
             >
                 <input
                     type="number"
+                    defaultValue={vehiculo?.cilindrada}
                     step="0.1"
                     placeholder="litros"
                     autoComplete="off"
@@ -115,34 +122,54 @@ const Form = function ({ vehiculo, edit, unEdit }: ComponentProps) {
             <Label title="Año" error={errors.year && "Ingrese un año correcto"}>
                 <input
                     type="number"
+                    defaultValue={vehiculo?.year}
                     placeholder="-"
                     autoComplete="off"
                     {...(register("year"), { min: 1900, max: 9999 })}
                 />
             </Label>
-            <Label
-                title="VIN"
-                length={2}
-                error={errors.vin && "Ingrese un VIN correcto"}
-            >
+            <Label title="VIN" length={2} error={errors.vin?.message}>
                 <input
                     type="text"
-                    defaultValue=""
+                    defaultValue={vehiculo?.vin}
                     placeholder="-"
                     autoComplete="off"
-                    {...register("vin", { minLength: 17 })}
+                    {...register("vin", {
+                        minLength: {
+                            value: 17,
+                            message: "El VIN debe contener 17 caracteres",
+                        },
+                        maxLength: {
+                            value: 17,
+                            message: "El VIN debe contener 17 caracteres",
+                        },
+                        validate: (vin) =>
+                            /\s/.test(vin)
+                                ? "El vin no puede contener espacios"
+                                : vin.includes("O")
+                                ? "El vin no puede contener la letra O"
+                                : vin.includes("I")
+                                ? "El vin no puede contener la letra I"
+                                : vin.includes("Q")
+                                ? "El vin no puede contener la letra Q"
+                                : true,
+                    })}
                 />
             </Label>
-            <Label
-                title="Patente"
-                error={errors.patente && "Ingrese la patente"}
-            >
+            <Label title="Patente" error={errors.patente?.message}>
                 <input
                     type="text"
-                    defaultValue=""
+                    defaultValue={vehiculo?.patente}
                     placeholder="-"
                     autoComplete="off"
-                    {...register("patente", { required: true, maxLength: 9 })}
+                    {...register("patente", {
+                        required: "Ingrese la patente",
+                        maxLength: {
+                            value: 9,
+                            message:
+                                "La patente no puede contener mas de 9 caracteres",
+                        },
+                    })}
                 />
             </Label>
             <Label title="Propietario" length={2}>

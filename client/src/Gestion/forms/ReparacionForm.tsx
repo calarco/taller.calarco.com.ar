@@ -15,13 +15,11 @@ const Number = styled(Label)`
     text-align: right;
 `;
 
-type Inputs = {
-    fecha: string;
-    km: string;
+type CurrentInputs = Inputs & {
     reparacion: string;
     repuestos: string;
-    labor: string;
-    costo: string;
+    labor: number;
+    costo: number;
 };
 
 type ComponentProps = {
@@ -37,18 +35,18 @@ const Form = function ({ reparacion, edit, unEdit }: ComponentProps) {
         handleSubmit,
         watch,
         formState: { errors },
-    } = useForm<Inputs>();
+    } = useForm<CurrentInputs>();
 
     const capitalize = (text: string) => {
         return text.charAt(0).toUpperCase() + text.substring(1);
     };
 
-    const onSubmit: SubmitHandler<Inputs> = (data) =>
+    const onSubmit: SubmitHandler<CurrentInputs> = (data) =>
         reparacion
             ? feathersClient
                   .service("reparaciones")
                   .patch(reparacion.id, {
-                      km: parseInt(data.km),
+                      km: data.km,
                       reparacion: capitalize(data.reparacion),
                       repuestos: capitalize(data.repuestos),
                       costo: data.costo,
@@ -61,7 +59,7 @@ const Form = function ({ reparacion, edit, unEdit }: ComponentProps) {
             : feathersClient
                   .service("reparaciones")
                   .create({
-                      km: parseInt(data.km),
+                      km: data.km,
                       reparacion: capitalize(data.reparacion),
                       repuestos: capitalize(data.repuestos),
                       costo: data.costo,
@@ -79,79 +77,77 @@ const Form = function ({ reparacion, edit, unEdit }: ComponentProps) {
             unEdit={unEdit}
             onSubmit={handleSubmit(onSubmit)}
         >
-            <Label title="Fecha" error={errors.fecha && "Ingrese la fecha"}>
+            <Label title="Fecha" error={errors.fecha?.message}>
                 <input
                     type="date"
-                    placeholder="-"
-                    autoComplete="off"
-                    {...register("fecha", { required: true })}
                     defaultValue={
                         reparacion
                             ? reparacion.createdAt.substring(0, 10)
                             : new Date().toISOString().substring(0, 10)
                     }
+                    placeholder="-"
+                    autoComplete="off"
+                    {...register("fecha", { required: "Ingrese la fecha" })}
                 />
             </Label>
-            <Label title="KM" error={errors.km && "Ingrese los km"}>
+            <Label title="KM" error={errors.km?.message}>
                 <input
                     type="number"
+                    defaultValue={reparacion?.km}
                     min="0000000"
                     max="9999999"
                     placeholder="-"
                     autoComplete="off"
-                    {...register("km", { required: true })}
-                    defaultValue={reparacion?.km}
+                    {...register("km", { required: "Ingrese los km" })}
                 />
             </Label>
             <Number title="Total">
-                <h4>
-                    $
-                    {(parseInt(watch("costo"), 10) || 0) +
-                        (parseInt(watch("labor"), 10) || 0)}
-                </h4>
+                <h4>${watch("costo") + watch("labor")}</h4>
             </Number>
             <Label
                 title="Reparación"
-                error={errors.reparacion && "Ingrese la reparacion"}
+                error={errors.reparacion?.message}
                 length={2}
             >
                 <input
                     type="text"
                     placeholder="-"
                     autoComplete="off"
-                    {...register("reparacion", { required: true })}
+                    {...register("reparacion", {
+                        required: "Ingrese la reparacion",
+                    })}
                     defaultValue={reparacion?.reparacion}
                 />
             </Label>
             <Number title="Mano de obra">
                 <input
                     type="number"
+                    defaultValue={reparacion?.labor}
                     min="0000000"
                     max="9999999"
                     placeholder="-"
                     autoComplete="off"
                     {...register("labor", { required: true })}
-                    defaultValue={reparacion?.labor}
                 />
             </Number>
             <Label title="Repuestos" length={2}>
                 <input
                     type="text"
+                    defaultValue={reparacion?.repuestos}
                     placeholder="-"
                     autoComplete="off"
                     {...register("repuestos")}
-                    defaultValue={reparacion?.repuestos}
                 />
             </Label>
             <Number title="Repuestos">
                 <input
                     type="number"
+                    defaultValue={reparacion?.costo}
                     min="0000000"
                     max="9999999"
                     placeholder="-"
                     autoComplete="off"
                     {...register("costo", { required: true })}
-                    defaultValue={reparacion?.costo}
                 />
             </Number>
         </Container>
