@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import transition from "styled-transition-group";
 import { SwitchTransition, TransitionGroup } from "react-transition-group";
 
@@ -7,10 +7,8 @@ import { useActive } from "Gestion/context/activeContext";
 import useReparaciones from "Gestion/hooks/useReparaciones";
 import SectionComponent from "components/Section";
 import Create from "components/Create";
-import CardComponent from "components/Card";
-import Box from "./Box";
 import ReparacionForm from "Gestion/forms/ReparacionForm";
-import Remove from "components/Remove";
+import CardComponent from "./ReparacionCard";
 
 const Container = transition.div.attrs({
     unmountOnExit: true,
@@ -54,10 +52,6 @@ const Container = transition.div.attrs({
     }
 `;
 
-type Props = {
-    readonly edit?: boolean;
-};
-
 const Section = transition(SectionComponent).attrs({
     unmountOnExit: true,
     timeout: {
@@ -82,15 +76,9 @@ const Section = transition(SectionComponent).attrs({
         opacity: 0;
         transition: 0.15s ease-in;
     }
-
-    ${(props: Props) =>
-        props.edit &&
-        css`
-            bottom: 6rem;
-        `};
 `;
 
-const Card = transition(CardComponent).attrs({
+const ReparacionCard = transition(CardComponent).attrs({
     unmountOnExit: true,
     timeout: {
         enter: 200,
@@ -130,11 +118,6 @@ const Reparaciones = function () {
         setSelected: setSelected,
     });
     const [create, setCreate] = useState(false);
-    const [remove, setRemove] = useState(false);
-
-    useEffect(() => {
-        setRemove(false);
-    }, [selected]);
 
     useEffect(() => {
         activeCard !== "Reparación" && setCreate(false);
@@ -165,84 +148,37 @@ const Reparaciones = function () {
                 >
                     <Create
                         type="Reparación"
-                        active={
+                        isActive={
                             activeCard === "Reparación" && create ? true : false
                         }
                         onClick={() => setCreate(true)}
                     >
                         <ReparacionForm
-                            edit={
+                            isActive={
                                 activeCard === "Reparación" && create
                                     ? true
                                     : false
                             }
-                            unEdit={() => {
-                                setActiveCard("");
-                            }}
                         />
                     </Create>
                     {reparaciones.data[0] ? (
                         <TransitionGroup component={null}>
                             {reparaciones.data[0].id !== 0 &&
                                 reparaciones.data.map((aReparacion) => (
-                                    <Card
+                                    <ReparacionCard
                                         key={aReparacion.id}
-                                        active={
+                                        reparacion={aReparacion}
+                                        isActive={
                                             selected === aReparacion.id
                                                 ? true
                                                 : false
                                         }
-                                        edit={
-                                            !create &&
-                                            selected === aReparacion.id &&
-                                            activeCard === "Reparación"
-                                                ? true
-                                                : false
-                                        }
-                                        onEdit={() =>
-                                            setActiveCard("Reparación")
-                                        }
-                                        remove={remove}
-                                        onRemove={() => {
-                                            setRemove(true);
+                                        setActive={() => {
+                                            selected === aReparacion.id
+                                                ? setSelected(0)
+                                                : setSelected(aReparacion.id);
                                         }}
-                                    >
-                                        <Box
-                                            reparacion={aReparacion}
-                                            onClick={() => {
-                                                selected === aReparacion.id
-                                                    ? setSelected(0)
-                                                    : setSelected(
-                                                          aReparacion.id
-                                                      );
-                                            }}
-                                        />
-                                        {selected === aReparacion.id && (
-                                            <>
-                                                <ReparacionForm
-                                                    reparacion={aReparacion}
-                                                    edit={
-                                                        activeCard ===
-                                                            "Reparación" &&
-                                                        !create
-                                                            ? true
-                                                            : false
-                                                    }
-                                                    unEdit={() => {
-                                                        setActiveCard("");
-                                                    }}
-                                                />
-                                                <Remove
-                                                    id={aReparacion.id}
-                                                    service="reparaciones"
-                                                    remove={remove}
-                                                    unRemove={() => {
-                                                        setRemove(false);
-                                                    }}
-                                                />
-                                            </>
-                                        )}
-                                    </Card>
+                                    />
                                 ))}
                         </TransitionGroup>
                     ) : (

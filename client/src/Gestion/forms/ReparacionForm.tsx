@@ -1,4 +1,4 @@
-import React, { MouseEvent } from "react";
+import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import feathersClient from "feathersClient";
 import styled from "styled-components";
@@ -24,12 +24,11 @@ type CurrentInputs = Inputs & {
 
 type ComponentProps = {
     reparacion?: Reparacion;
-    edit: boolean;
-    unEdit: (e: MouseEvent<HTMLButtonElement>) => void;
+    isActive: boolean;
 };
 
-const Form = function ({ reparacion, edit, unEdit }: ComponentProps) {
-    const { vehiculoId } = useActive();
+const Form = function ({ reparacion, isActive }: ComponentProps) {
+    const { vehiculoId, setActiveCard } = useActive();
     const {
         register,
         handleSubmit,
@@ -73,8 +72,10 @@ const Form = function ({ reparacion, edit, unEdit }: ComponentProps) {
 
     return (
         <Container
-            edit={edit}
-            unEdit={unEdit}
+            isActive={isActive}
+            exit={() => {
+                setActiveCard("");
+            }}
             onSubmit={handleSubmit(onSubmit)}
         >
             <Label title="Fecha" error={errors.fecha?.message}>

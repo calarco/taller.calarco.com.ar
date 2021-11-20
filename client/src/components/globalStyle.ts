@@ -42,6 +42,7 @@ const GlobalStyle = createGlobalStyle`
 
     #root, html, body {
         height: 100vh;
+        width: 100vw;
     }
 
     html {
@@ -324,10 +325,10 @@ const GlobalStyle = createGlobalStyle`
         padding: 0.25rem 0.5rem;
         border-radius: 4px;
         background: var(--overlay);
-        background: rgba(236, 239, 241, 0.7);
         border: 1px solid rgba(0, 0, 0, 0);
         outline: none;
         font: var(--subhead1);
+        color: var(--on-background);
         transition: 0.1s ease-in;
 
         &:not(:disabled):hover {
@@ -346,7 +347,7 @@ const GlobalStyle = createGlobalStyle`
         }
         
         &:disabled {
-            opacity: 0.8;
+            opacity: 0.5;
         }
 
         &::-webkit-calendar-picker-indicator {

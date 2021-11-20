@@ -52,7 +52,7 @@ const Panel = styled.div`
 `;
 
 type Props = {
-    readonly active?: boolean;
+    readonly isActive?: boolean;
 };
 
 const Side = styled.div<Props>`
@@ -66,7 +66,7 @@ const Side = styled.div<Props>`
     grid-template-rows: auto 1fr;
 
     ${(props) =>
-        !props.active &&
+        !props.isActive &&
         css`
             pointer-events: none;
         `};
@@ -114,21 +114,21 @@ const Gestion = function ({
                         <Reparaciones />
                         <Presupuesto />
                         <PresupuestoForm
-                            edit={createPresupuesto}
-                            unEdit={() => {
+                            isActive={createPresupuesto}
+                            exit={() => {
                                 setActiveCard("");
                             }}
                         />
                     </Panel>
                     <Panel>
                         <Turnos overlay={clienteId !== 0} />
-                        <Side active={clienteId !== 0}>
+                        <Side isActive={clienteId !== 0}>
                             <Vehiculos />
                             <Cliente createCliente={createCliente} />
                         </Side>
                         <ClienteForm
-                            edit={createCliente}
-                            unEdit={() => {
+                            isActive={createCliente}
+                            exit={() => {
                                 setActiveCard("");
                             }}
                         />

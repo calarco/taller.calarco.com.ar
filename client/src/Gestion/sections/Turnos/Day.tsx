@@ -211,7 +211,7 @@ const Day = function ({
             <List active={turnos[0] && turnos[0].id !== 0}>
                 <Create
                     type="Turno"
-                    active={active}
+                    isActive={active}
                     variant={!current}
                     onClick={setActive}
                 >
@@ -221,8 +221,8 @@ const Day = function ({
                             .padStart(2, "0")}-${date[2]
                             .toString()
                             .padStart(2, "0")}`}
-                        edit={active}
-                        unEdit={unActive}
+                        isActive={active}
+                        exit={unActive}
                     />
                 </Create>
                 <TransitionGroup component={null}>
@@ -250,8 +250,8 @@ const Day = function ({
                                 <Remove
                                     id={aTurno.id}
                                     service="turnos"
-                                    remove={remove === aTurno.id}
-                                    unRemove={() => {
+                                    isActive={remove === aTurno.id}
+                                    exit={() => {
                                         setRemove(0);
                                     }}
                                     inline

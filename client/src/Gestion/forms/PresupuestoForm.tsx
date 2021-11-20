@@ -54,7 +54,7 @@ const Repuestos = styled.div`
 
             &:first-child {
                 border-radius: 4px;
-                background: rgba(236, 239, 241, 0.7);
+                background: var(--overlay);
 
                 &:focus-within {
                     box-shadow: var(--shadow-variant);
@@ -193,11 +193,11 @@ type CurrentInputs = Inputs & {
 };
 
 type ComponentProps = {
-    edit: boolean;
-    unEdit: (e: MouseEvent<HTMLButtonElement>) => void;
+    isActive: boolean;
+    exit: (e: MouseEvent<HTMLButtonElement>) => void;
 };
 
-const Form = function ({ edit, unEdit }: ComponentProps) {
+const Form = function ({ isActive, exit }: ComponentProps) {
     const {
         register,
         watch,
@@ -288,8 +288,8 @@ const Form = function ({ edit, unEdit }: ComponentProps) {
 
     return (
         <Container
-            edit={edit}
-            unEdit={unEdit}
+            isActive={isActive}
+            exit={exit}
             onSubmit={handleSubmit(onSubmit)}
             noButtons
         >
@@ -308,10 +308,14 @@ const Form = function ({ edit, unEdit }: ComponentProps) {
                     {...register("patente", {
                         required: "Ingrese la patente",
                         maxLength: {
-                            value: 9,
+                            value: 8,
                             message:
-                                "La patente no puede contener mas de 9 caracteres",
+                                "La patente no puede contener mas de 8 caracteres",
                         },
+                        validate: (patente) =>
+                            /\s/.test(patente)
+                                ? "La patente no puede contener espacios"
+                                : true,
                     })}
                 />
             </Label>
@@ -433,7 +437,7 @@ const Form = function ({ edit, unEdit }: ComponentProps) {
                 </ul>
             </Repuestos>
             <Buttons>
-                <button type="button" onClick={unEdit}>
+                <button type="button" onClick={exit}>
                     Cancelar
                 </button>
                 <input

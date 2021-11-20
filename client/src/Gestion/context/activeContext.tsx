@@ -4,6 +4,7 @@ import React, {
     useContext,
     useState,
     useEffect,
+    useMemo,
 } from "react";
 
 type ContextType = {
@@ -46,19 +47,22 @@ function ActiveProvider({ children }: ComponentProps) {
         presupuestoId !== 0 && setVehiculoId(0);
     }, [presupuestoId]);
 
+    const value = useMemo(
+        () => ({
+            clienteId,
+            vehiculoId,
+            presupuestoId,
+            activeCard,
+            setClienteId,
+            setVehiculoId,
+            setPresupuestoId,
+            setActiveCard,
+        }),
+        [clienteId, vehiculoId, presupuestoId, activeCard]
+    );
+
     return (
-        <ActiveContext.Provider
-            value={{
-                clienteId,
-                vehiculoId,
-                presupuestoId,
-                activeCard,
-                setClienteId,
-                setVehiculoId,
-                setPresupuestoId,
-                setActiveCard,
-            }}
-        >
+        <ActiveContext.Provider value={value}>
             {children}
         </ActiveContext.Provider>
     );

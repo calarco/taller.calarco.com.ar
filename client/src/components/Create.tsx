@@ -2,7 +2,7 @@ import React, { MouseEvent, ReactNode } from "react";
 import styled, { css } from "styled-components";
 
 type Props = {
-    readonly active?: boolean;
+    readonly isActive?: boolean;
     readonly variant?: boolean;
 };
 
@@ -26,7 +26,7 @@ const Container = styled.div<Props>`
     }
 
     ${(props) =>
-        props.active &&
+        props.isActive &&
         css`
             z-index: 1500;
             box-shadow: none;
@@ -50,7 +50,7 @@ const Button = styled.button`
 
 type ComponentProps = {
     type: string;
-    active: boolean;
+    isActive: boolean;
     variant?: boolean;
     onClick: (e: MouseEvent<HTMLButtonElement>) => void;
     children: ReactNode;
@@ -59,14 +59,14 @@ type ComponentProps = {
 
 const Create = function ({
     type,
-    active,
+    isActive,
     variant,
     onClick,
     children,
     className,
 }: ComponentProps) {
     return (
-        <Container active={active} variant={variant} className={className}>
+        <Container isActive={isActive} variant={variant} className={className}>
             {children}
             <Button type="button" onClick={onClick}>
                 Crear {type}

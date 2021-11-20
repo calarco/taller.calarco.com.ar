@@ -77,8 +77,8 @@ const Buttons = styled.div`
 `;
 
 type ComponentProps = {
-    edit: boolean;
-    unEdit: (e: MouseEvent<HTMLButtonElement>) => void;
+    isActive: boolean;
+    exit: (e: MouseEvent<HTMLButtonElement>) => void;
     onSubmit: (e: FormEvent) => void;
     children: ReactNode;
     className?: string;
@@ -86,19 +86,19 @@ type ComponentProps = {
 };
 
 const Form = function ({
-    edit,
-    unEdit,
+    isActive,
+    exit,
     onSubmit,
     children,
     className,
     noButtons,
 }: ComponentProps) {
     return (
-        <Container in={edit} onSubmit={onSubmit} className={className}>
+        <Container in={isActive} onSubmit={onSubmit} className={className}>
             {children}
             {!noButtons && (
                 <Buttons>
-                    <button type="button" onClick={unEdit}>
+                    <button type="button" onClick={exit}>
                         Cancelar
                     </button>
                     <button type="submit" onClick={() => {}}>

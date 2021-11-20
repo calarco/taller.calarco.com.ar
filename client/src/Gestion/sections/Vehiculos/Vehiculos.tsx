@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import transition from "styled-transition-group";
 import { SwitchTransition, TransitionGroup } from "react-transition-group";
 
@@ -7,10 +7,8 @@ import { useActive } from "Gestion/context/activeContext";
 import useVehiculos from "Gestion/hooks/useVehiculos";
 import SectionComponent from "components/Section";
 import Create from "components/Create";
-import CardComponent from "components/Card";
-import Box from "./Box";
 import VehiculoForm from "Gestion/forms/VehiculoForm";
-import Remove from "components/Remove";
+import CardComponent from "./VehiculoCard";
 
 const Container = transition.div.attrs({
     unmountOnExit: true,
@@ -74,11 +72,7 @@ const Section = transition(SectionComponent).attrs({
     }
 `;
 
-type Props = {
-    edit?: boolean;
-};
-
-const Card = transition(CardComponent).attrs({
+const VehiculoCard = transition(CardComponent).attrs({
     unmountOnExit: true,
     timeout: {
         enter: 200,
@@ -102,12 +96,6 @@ const Card = transition(CardComponent).attrs({
         opacity: 0;
         transition: 0.15s ease-in;
     }
-
-    ${(props: Props) =>
-        props.edit &&
-        css`
-            bottom: 15rem;
-        `};
 `;
 
 const Empty = styled.h5`
@@ -117,16 +105,10 @@ const Empty = styled.h5`
 `;
 
 const Vehiculos = function () {
-    const { clienteId, vehiculoId, setVehiculoId, activeCard, setActiveCard } =
-        useActive();
+    const { clienteId, activeCard, setActiveCard } = useActive();
     const { vehiculos } = useVehiculos();
 
     const [create, setCreate] = useState(false);
-    const [remove, setRemove] = useState(false);
-
-    useEffect(() => {
-        setRemove(false);
-    }, [vehiculoId]);
 
     useEffect(() => {
         create ? setActiveCard("Vehículo") : setActiveCard("");
@@ -160,7 +142,7 @@ const Vehiculos = function () {
                 >
                     <Create
                         type="Vehículo"
-                        active={
+                        isActive={
                             activeCard === "Vehículo" && create ? true : false
                         }
                         onClick={() => {
@@ -180,71 +162,20 @@ const Vehiculos = function () {
                                 clienteId: clienteId,
                                 modeloId: 0,
                             }}
-                            edit={
+                            isActive={
                                 activeCard === "Vehículo" && create
                                     ? true
                                     : false
                             }
-                            unEdit={() => {
-                                setCreate(false);
-                            }}
                         />
                     </Create>
                     <TransitionGroup component={null}>
                         {vehiculos.data[0] && vehiculos.data[0].id !== 0 ? (
                             vehiculos.data.map((aVehiculo) => (
-                                <Card
+                                <VehiculoCard
                                     key={aVehiculo.id}
-                                    active={
-                                        vehiculoId === aVehiculo.id
-                                            ? true
-                                            : false
-                                    }
-                                    edit={
-                                        vehiculoId === aVehiculo.id &&
-                                        activeCard === "Vehículo" &&
-                                        !create
-                                            ? true
-                                            : false
-                                    }
-                                    onEdit={() => setActiveCard("Vehículo")}
-                                    remove={remove}
-                                    onRemove={() => {
-                                        setRemove(true);
-                                    }}
-                                >
-                                    <Box
-                                        vehiculo={aVehiculo}
-                                        onClick={() =>
-                                            vehiculoId === aVehiculo.id
-                                                ? setVehiculoId(0)
-                                                : setVehiculoId(aVehiculo.id)
-                                        }
-                                    />
-                                    {vehiculoId === aVehiculo.id && !create && (
-                                        <>
-                                            <VehiculoForm
-                                                vehiculo={aVehiculo}
-                                                edit={
-                                                    activeCard === "Vehículo"
-                                                        ? true
-                                                        : false
-                                                }
-                                                unEdit={() => {
-                                                    setActiveCard("");
-                                                }}
-                                            />
-                                            <Remove
-                                                id={aVehiculo.id}
-                                                service="clientes"
-                                                remove={remove}
-                                                unRemove={() => {
-                                                    setRemove(false);
-                                                }}
-                                            />
-                                        </>
-                                    )}
-                                </Card>
+                                    vehiculo={aVehiculo}
+                                />
                             ))
                         ) : (
                             <Empty>No se encontraron vehiculos</Empty>

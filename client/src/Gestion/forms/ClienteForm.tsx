@@ -21,11 +21,11 @@ type Inputs = {
 
 type ComponentProps = {
     cliente?: Cliente;
-    edit: boolean;
-    unEdit: (e: MouseEvent<HTMLButtonElement>) => void;
+    isActive: boolean;
+    exit: (e: MouseEvent<HTMLButtonElement>) => void;
 };
 
-const Form = function ({ cliente, edit, unEdit }: ComponentProps) {
+const Form = function ({ cliente, isActive, exit }: ComponentProps) {
     const {
         register,
         handleSubmit,
@@ -72,8 +72,8 @@ const Form = function ({ cliente, edit, unEdit }: ComponentProps) {
 
     return (
         <Container
-            edit={edit}
-            unEdit={unEdit}
+            isActive={isActive}
+            exit={exit}
             onSubmit={handleSubmit(onSubmit)}
         >
             <Label title="Nombre" error={errors.nombre?.message}>

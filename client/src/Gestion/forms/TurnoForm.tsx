@@ -8,11 +8,11 @@ import SelectModelo from "components/SelectModelo";
 
 type ComponentProps = {
     fecha: string;
-    edit: boolean;
-    unEdit: (event: MouseEvent<HTMLButtonElement>) => void;
+    isActive: boolean;
+    exit: (event: MouseEvent<HTMLButtonElement>) => void;
 };
 
-const Form = function ({ fecha, edit, unEdit }: ComponentProps) {
+const Form = function ({ fecha, isActive, exit }: ComponentProps) {
     const {
         register,
         watch,
@@ -43,8 +43,8 @@ const Form = function ({ fecha, edit, unEdit }: ComponentProps) {
 
     return (
         <FormComponent
-            edit={edit}
-            unEdit={unEdit}
+            isActive={isActive}
+            exit={exit}
             onSubmit={handleSubmit(onSubmit)}
         >
             <Label title="Motivo" error={errors.motivo?.message}>

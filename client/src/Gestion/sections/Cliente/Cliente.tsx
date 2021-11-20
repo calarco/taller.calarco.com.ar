@@ -125,8 +125,8 @@ const Cliente = function ({ createCliente }: ComponentProps) {
                     {!createCliente && (
                         <ClienteForm
                             cliente={cliente}
-                            edit={activeCard === "Cliente" ? true : false}
-                            unEdit={() => {
+                            isActive={activeCard === "Cliente" ? true : false}
+                            exit={() => {
                                 setActiveCard("");
                             }}
                         />
@@ -134,8 +134,8 @@ const Cliente = function ({ createCliente }: ComponentProps) {
                     <Remove
                         id={cliente.id}
                         service="clientes"
-                        remove={remove}
-                        unRemove={() => {
+                        isActive={remove}
+                        exit={() => {
                             setRemove(false);
                         }}
                     />

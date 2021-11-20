@@ -1,6 +1,7 @@
-import React, { MouseEvent } from "react";
+import React from "react";
 import styled from "styled-components";
 
+import { useActive } from "Gestion/context/activeContext";
 import { useCarName } from "Gestion/context/carNameContext";
 
 const Container = styled.article`
@@ -24,14 +25,20 @@ const Container = styled.article`
 
 type ComponentProps = {
     vehiculo: Vehiculo;
-    onClick: (e: MouseEvent<HTMLDivElement>) => void;
 };
 
-const VehiculoBox = function ({ vehiculo, onClick }: ComponentProps) {
+const VehiculoBox = function ({ vehiculo }: ComponentProps) {
+    const { vehiculoId, setVehiculoId } = useActive();
     const { getCarName } = useCarName();
 
     return (
-        <Container onClick={onClick}>
+        <Container
+            onClick={() =>
+                vehiculoId === vehiculo.id
+                    ? setVehiculoId(0)
+                    : setVehiculoId(vehiculo.id)
+            }
+        >
             <h4>{vehiculo.patente}</h4>
             <div>
                 <h6>{getCarName(vehiculo.modeloId)}</h6>

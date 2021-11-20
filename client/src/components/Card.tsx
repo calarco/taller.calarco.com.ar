@@ -1,11 +1,11 @@
-import React from "react";
+import React, { MouseEvent, ReactNode } from "react";
 import styled, { css } from "styled-components";
 import transition from "styled-transition-group";
 
 type Props = {
-    readonly active?: boolean;
-    readonly edit?: boolean;
-    readonly remove?: boolean;
+    readonly isActive?: boolean;
+    readonly isForm?: boolean;
+    readonly isRemove?: boolean;
 };
 
 const Container = styled.div<Props>`
@@ -14,8 +14,8 @@ const Container = styled.div<Props>`
     transition: 0.2s ease-in;
 
     ${(props) =>
-        !props.active &&
-        !props.edit &&
+        !props.isActive &&
+        !props.isForm &&
         css`
             &:hover {
                 cursor: pointer;
@@ -25,7 +25,7 @@ const Container = styled.div<Props>`
         `};
 
     ${(props) =>
-        props.active &&
+        props.isActive &&
         css`
             position: sticky;
             top: 4.5rem;
@@ -43,7 +43,7 @@ const Container = styled.div<Props>`
         `};
 
     ${(props) =>
-        props.edit &&
+        props.isForm &&
         css`
             position: sticky;
             top: 0;
@@ -53,7 +53,7 @@ const Container = styled.div<Props>`
         `};
 
     ${(props) =>
-        props.remove &&
+        props.isRemove &&
         css`
             backdrop-filter: none;
         `};
@@ -67,7 +67,7 @@ const Container = styled.div<Props>`
         border-top: var(--border-variant);
 
         ${(props) =>
-            props.edit &&
+            props.isForm &&
             css`
                 border-top: 1px solid rgba(0, 0, 0, 0);
                 transition: 0.3s ease-out;
@@ -130,37 +130,37 @@ const Buttons = transition.div.attrs({
 `;
 
 type ComponentProps = {
-    active: boolean;
-    edit: boolean;
-    onEdit: (e: React.MouseEvent<HTMLButtonElement>) => void;
-    remove: boolean;
-    onRemove: (e: React.MouseEvent<HTMLButtonElement>) => void;
-    children: React.ReactNode;
+    isActive: boolean;
+    isRemove: boolean;
+    setRemove: (e: MouseEvent<HTMLButtonElement>) => void;
+    isForm: boolean;
+    setForm: (e: MouseEvent<HTMLButtonElement>) => void;
+    children: ReactNode;
     className?: string;
 };
 
 const Card = function ({
-    active,
-    edit,
-    onEdit,
-    remove,
-    onRemove,
+    isActive,
+    isRemove,
+    setRemove,
+    isForm,
+    setForm,
     children,
     className,
 }: ComponentProps) {
     return (
         <Container
-            active={active}
-            edit={edit}
-            remove={remove}
+            isActive={isActive}
+            isForm={isForm}
+            isRemove={isRemove}
             className={className}
         >
             {children}
-            <Buttons in={active}>
-                <button type="button" onClick={onRemove}>
+            <Buttons in={isActive}>
+                <button type="button" onClick={setRemove}>
                     Borrar
                 </button>
-                <button type="button" onClick={onEdit}>
+                <button type="button" onClick={setForm}>
                     Editar
                 </button>
             </Buttons>

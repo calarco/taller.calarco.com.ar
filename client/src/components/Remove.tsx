@@ -114,8 +114,8 @@ const Buttons = styled.div<Props>`
 type ComponentProps = {
     id: number;
     service: string;
-    remove: boolean;
-    unRemove: (e: MouseEvent<HTMLButtonElement>) => void;
+    isActive: boolean;
+    exit: (e: MouseEvent<HTMLButtonElement>) => void;
     inline?: boolean;
     className?: string;
 };
@@ -123,8 +123,8 @@ type ComponentProps = {
 const Remove = function ({
     id,
     service,
-    remove,
-    unRemove,
+    isActive,
+    exit,
     inline,
     className,
 }: ComponentProps) {
@@ -139,10 +139,10 @@ const Remove = function ({
     };
 
     return (
-        <Container in={remove} className={className} inline={inline}>
+        <Container in={isActive} className={className} inline={inline}>
             <h5>¿Borrar ?</h5>
             <Buttons inline={inline}>
-                <button type="button" onClick={unRemove}>
+                <button type="button" onClick={exit}>
                     Cancelar
                 </button>
                 <button type="reset" onClick={handleDelete}>

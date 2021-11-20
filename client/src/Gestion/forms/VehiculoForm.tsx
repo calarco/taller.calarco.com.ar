@@ -1,13 +1,14 @@
-import React, { MouseEvent, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import feathersClient from "feathersClient";
 import styled from "styled-components";
 
+import { useActive } from "Gestion/context/activeContext";
 import FormComponent from "components/Form";
 import Label from "components/Label";
 import ModeloComponent from "components/SelectModelo";
 
-const Container = styled(FormComponent)`
+const Form = styled(FormComponent)`
     grid-template-columns: 1fr 1fr 1fr [end];
 `;
 
@@ -23,12 +24,12 @@ type CurrentInputs = Inputs & {
 };
 
 type ComponentProps = {
-    vehiculo: Vehiculo;
-    edit: boolean;
-    unEdit: (e: MouseEvent<HTMLButtonElement>) => void;
+    vehiculo?: Vehiculo;
+    isActive: boolean;
 };
 
-const Form = function ({ vehiculo, edit, unEdit }: ComponentProps) {
+const VehiculoForm = function ({ vehiculo, isActive }: ComponentProps) {
+    const { clienteId, setActiveCard } = useActive();
     const {
         register,
         watch,
@@ -40,31 +41,14 @@ const Form = function ({ vehiculo, edit, unEdit }: ComponentProps) {
         defaultValues: {
             fabricanteId: 0,
             fabricante: "",
-            modeloId: vehiculo.modeloId,
+            modeloId: vehiculo?.modeloId || 0,
             modelo: "",
         },
     });
 
     const onSubmit: SubmitHandler<CurrentInputs> = (data) =>
-        vehiculo.id === 0
+        vehiculo
             ? feathersClient
-                  .service("vehiculos")
-                  .create({
-                      patente: data.patente.toUpperCase(),
-                      year: data.year,
-                      combustible: data.combustible,
-                      cilindrada: data.cilindrada,
-                      vin: data.vin.toUpperCase(),
-                      clienteId: data.clienteId,
-                      modeloId: data.modeloId,
-                      createdAt: Date(),
-                      updatedAt: Date(),
-                  })
-                  .then(() => {})
-                  .catch((error: FeathersErrorJSON) => {
-                      console.error(error.message);
-                  })
-            : feathersClient
                   .service("vehiculos")
                   .patch(vehiculo.id, {
                       patente: data.patente,
@@ -72,8 +56,25 @@ const Form = function ({ vehiculo, edit, unEdit }: ComponentProps) {
                       combustible: data.combustible,
                       cilindrada: data.cilindrada,
                       vin: data.vin,
-                      clienteId: data.clienteId,
+                      clienteId: clienteId,
                       modeloId: data.modeloId,
+                  })
+                  .then(() => {})
+                  .catch((error: FeathersErrorJSON) => {
+                      console.error(error.message);
+                  })
+            : feathersClient
+                  .service("vehiculos")
+                  .create({
+                      patente: data.patente.toUpperCase(),
+                      year: data.year,
+                      combustible: data.combustible,
+                      cilindrada: data.cilindrada,
+                      vin: data.vin.toUpperCase(),
+                      clienteId: clienteId,
+                      modeloId: data.modeloId,
+                      createdAt: Date(),
+                      updatedAt: Date(),
                   })
                   .then(() => {})
                   .catch((error: FeathersErrorJSON) => {
@@ -85,9 +86,11 @@ const Form = function ({ vehiculo, edit, unEdit }: ComponentProps) {
     }, [vehiculo, reset]);
 
     return (
-        <Container
-            edit={edit}
-            unEdit={unEdit}
+        <Form
+            isActive={isActive}
+            exit={() => {
+                setActiveCard("");
+            }}
             onSubmit={handleSubmit(onSubmit)}
         >
             <SelectModelo
@@ -165,10 +168,14 @@ const Form = function ({ vehiculo, edit, unEdit }: ComponentProps) {
                     {...register("patente", {
                         required: "Ingrese la patente",
                         maxLength: {
-                            value: 9,
+                            value: 8,
                             message:
-                                "La patente no puede contener mas de 9 caracteres",
+                                "La patente no puede contener mas de 8 caracteres",
                         },
+                        validate: (patente) =>
+                            /\s/.test(patente)
+                                ? "La patente no puede contener espacios"
+                                : true,
                     })}
                 />
             </Label>
@@ -177,8 +184,8 @@ const Form = function ({ vehiculo, edit, unEdit }: ComponentProps) {
                     <option value="">0</option>
                 </select>
             </Label>
-        </Container>
+        </Form>
     );
 };
 
-export default Form;
+export default VehiculoForm;

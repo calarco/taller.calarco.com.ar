@@ -13,6 +13,7 @@ import Label from "components/Label";
 
 const Container = styled.fieldset`
     height: 100%;
+    background: var(--surface);
     display: grid;
     grid-auto-flow: column;
     align-items: center;
