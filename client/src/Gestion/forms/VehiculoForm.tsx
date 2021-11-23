@@ -29,7 +29,7 @@ type ComponentProps = {
 };
 
 const VehiculoForm = function ({ vehiculo, isActive }: ComponentProps) {
-    const { clienteId, setActiveCard } = useActive();
+    const { clienteId } = useActive();
     const {
         register,
         watch,
@@ -83,16 +83,10 @@ const VehiculoForm = function ({ vehiculo, isActive }: ComponentProps) {
 
     useEffect(() => {
         reset();
-    }, [vehiculo, reset]);
+    }, [isActive, vehiculo, reset]);
 
     return (
-        <Form
-            isActive={isActive}
-            exit={() => {
-                setActiveCard("");
-            }}
-            onSubmit={handleSubmit(onSubmit)}
-        >
+        <Form isActive={isActive} onSubmit={handleSubmit(onSubmit)}>
             <SelectModelo
                 register={register}
                 watch={watch}

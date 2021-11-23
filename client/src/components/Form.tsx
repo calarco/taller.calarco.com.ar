@@ -1,6 +1,8 @@
-import React, { MouseEvent, FormEvent, ReactNode } from "react";
+import React, { FormEvent, ReactNode } from "react";
 import styled from "styled-components";
 import transition from "styled-transition-group";
+
+import { useActive } from "Gestion/context/activeContext";
 
 const Container = transition.form.attrs({
     unmountOnExit: true,
@@ -78,7 +80,6 @@ const Buttons = styled.div`
 
 type ComponentProps = {
     isActive: boolean;
-    exit: (e: MouseEvent<HTMLButtonElement>) => void;
     onSubmit: (e: FormEvent) => void;
     children: ReactNode;
     className?: string;
@@ -87,18 +88,19 @@ type ComponentProps = {
 
 const Form = function ({
     isActive,
-    exit,
     onSubmit,
     children,
     className,
     noButtons,
 }: ComponentProps) {
+    const { setActiveCard } = useActive();
+
     return (
         <Container in={isActive} onSubmit={onSubmit} className={className}>
             {children}
             {!noButtons && (
                 <Buttons>
-                    <button type="button" onClick={exit}>
+                    <button type="button" onClick={() => setActiveCard("")}>
                         Cancelar
                     </button>
                     <button type="submit" onClick={() => {}}>

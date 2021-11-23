@@ -1,4 +1,4 @@
-import React, { MouseEvent } from "react";
+import React, { useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import feathersClient from "feathersClient";
 import styled from "styled-components";
@@ -22,13 +22,13 @@ type Inputs = {
 type ComponentProps = {
     cliente?: Cliente;
     isActive: boolean;
-    exit: (e: MouseEvent<HTMLButtonElement>) => void;
 };
 
-const Form = function ({ cliente, isActive, exit }: ComponentProps) {
+const Form = function ({ cliente, isActive }: ComponentProps) {
     const {
         register,
         handleSubmit,
+        reset,
         formState: { errors },
     } = useForm<Inputs>();
 
@@ -70,12 +70,12 @@ const Form = function ({ cliente, isActive, exit }: ComponentProps) {
                       console.error(error.message);
                   });
 
+    useEffect(() => {
+        reset();
+    }, [isActive, reset]);
+
     return (
-        <Container
-            isActive={isActive}
-            exit={exit}
-            onSubmit={handleSubmit(onSubmit)}
-        >
+        <Container isActive={isActive} onSubmit={handleSubmit(onSubmit)}>
             <Label title="Nombre" error={errors.nombre?.message}>
                 <input
                     type="text"

@@ -228,7 +228,11 @@ const SelectModelo = function ({
             </Label>
             <Label
                 title="Modelo"
-                error={error ? "Seleccione un modelo" : undefined}
+                error={
+                    watchFabricanteId !== 0 && error
+                        ? "Seleccione un modelo"
+                        : undefined
+                }
                 onBlur={() => watchModelo === modelo && setValue("modelo", "")}
             >
                 <Input

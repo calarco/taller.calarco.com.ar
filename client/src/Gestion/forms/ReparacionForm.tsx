@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import feathersClient from "feathersClient";
 import styled from "styled-components";
@@ -28,11 +28,12 @@ type ComponentProps = {
 };
 
 const Form = function ({ reparacion, isActive }: ComponentProps) {
-    const { vehiculoId, setActiveCard } = useActive();
+    const { vehiculoId } = useActive();
     const {
         register,
         handleSubmit,
         watch,
+        reset,
         formState: { errors },
     } = useForm<CurrentInputs>();
 
@@ -70,14 +71,12 @@ const Form = function ({ reparacion, isActive }: ComponentProps) {
                       console.error(error.message);
                   });
 
+    useEffect(() => {
+        reset();
+    }, [isActive, reset]);
+
     return (
-        <Container
-            isActive={isActive}
-            exit={() => {
-                setActiveCard("");
-            }}
-            onSubmit={handleSubmit(onSubmit)}
-        >
+        <Container isActive={isActive} onSubmit={handleSubmit(onSubmit)}>
             <Label title="Fecha" error={errors.fecha?.message}>
                 <input
                     type="date"

@@ -1,5 +1,7 @@
-import React, { MouseEvent } from "react";
+import React from "react";
 import styled from "styled-components";
+
+import { useActive } from "Gestion/context/activeContext";
 
 const Container = styled.div`
     position: relative;
@@ -50,12 +52,18 @@ const Container = styled.div`
 
 type ComponentProps = {
     cliente: Cliente;
-    onClick: (e: MouseEvent<HTMLDivElement>) => void;
 };
 
-const ClienteBox = function ({ cliente, onClick }: ComponentProps) {
+const ClienteBox = function ({ cliente }: ComponentProps) {
+    const { setClienteId, setVehiculoId } = useActive();
+
     return (
-        <Container onClick={onClick}>
+        <Container
+            onClick={() => {
+                setClienteId(cliente.id);
+                setVehiculoId(0);
+            }}
+        >
             <p>
                 {cliente.updatedAt.substring(8, 10)}
                 <span>

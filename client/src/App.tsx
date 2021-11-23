@@ -5,7 +5,7 @@ import transition from "styled-transition-group";
 import { SwitchTransition } from "react-transition-group";
 
 import { themeDark, themeLight } from "themes";
-import GlobalStyle from "components/globalStyle";
+import GlobalStyle from "globalStyle";
 import Login from "Login/Login";
 import { ActiveProvider } from "Gestion/context/activeContext";
 import { Gestion } from "Gestion";

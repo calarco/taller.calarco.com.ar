@@ -4,32 +4,11 @@ import styled from "styled-components";
 import { useActive } from "Gestion/context/activeContext";
 import useTurnos from "Gestion/hooks/useTurnos";
 import SectionComponent from "components/Section";
-import Day from "./Day";
+import Month from "./Month";
 
 const Section = styled(SectionComponent)`
     padding: 0;
     gap: 0;
-`;
-
-const Mes = styled.div`
-    position: sticky;
-    top: 0;
-    z-index: 900;
-    width: 100%;
-    min-height: 3rem;
-    padding: 0.5rem 1.5rem;
-    border-radius: 4px;
-    background: var(--surface-t);
-    backdrop-filter: blur(0.4rem);
-    box-shadow: var(--shadow);
-    display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: center;
-    text-transform: capitalize;
-
-    h6 {
-        color: var(--on-background-variant);
-    }
 `;
 
 const Loading = styled.div`
@@ -142,68 +121,17 @@ const Turnos = function ({ overlay }: ComponentProps) {
                     ? true
                     : false
             }
-            onClick={() => {
-                setActiveCard("");
-            }}
         >
             {calendar.map((item, indexMonth) => (
-                <>
-                    <Mes
-                        key={`${item.year}-${(item.month + 1)
-                            .toString()
-                            .padStart(2, "0")}`}
-                    >
-                        <h4>
-                            {new Date(
-                                item.year,
-                                item.month,
-                                1
-                            ).toLocaleDateString("default", {
-                                month: "long",
-                            })}
-                        </h4>
-                        <h6>{item.year}</h6>
-                    </Mes>
-                    {item.days.map((number, indexDay) => (
-                        <Day
-                            key={`${item.year}-${(item.month + 1)
-                                .toString()
-                                .padStart(2, "0")}-${number
-                                .toString()
-                                .padStart(2, "0")}`}
-                            date={[item.year, item.month, number]}
-                            turnos={turnos.data.filter(
-                                ({ fecha }) =>
-                                    fecha.substring(0, 10) ===
-                                    `${item.year}-${(item.month + 1)
-                                        .toString()
-                                        .padStart(2, "0")}-${number
-                                        .toString()
-                                        .padStart(2, "0")}`
-                            )}
-                            current={indexMonth === 0 && indexDay === 0}
-                            active={
-                                selected ===
-                                    `${item.year}-${(item.month + 1)
-                                        .toString()
-                                        .padStart(2, "0")}-${number
-                                        .toString()
-                                        .padStart(2, "0")}` &&
-                                activeCard === "Turno"
-                            }
-                            setActive={() => {
-                                setSelected(
-                                    `${item.year}-${(item.month + 1)
-                                        .toString()
-                                        .padStart(2, "0")}-${number
-                                        .toString()
-                                        .padStart(2, "0")}`
-                                );
-                            }}
-                            unActive={() => setActiveCard("")}
-                        />
-                    ))}
-                </>
+                <Month
+                    key={`${item.year}-${(item.month + 1)
+                        .toString()
+                        .padStart(2, "0")}`}
+                    item={item}
+                    indexMonth={indexMonth}
+                    selected={selected}
+                    setSelected={setSelected}
+                />
             ))}
             <Loading ref={loader}>Loading...</Loading>
         </Section>

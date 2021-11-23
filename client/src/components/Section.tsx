@@ -1,5 +1,7 @@
-import React, { MouseEvent, ReactNode } from "react";
+import React, { ReactNode } from "react";
 import styled, { css } from "styled-components";
+
+import { useActive } from "Gestion/context/activeContext";
 
 type Props = {
     overlay?: boolean;
@@ -56,21 +58,22 @@ const Overlay = styled.div<Props>`
 
 type ComponentProps = {
     overlay: boolean;
-    onClick: (e: MouseEvent<HTMLDivElement>) => void;
     children: ReactNode;
     className?: string;
 };
 
-const Section = function ({
-    overlay,
-    onClick,
-    children,
-    className,
-}: ComponentProps) {
+const Section = function ({ overlay, children, className }: ComponentProps) {
+    const { setActiveCard } = useActive();
+
     return (
         <Container overlay={overlay} className={className}>
             {children}
-            <Overlay overlay={overlay} onClick={onClick} />
+            <Overlay
+                overlay={overlay}
+                onClick={() => {
+                    setActiveCard("");
+                }}
+            />
         </Container>
     );
 };

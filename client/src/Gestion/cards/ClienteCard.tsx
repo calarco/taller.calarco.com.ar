@@ -5,7 +5,7 @@ import { SwitchTransition } from "react-transition-group";
 
 import { useActive } from "Gestion/context/activeContext";
 import useCliente from "Gestion/hooks/useCliente";
-import Box from "./Box";
+import Box from "./ClienteBox";
 import ClienteForm from "Gestion/forms/ClienteForm";
 import Remove from "components/Remove";
 
@@ -76,7 +76,7 @@ type ComponentProps = {
     createCliente: boolean;
 };
 
-const Cliente = function ({ createCliente }: ComponentProps) {
+const ClienteCard = function ({ createCliente }: ComponentProps) {
     const {
         clienteId,
         setClienteId,
@@ -126,9 +126,6 @@ const Cliente = function ({ createCliente }: ComponentProps) {
                         <ClienteForm
                             cliente={cliente}
                             isActive={activeCard === "Cliente" ? true : false}
-                            exit={() => {
-                                setActiveCard("");
-                            }}
                         />
                     )}
                     <Remove
@@ -145,4 +142,4 @@ const Cliente = function ({ createCliente }: ComponentProps) {
     );
 };
 
-export default Cliente;
+export default ClienteCard;

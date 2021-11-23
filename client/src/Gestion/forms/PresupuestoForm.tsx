@@ -1,4 +1,4 @@
-import React, { MouseEvent, ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useState, useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import feathersClient from "feathersClient";
 import styled from "styled-components";
@@ -6,12 +6,13 @@ import transition from "styled-transition-group";
 import { TransitionGroup } from "react-transition-group";
 import { renderEmail, Email } from "react-html-email";
 
+import { useActive } from "Gestion/context/activeContext";
 import FormComponent from "components/Form";
 import Label from "components/Label";
 import ModeloComponent from "components/SelectModelo";
 import Mensaje from "Gestion/sections/Presupuesto/Mensaje";
 
-const Container = styled(FormComponent)`
+const Form = styled(FormComponent)`
     grid-template-columns: 3fr 4fr 3fr 3fr [end];
 
     label:nth-child(4) {
@@ -194,15 +195,16 @@ type CurrentInputs = Inputs & {
 
 type ComponentProps = {
     isActive: boolean;
-    exit: (e: MouseEvent<HTMLButtonElement>) => void;
 };
 
-const Form = function ({ isActive, exit }: ComponentProps) {
+const PresupuestoForm = function ({ isActive }: ComponentProps) {
+    const { setActiveCard } = useActive();
     const {
         register,
         watch,
         handleSubmit,
         setValue,
+        reset,
         formState: { errors },
     } = useForm<CurrentInputs>({
         defaultValues: {
@@ -286,13 +288,12 @@ const Form = function ({ isActive, exit }: ComponentProps) {
         setRepuestos(newRepuestos);
     };
 
+    useEffect(() => {
+        reset();
+    }, [isActive, reset]);
+
     return (
-        <Container
-            isActive={isActive}
-            exit={exit}
-            onSubmit={handleSubmit(onSubmit)}
-            noButtons
-        >
+        <Form isActive={isActive} onSubmit={handleSubmit(onSubmit)} noButtons>
             <SelectModelo
                 register={register}
                 watch={watch}
@@ -437,7 +438,12 @@ const Form = function ({ isActive, exit }: ComponentProps) {
                 </ul>
             </Repuestos>
             <Buttons>
-                <button type="button" onClick={exit}>
+                <button
+                    type="button"
+                    onClick={() => {
+                        setActiveCard("");
+                    }}
+                >
                     Cancelar
                 </button>
                 <input
@@ -447,8 +453,8 @@ const Form = function ({ isActive, exit }: ComponentProps) {
                 />
                 <button type="submit">Enviar</button>
             </Buttons>
-        </Container>
+        </Form>
     );
 };
 
-export default Form;
+export default PresupuestoForm;

@@ -47,10 +47,10 @@ const themeDark: DefaultTheme = {
     },
 
     colors: {
-        background: "hsla(202, 10%, 5%, 1)",
-        surface: "hsla(202, 10%, 12%, 1)",
-        surfaceT: "hsla(202, 10%, 14%, 0.7)",
-        surfaceVariant: "hsla(202, 10%, 8%, 1)",
+        background: "hsla(202, 5%, 5%, 1)",
+        surface: "hsla(202, 5%, 12%, 1)",
+        surfaceT: "hsla(202, 5%, 14%, 0.7)",
+        surfaceVariant: "hsla(202, 5%, 8%, 1)",
         primary: "hsla(202, 39%, 53%, 1)",
         primaryVariant: "hsla(202, 39%, 53%, 0.1)",
         secondary: "hsla(17, 42%, 68%, 1)",
@@ -60,7 +60,7 @@ const themeDark: DefaultTheme = {
         onBackgroundDisabled: "rgba(255, 255, 255, 0.038)",
         error: "hsla(354, 60%, 70%, 1)",
         errorVariant: "hsla(354, 90%, 70%, 0.2)",
-        overlay: "hsla(202, 10%, 8%, 0.7)",
+        overlay: "hsla(202, 5%, 8%, 0.7)",
     },
 };
 

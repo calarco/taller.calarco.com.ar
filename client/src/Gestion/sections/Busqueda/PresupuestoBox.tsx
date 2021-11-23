@@ -1,6 +1,7 @@
-import React, { MouseEvent } from "react";
+import React from "react";
 import styled from "styled-components";
 
+import { useActive } from "Gestion/context/activeContext";
 import { useCarName } from "Gestion/context/carNameContext";
 
 const Container = styled.div`
@@ -65,14 +66,18 @@ const Container = styled.div`
 
 type ComponentProps = {
     presupuesto: Presupuesto;
-    onClick: (e: MouseEvent<HTMLDivElement>) => void;
 };
 
-const PresupuestoBox = function ({ presupuesto, onClick }: ComponentProps) {
+const PresupuestoBox = function ({ presupuesto }: ComponentProps) {
+    const { setPresupuestoId } = useActive();
     const { getCarName } = useCarName();
 
     return (
-        <Container onClick={onClick}>
+        <Container
+            onClick={() => {
+                setPresupuestoId(presupuesto.id);
+            }}
+        >
             <p>
                 {presupuesto.updatedAt.substring(8, 10)}
                 <span>

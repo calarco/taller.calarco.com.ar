@@ -1,4 +1,4 @@
-import React, { MouseEvent } from "react";
+import React, { useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import feathersClient from "feathersClient";
 
@@ -9,15 +9,15 @@ import SelectModelo from "components/SelectModelo";
 type ComponentProps = {
     fecha: string;
     isActive: boolean;
-    exit: (event: MouseEvent<HTMLButtonElement>) => void;
 };
 
-const Form = function ({ fecha, isActive, exit }: ComponentProps) {
+const Form = function ({ fecha, isActive }: ComponentProps) {
     const {
         register,
         watch,
         handleSubmit,
         setValue,
+        reset,
         formState: { errors },
     } = useForm<Inputs>({
         defaultValues: {
@@ -41,12 +41,12 @@ const Form = function ({ fecha, isActive, exit }: ComponentProps) {
                 console.error(error.message);
             });
 
+    useEffect(() => {
+        reset();
+    }, [isActive, reset]);
+
     return (
-        <FormComponent
-            isActive={isActive}
-            exit={exit}
-            onSubmit={handleSubmit(onSubmit)}
-        >
+        <FormComponent isActive={isActive} onSubmit={handleSubmit(onSubmit)}>
             <Label title="Motivo" error={errors.motivo?.message}>
                 <input
                     type="text"

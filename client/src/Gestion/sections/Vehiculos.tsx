@@ -8,7 +8,7 @@ import useVehiculos from "Gestion/hooks/useVehiculos";
 import SectionComponent from "components/Section";
 import Create from "components/Create";
 import VehiculoForm from "Gestion/forms/VehiculoForm";
-import CardComponent from "./VehiculoCard";
+import CardComponent from "Gestion/cards/VehiculoCard";
 
 const Container = transition.div.attrs({
     unmountOnExit: true,
@@ -136,9 +136,6 @@ const Vehiculos = function () {
                             ? true
                             : false
                     }
-                    onClick={() => {
-                        setActiveCard("");
-                    }}
                 >
                     <Create
                         type="Vehículo"

@@ -8,7 +8,7 @@ import useReparaciones from "Gestion/hooks/useReparaciones";
 import SectionComponent from "components/Section";
 import Create from "components/Create";
 import ReparacionForm from "Gestion/forms/ReparacionForm";
-import CardComponent from "./ReparacionCard";
+import CardComponent from "Gestion/cards/ReparacionCard";
 
 const Container = transition.div.attrs({
     unmountOnExit: true,
@@ -142,9 +142,6 @@ const Reparaciones = function () {
                             reparaciones.data[0].vehiculoId)
                     }
                     overlay={activeCard !== "" ? true : false}
-                    onClick={() => {
-                        setActiveCard("");
-                    }}
                 >
                     <Create
                         type="Reparación"

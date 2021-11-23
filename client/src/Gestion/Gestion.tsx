@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from "react";
 import styled, { css } from "styled-components";
 
-import { Device } from "components/globalStyle";
+import { Device } from "globalStyle";
 import { useActive } from "Gestion/context/activeContext";
 import { CarNameProvider } from "Gestion/context/carNameContext";
 import Bar from "./Bar";
 
 import { Busqueda } from "Gestion/sections/Busqueda";
-import { Cliente } from "Gestion/sections/Cliente";
-import { Vehiculos } from "Gestion/sections/Vehiculos";
-import { Reparaciones } from "Gestion/sections/Reparaciones";
+import Buscador from "Gestion/Buscador";
+import ClienteCard from "Gestion/cards/ClienteCard";
+import Vehiculos from "Gestion/sections/Vehiculos";
+import Reparaciones from "Gestion/sections/Reparaciones";
 import { Turnos } from "Gestion/sections/Turnos";
 import { Presupuesto } from "Gestion/sections/Presupuesto";
 
@@ -85,6 +86,7 @@ const Gestion = function ({
 }: ComponentProps) {
     const { clienteId, activeCard, setActiveCard } = useActive();
 
+    const [busqueda, setBusqueda] = useState("");
     const [createCliente, setCreateCliente] = useState(false);
     const [createPresupuesto, setCreatePresupuesto] = useState(false);
 
@@ -106,32 +108,25 @@ const Gestion = function ({
             <Container>
                 <Panels>
                     <Panel>
-                        <Busqueda
+                        <Busqueda busqueda={busqueda} />
+                        <Reparaciones />
+                        <Presupuesto />
+                        <PresupuestoForm isActive={createPresupuesto} />
+                        <Buscador
+                            busqueda={busqueda}
+                            setBusqueda={setBusqueda}
                             createCliente={createCliente}
                             setCreateCliente={setCreateCliente}
                             setCreatePresupuesto={setCreatePresupuesto}
-                        />
-                        <Reparaciones />
-                        <Presupuesto />
-                        <PresupuestoForm
-                            isActive={createPresupuesto}
-                            exit={() => {
-                                setActiveCard("");
-                            }}
                         />
                     </Panel>
                     <Panel>
                         <Turnos overlay={clienteId !== 0} />
                         <Side isActive={clienteId !== 0}>
                             <Vehiculos />
-                            <Cliente createCliente={createCliente} />
+                            <ClienteCard createCliente={createCliente} />
                         </Side>
-                        <ClienteForm
-                            isActive={createCliente}
-                            exit={() => {
-                                setActiveCard("");
-                            }}
-                        />
+                        <ClienteForm isActive={createCliente} />
                     </Panel>
                 </Panels>
                 <Bar

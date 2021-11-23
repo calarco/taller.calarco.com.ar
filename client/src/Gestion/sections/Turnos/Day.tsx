@@ -9,8 +9,9 @@ import TurnoForm from "Gestion/forms/TurnoForm";
 import Remove from "components/Remove";
 
 type Props = {
-    active?: boolean;
-    inactive?: boolean;
+    isActive?: boolean;
+    isCurrent?: boolean;
+    disabled?: boolean;
 };
 
 const Container = styled.div<Props>`
@@ -23,7 +24,7 @@ const Container = styled.div<Props>`
     transition: 0.15s ease-in;
 
     ${(props) =>
-        props.active &&
+        props.isActive &&
         css`
             position: sticky;
             top: 0;
@@ -42,7 +43,7 @@ const Container = styled.div<Props>`
         border-bottom: var(--border-variant);
 
         ${(props) =>
-            props.active &&
+            props.isActive &&
             css`
                 transition: 0.2s ease-out;
                 border-bottom: 1px solid rgba(0, 0, 0, 0);
@@ -68,7 +69,7 @@ const Dia = styled.div<Props>`
     }
 
     ${(props) =>
-        props.inactive &&
+        props.disabled &&
         css`
             & > * {
                 color: var(--on-background-variant);
@@ -76,7 +77,7 @@ const Dia = styled.div<Props>`
         `};
 
     ${(props) =>
-        props.active &&
+        props.isCurrent &&
         css`
             & > * {
                 color: var(--secondary);
@@ -92,7 +93,7 @@ const List = styled.div<Props>`
     transition: 0.15s ease-in;
 
     ${(props) =>
-        props.active &&
+        props.isActive &&
         css`
             background: var(--surface-t);
             box-shadow: var(--shadow);
@@ -161,19 +162,17 @@ const Turno = transition.div`
 type ComponentProps = {
     date: number[];
     turnos: Turno[];
-    current: boolean;
-    active: boolean;
+    isCurrent: boolean;
+    isActive: boolean;
     setActive: (e: MouseEvent<HTMLButtonElement>) => void;
-    unActive: (e: MouseEvent<HTMLButtonElement>) => void;
 };
 
 const Day = function ({
     date,
     turnos,
-    current,
-    active,
+    isCurrent,
+    isActive,
     setActive,
-    unActive,
 }: ComponentProps) {
     const { getCarName } = useCarName();
 
@@ -184,10 +183,10 @@ const Day = function ({
     }, [turnos]);
 
     return (
-        <Container active={active}>
+        <Container isActive={isActive}>
             <Dia
-                active={current}
-                inactive={
+                isCurrent={isCurrent}
+                disabled={
                     [0, 6].indexOf(
                         new Date(date[0], date[1], date[2]).getDay()
                     ) !== -1
@@ -208,11 +207,11 @@ const Day = function ({
                         .substring(0, 3)}
                 </p>
             </Dia>
-            <List active={turnos[0] && turnos[0].id !== 0}>
+            <List isActive={turnos[0] && turnos[0].id !== 0}>
                 <Create
                     type="Turno"
-                    isActive={active}
-                    variant={!current}
+                    isActive={isActive}
+                    variant={!isCurrent}
                     onClick={setActive}
                 >
                     <TurnoForm
@@ -221,8 +220,7 @@ const Day = function ({
                             .padStart(2, "0")}-${date[2]
                             .toString()
                             .padStart(2, "0")}`}
-                        isActive={active}
-                        exit={unActive}
+                        isActive={isActive}
                     />
                 </Create>
                 <TransitionGroup component={null}>

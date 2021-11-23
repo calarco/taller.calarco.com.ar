@@ -118,11 +118,10 @@ const Cliente = styled.h5<Props>`
 
 type ComponentProps = {
     vehiculo: Vehiculo;
-    active: boolean;
 };
 
-const VehiculoBox = function ({ vehiculo, active }: ComponentProps) {
-    const { setClienteId, setVehiculoId } = useActive();
+const VehiculoBox = function ({ vehiculo }: ComponentProps) {
+    const { clienteId, setClienteId, setVehiculoId } = useActive();
     const { getCarName } = useCarName();
 
     const [cliente, setCliente] = useState<Cliente>({
@@ -150,9 +149,9 @@ const VehiculoBox = function ({ vehiculo, active }: ComponentProps) {
     }, [vehiculo.clienteId]);
 
     return (
-        <Container active={active}>
+        <Container active={vehiculo.clienteId === clienteId}>
             <Box
-                active={active}
+                active={vehiculo.clienteId === clienteId}
                 onClick={() => {
                     setVehiculoId(vehiculo.id);
                     setClienteId(vehiculo.clienteId);
@@ -174,9 +173,11 @@ const VehiculoBox = function ({ vehiculo, active }: ComponentProps) {
                 </div>
             </Box>
             <Cliente
-                active={active}
+                active={vehiculo.clienteId === clienteId}
                 onClick={() => {
-                    active ? setClienteId(0) : setClienteId(cliente.id);
+                    vehiculo.clienteId === clienteId
+                        ? setClienteId(0)
+                        : setClienteId(cliente.id);
                 }}
             >
                 {cliente.nombre} {cliente.apellido}

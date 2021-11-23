@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { MouseEvent, useState, useEffect } from "react";
 import styled, { css } from "styled-components";
 
 import { useActive } from "Gestion/context/activeContext";
 import CardComponent from "components/Card";
-import VehiculoBox from "./VehiculoBox";
-import VehiculoForm from "Gestion/forms/VehiculoForm";
+import ReparacionBox from "./ReparacionBox";
+import ReparacionForm from "Gestion/forms/ReparacionForm";
 import Remove from "components/Remove";
 
 type Props = {
@@ -15,51 +15,59 @@ const Card = styled(CardComponent)`
     ${(props: Props) =>
         props.isForm &&
         css`
-            bottom: 15rem;
+            bottom: 3rem;
         `};
 `;
 
 type ComponentProps = {
-    vehiculo: Vehiculo;
+    reparacion: Reparacion;
+    isActive: boolean;
+    setActive: (e: MouseEvent<HTMLDivElement>) => void;
     className?: string;
 };
 
-const VehiculoCard = function ({ vehiculo, className }: ComponentProps) {
-    const { vehiculoId, activeCard, setActiveCard } = useActive();
+const ReparacionCard = function ({
+    reparacion,
+    isActive,
+    setActive,
+    className,
+}: ComponentProps) {
+    const { activeCard, setActiveCard } = useActive();
 
     const [form, setForm] = useState(false);
     const [remove, setRemove] = useState(false);
 
     useEffect(() => {
-        form ? setActiveCard("Vehículo") : setActiveCard("");
+        form ? setActiveCard("Reparación") : setActiveCard("");
     }, [form, setActiveCard]);
 
     useEffect(() => {
-        activeCard !== "Vehículo" && setForm(false);
+        activeCard !== "Reparación" && setForm(false);
     }, [activeCard]);
 
     useEffect(() => {
+        setForm(false);
         setRemove(false);
-    }, [vehiculoId]);
+    }, [isActive]);
 
     return (
         <Card
-            isActive={vehiculoId === vehiculo.id ? true : false}
+            isActive={isActive}
             isRemove={remove}
             setRemove={() => setRemove(true)}
             isForm={form}
             setForm={() => setForm(true)}
             className={className}
         >
-            <VehiculoBox vehiculo={vehiculo} />
-            <VehiculoForm
-                vehiculo={vehiculo}
-                isActive={vehiculoId === vehiculo.id && form ? true : false}
+            <ReparacionBox reparacion={reparacion} onClick={setActive} />
+            <ReparacionForm
+                reparacion={reparacion}
+                isActive={isActive && form ? true : false}
             />
             <Remove
-                id={vehiculo.id}
-                service="vehiculos"
-                isActive={vehiculoId === vehiculo.id && remove}
+                id={reparacion.id}
+                service="reparaciones"
+                isActive={remove}
                 exit={() => {
                     setRemove(false);
                 }}
@@ -68,4 +76,4 @@ const VehiculoCard = function ({ vehiculo, className }: ComponentProps) {
     );
 };
 
-export default VehiculoCard;
+export default ReparacionCard;
